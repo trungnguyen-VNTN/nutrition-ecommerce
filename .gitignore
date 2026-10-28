@@ -1,0 +1,22 @@
+.env
+.env.*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+.terraform/
+*.tfplan
+tfplan
+target/
+build/
+node_modules/
+.idea/
+.vscode/
+*.log
+
+# Frontend
+dist/
+coverage/
+playwright-report/
+test-results/
+frontend/.screenshots/
