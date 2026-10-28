@@ -1,0 +1,100 @@
+# Quy tắc lệnh cho Codex (thay cho phần allow / ask / deny của .claude/settings.json).
+# Cú pháp Starlark. Khớp theo TIỀN TỐ từng token, không hỗ trợ ký tự đại diện như `aws * delete-*`.
+# decision: "allow" (chạy không hỏi) | "prompt" (hỏi) | "forbidden" (chặn).
+# Khi nhiều rule cùng khớp, rule nghiêm ngặt nhất thắng.
+# Kiểm tra thử: codex execpolicy check --rules .codex/rules/default.rules -- terraform apply
+
+# ---------- CẤM ----------
+prefix_rule(
+    pattern = ["terraform", ["apply", "destroy", "import", "state", "taint", "untaint", "force-unlock"]],
+    decision = "forbidden",
+    justification = "Thay đổi hạ tầng chỉ do người dùng thực hiện bằng profile nutrition-apply.",
+)
+
+prefix_rule(
+    pattern = ["aws", ["iam", "configure"]],
+    decision = "forbidden",
+    justification = "Không đụng IAM hay cấu hình credential.",
+)
+
+prefix_rule(
+    pattern = ["aws", "s3", ["rm", "rb", "mv"]],
+    decision = "forbidden",
+    justification = "Không xóa hoặc di chuyển dữ liệu S3.",
+)
+
+prefix_rule(
+    pattern = ["aws", "s3api", ["delete-bucket", "delete-object", "delete-objects", "delete-bucket-policy"]],
+    decision = "forbidden",
+    justification = "Không xóa tài nguyên S3.",
+)
+
+prefix_rule(
+    pattern = ["aws", ["ec2", "rds", "ecs", "ecr", "elbv2", "cloudfront", "cognito-idp", "secretsmanager", "logs", "kms", "bedrock"],
+               ["delete-db-instance", "delete-db-cluster", "delete-cluster", "delete-service", "delete-repository",
+                "delete-load-balancer", "delete-distribution", "delete-user-pool", "delete-secret",
+                "delete-log-group", "delete-vpc", "delete-subnet", "delete-nat-gateway", "delete-vpc-endpoints",
+                "terminate-instances", "schedule-key-deletion"]],
+    decision = "forbidden",
+    justification = "Không xóa tài nguyên bằng AWS CLI (danh sách không đầy đủ; IAM của profile plan mới là chốt chặn thật).",
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf"],
+    decision = "forbidden",
+    justification = "Không xóa đệ quy cưỡng bức.",
+)
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease"]],
+    decision = "forbidden",
+    justification = "Không ghi đè lịch sử từ xa.",
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Không bỏ thay đổi chưa commit của người dùng.",
+)
+
+# ---------- HỎI ----------
+prefix_rule(
+    pattern = ["git", ["commit", "push"]],
+    decision = "prompt",
+    justification = "Người dùng duyệt trước khi commit hoặc push.",
+)
+
+prefix_rule(
+    pattern = ["docker", ["build", "push"]],
+    decision = "prompt",
+    justification = "Build / push image tốn thời gian và có thể đẩy lên ECR.",
+)
+
+# ---------- CHO PHÉP (chạy ngoài sandbox, không hỏi) ----------
+# Các lệnh chỉ-đọc / kiểm tra cần mạng. Profile nutrition-plan không có quyền ghi tài nguyên.
+prefix_rule(
+    pattern = ["terraform", ["fmt", "validate", "show"]],
+    decision = "allow",
+    justification = "Kiểm tra cú pháp và đọc plan.",
+)
+
+prefix_rule(
+    pattern = ["terraform", "plan"],
+    decision = "allow",
+    justification = "Plan chỉ đọc; AGENTS.md yêu cầu dùng -out=tfplan và dừng sau đó.",
+)
+
+prefix_rule(
+    pattern = ["aws", "sts", "get-caller-identity"],
+    decision = "allow",
+    justification = "Kiểm tra đang dùng đúng profile.",
+)
+
+prefix_rule(
+    pattern = ["aws", "logs", "tail"],
+    decision = "allow",
+    justification = "Đọc log để gỡ lỗi.",
+)
+
+# Các lệnh `aws <service> describe-* / list-* / get-*` không khớp rule nào ở đây,
+# nên sẽ rơi về chính sách phê duyệt mặc định (hỏi). Đây là chủ ý vì không viết được ký tự đại diện.

@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit(/backend/**)",
+      "Edit(/frontend/**)",
+      "Edit(/infra/**)",
+      "Edit(/docs/**)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(mvn *)",
+      "Bash(npm run *)",
+      "Bash(docker compose *)",
+      "Bash(terraform fmt *)",
+      "Bash(terraform validate *)",
+      "Bash(terraform plan *)",
+      "Bash(terraform show *)",
+      "Bash(aws sts get-caller-identity *)",
+      "Bash(aws * describe-*)",
+      "Bash(aws * list-*)",
+      "Bash(aws * get-*)",
+      "Bash(aws logs tail *)"
+    ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(docker build *)",
+      "Bash(docker push *)"
+    ],
+    "deny": [
+      "Bash(terraform apply *)",
+      "Bash(terraform destroy *)",
+      "Bash(terraform import *)",
+      "Bash(terraform state *)",
+      "Bash(terraform taint *)",
+      "Bash(aws * delete-*)",
+      "Bash(aws * terminate-*)",
+      "Bash(aws * create-access-key *)",
+      "Bash(aws iam *)",
+      "Bash(aws configure *)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.tfvars)",
+      "Read(**/*.tfstate)",
+      "Read(~/.aws/**)"
+    ]
+  }
+}

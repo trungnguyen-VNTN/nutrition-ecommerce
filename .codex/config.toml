@@ -1,0 +1,16 @@
+# Cấu hình Codex cho dự án (thay cho .claude/settings.json).
+# Chỉ được nạp khi bạn đánh dấu repo là "trusted" trong Codex.
+# Tên khóa có thể khác theo phiên bản Codex: đối chiếu với tài liệu bản đang cài.
+
+# Ghi được trong thư mục dự án, không đụng ra ngoài; hỏi khi cần vượt sandbox.
+sandbox_mode    = "workspace-write"
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+# Mặc định TẮT mạng. Các bước cần mạng (terraform plan, aws describe-*, npm install, mvn tải thư viện)
+# sẽ bị hỏi phê duyệt; bạn duyệt từng lệnh. Chỉ bật true khi bạn chủ động muốn.
+network_access = false
+
+[shell_environment_policy]
+# Mọi lệnh AWS CLI / Terraform do Codex chạy mặc định dùng profile chỉ-đọc.
+set = { AWS_PROFILE = "nutrition-plan", AWS_PAGER = "", AWS_DEFAULT_REGION = "ap-southeast-1" }
