@@ -8,8 +8,8 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 ## Bối cảnh cố định
 - Region: ap-southeast-1. Tiền tố tài nguyên: nutrition-dev. Tag: Project, Env, Owner.
 - Terraform >= 1.10, backend S3 với use_lockfile = true. Ghim phiên bản provider, commit .terraform.lock.hcl.
-- Backend: Java <điền phiên bản LTS> + Spring Boot, build bằng <Maven|Gradle>. Frontend: React + TypeScript (xem frontend/AGENTS.md). DB: PostgreSQL (Flyway).
-- Image: linux/<arm64|amd64>. ECS Fargate runtime_platform phải khớp.
+- Backend: Java 21 (LTS) + Spring Boot, build bằng Maven (luôn dùng wrapper `./mvnw`). Frontend: React + TypeScript (xem frontend/AGENTS.md). DB: PostgreSQL (Flyway).
+- Image: linux/arm64. ECS Fargate runtime_platform phải khớp (cpu_architecture = "ARM64", operating_system_family = "LINUX"). Build bằng `docker buildx` với `--platform linux/arm64`; CI cần QEMU hoặc runner arm64.
 - AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình.
 - Mạng: ưu tiên VPC endpoints. NAT chỉ bật qua biến enable_nat khi spike S3 yêu cầu. ALB nằm internal; CloudFront truy cập qua VPC origin.
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito (frontend tự làm màn hình đăng nhập/đăng ký).
@@ -63,11 +63,13 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 - Ưu tiên cách đơn giản, nhất quán với code hiện có hơn là cách "thông minh".
 
 ## Lệnh thường dùng
-<điền sau khi có backend / frontend: chạy local, test backend, test frontend, docker compose, terraform plan>
-Gợi ý (sửa theo quyết định O5): 
-- Backend: `cd backend && ./mvnw verify` (hoặc `./gradlew check`)
-- Frontend: `cd frontend && npm run format:check && npm run lint && npm run typecheck && npm test`
+- Backend (kiểm tra đầy đủ: format, test, build): `cd backend && ./mvnw verify`
+- Backend chạy local: chưa có, cập nhật khi tạo backend
+- Frontend (kiểm tra đầy đủ): `cd frontend && npm run format:check && npm run lint && npm run typecheck && npm test`
+- Frontend chạy local: `cd frontend && npm run dev`
 - Ảnh chụp giao diện: `cd frontend && npm run screenshots`
+- Docker compose: chưa có, cập nhật khi tạo
+- Build image (hỏi tôi trước khi chạy): `docker buildx build --platform linux/arm64 ...`
 - Terraform: `terraform fmt -check && terraform validate && terraform plan -out=tfplan`
 
 ## Định nghĩa "xong" của một giai đoạn
