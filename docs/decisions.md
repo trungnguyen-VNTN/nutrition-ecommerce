@@ -20,10 +20,10 @@
 | # | Chủ đề | Lựa chọn | Quyết khi nào | Trạng thái |
 | --- | --- | --- | --- | --- |
 | O1 | Model và inference profile | in-region hay global; model cụ thể | Sau spike S1 | Chưa quyết |
-| O2 | Kiến trúc CPU của image | arm64 hay amd64 | Trước giai đoạn 3 | Chưa quyết |
+| O2 | Kiến trúc CPU của image | linux/arm64 | Trước giai đoạn 3 | Đã chốt |
 | O3 | Số AZ cho endpoint ở dev; bật NAT? | 1 AZ, NAT hay không | Sau spike S3 và so sánh chi phí | Chưa quyết |
 | O4 | Permission set `apply` | Tùy chỉnh (khuyến nghị) hay AdministratorAccess trên sandbox | Giai đoạn 0 | Chưa quyết |
-| O5 | JDK và build tool | Phiên bản LTS; Maven hay Gradle | Giai đoạn 0 | Chưa quyết |
+| O5 | JDK và build tool | Java 21 LTS; Maven, dùng ./mvnw | Giai đoạn 0 | Đã chốt |
 | O6 | Rủi ro HTTP nội bộ CloudFront → ALB nếu S4 thất bại | Chấp nhận (kèm biện pháp giảm) hay đổi hướng | Sau spike S4 | Chưa quyết |
 | O7 | Môi trường | Chỉ `dev` hay thêm `prod` | Giai đoạn 7 | Chưa quyết |
 
@@ -38,6 +38,8 @@
 | S5 | Quota Bedrock đủ cho demo? | GĐ 0 | _chưa làm_ | | Nếu thiếu: xin tăng sớm |
 
 ## Cách dùng file này
+
+- 2026-10-29: Hạ tầng rút gọn dùng ALB công khai, bỏ VPC origin và VPC endpoint riêng vì đề bài không bắt buộc mạng riêng (thay thế lựa chọn mạng riêng trước đây).
 
 - Khi đổi quyết định: cập nhật file này **trước**, rồi mới yêu cầu Codex sửa code.
 - Ghi kết quả spike kèm ngày và bằng chứng (lệnh đã chạy, kết quả ngắn gọn).

@@ -4,6 +4,8 @@ _Cập nhật lần cuối: 2026-10-29_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
+- Cognito: đã viết infra/cognito với đúng 4 resource và 3 outputs, state local tạm; fmt/init/validate bị chặn vì Terraform CLI chưa có trong PATH. Tiếp theo: xác định CLI và xin duyệt mạng cho init -backend=false; chưa chạy plan/apply hay truy cập credentials.
+
 - Giai đoạn: **0 – Chuẩn bị**
 - Phase A hoàn tất: lint, typecheck, 29 unit tests, build và kiểm tra bundle không có mock đều xanh; audit gần nhất 0.
 - Ảnh `/products` sau sửa ở `frontend/.screenshots/products-390.png` và `products-1440.png`; không thấy tràn ngang/cắt chữ/thiếu nhãn dữ liệu. Các ghi chép lỗi bên dưới là lịch sử đã được xử lý.
