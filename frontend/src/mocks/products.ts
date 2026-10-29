@@ -1,0 +1,83 @@
+import type { Product, ProductPage } from '@/lib/api/catalog.types';
+
+export const products: Product[] = [
+  {
+    id: 'oats',
+    name: 'Yến mạch nguyên hạt',
+    price: 68000,
+    currency: 'VND',
+    stock: 24,
+    nutrition_complete: true,
+    allergens_verified: true,
+  },
+  {
+    id: 'almonds',
+    name: 'Hạnh nhân rang mộc',
+    price: 125000,
+    currency: 'VND',
+    stock: 12,
+    nutrition_complete: true,
+    allergens_verified: true,
+  },
+  {
+    id: 'brown-rice',
+    name: 'Gạo lứt nguyên cám',
+    price: 52000,
+    currency: 'VND',
+    stock: 18,
+    nutrition_complete: false,
+    allergens_verified: true,
+  },
+  {
+    id: 'chia',
+    name: 'Hạt chia',
+    price: 89000,
+    currency: 'VND',
+    stock: 8,
+    nutrition_complete: true,
+    allergens_verified: false,
+  },
+  {
+    id: 'granola',
+    name: 'Ngũ cốc granola',
+    price: 115000,
+    currency: 'VND',
+    stock: 0,
+    nutrition_complete: false,
+    allergens_verified: false,
+  },
+  {
+    id: 'lentils',
+    name: 'Đậu lăng đỏ',
+    price: 74000,
+    currency: 'VND',
+    stock: 15,
+    nutrition_complete: true,
+    allergens_verified: true,
+  },
+  {
+    id: 'pumpkin-seeds',
+    name: 'Hạt bí rang mộc',
+    price: 96000,
+    currency: 'VND',
+    stock: 9,
+    nutrition_complete: false,
+    allergens_verified: true,
+  },
+  {
+    id: 'quinoa',
+    name: 'Hạt diêm mạch',
+    price: 138000,
+    currency: 'VND',
+    stock: 11,
+    nutrition_complete: true,
+    allergens_verified: false,
+  },
+];
+
+export const productPage: ProductPage = {
+  items: products,
+  page: 0,
+  size: 8,
+  total: products.length,
+};

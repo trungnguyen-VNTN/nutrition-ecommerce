@@ -1,0 +1,16 @@
+{
+  "package": "@tanstack/react-query@5.90.2",
+  "integrityVerified": true,
+  "files": [
+    {
+      "file": "build/modern/index.d.ts",
+      "inRegistryArchive": true,
+      "installed": false
+    },
+    {
+      "file": "build/legacy/index.d.ts",
+      "inRegistryArchive": true,
+      "installed": false
+    }
+  ]
+}
