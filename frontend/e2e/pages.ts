@@ -4,7 +4,7 @@ export const pages = [
   {
     path: '/products/oats',
     name: 'product-detail',
-    title: 'Chi tiết sản phẩm',
+    title: 'Yến mạch nguyên hạt',
   },
   { path: '/cart', name: 'cart', title: 'Giỏ hàng' },
   { path: '/orders', name: 'orders', title: 'Đơn hàng' },

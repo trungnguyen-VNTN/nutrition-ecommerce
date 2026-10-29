@@ -16,14 +16,15 @@ describe('API boundaries', () => {
     expect(apiErrorMessage(new ApiError(Number(status)))).toBe(text);
   });
 
-  it('blocks production requests before calling fetch', async () => {
+  it('allows same-origin catalog requests in production', async () => {
     vi.stubEnv('DEV', false);
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
     try {
-      await expect(getJson('products')).rejects.toThrow(
-        'Catalog integration is not enabled',
+      await expect(getJson('products')).resolves.toHaveProperty('total', 8);
+      expect(fetchSpy).toHaveBeenCalledWith(
+        new URL('/api/products', window.location.origin),
+        expect.any(Object),
       );
-      expect(fetchSpy).not.toHaveBeenCalled();
     } finally {
       fetchSpy.mockRestore();
     }

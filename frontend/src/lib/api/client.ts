@@ -29,9 +29,6 @@ export async function getJson(
   path: string,
   signal?: AbortSignal,
 ): Promise<unknown> {
-  // This scaffold must never fall through to a real production API.
-  if (!import.meta.env.DEV)
-    throw new Error('Catalog integration is not enabled');
   const response = await fetch(
     new URL(`/api/${path}`, window.location.origin),
     { signal },

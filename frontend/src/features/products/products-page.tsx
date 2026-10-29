@@ -1,3 +1,11 @@
+import { useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ProductFiltersForm } from './product-filters';
+import {
+  filtersSchema,
+  productQuery,
+  type ProductFilters,
+} from './api/filters';
 import { messages } from '@/app/messages.vi';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
@@ -6,8 +14,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage } from '@/lib/api/client';
 import { useProducts } from './hooks/use-products';
 
-function ProductList() {
-  const query = useProducts();
+function ProductList({
+  filters,
+  onPage,
+}: {
+  filters: ProductFilters;
+  onPage: (page: number) => void;
+}) {
+  const query = useProducts(filters);
   if (query.isFetching) {
     return (
       <section aria-busy="true" aria-label={messages.loading}>
@@ -59,11 +73,38 @@ function ProductList() {
           </li>
         ))}
       </ul>
+      <nav
+        aria-label={messages.pagination}
+        className="mt-6 flex flex-wrap items-center gap-4"
+      >
+        <Button
+          variant="secondary"
+          disabled={filters.page === 0}
+          onClick={() => onPage(filters.page - 1)}
+        >
+          {messages.previous}
+        </Button>
+        <span className="text-sm">
+          {messages.pageNumber(
+            filters.page + 1,
+            Math.ceil(query.data.total / query.data.size),
+          )}
+        </span>
+        <Button
+          variant="secondary"
+          disabled={(filters.page + 1) * query.data.size >= query.data.total}
+          onClick={() => onPage(filters.page + 1)}
+        >
+          {messages.next}
+        </Button>
+      </nav>
     </>
   );
 }
 
 export function ProductsPage() {
+  const [params, setParams] = useSearchParams();
+  const parsed = filtersSchema.safeParse(Object.fromEntries(params));
   return (
     <div className="space-y-8">
       <header className="max-w-copy space-y-3">
@@ -75,20 +116,29 @@ export function ProductsPage() {
         </h1>
         <p className="text-neutral-700">{messages.productsDescription}</p>
       </header>
-      {import.meta.env.DEV ? (
-        <>
-          <p className="rounded-control bg-primary-50 p-4 text-sm text-primary-700">
-            {messages.sampleNotice}
-          </p>
-          <ProductList />
-        </>
+      <ProductFiltersForm
+        filters={parsed.success ? parsed.data : null}
+        onClear={() => setParams({})}
+        onApply={(values) => {
+          const next = new URLSearchParams();
+          for (const [key, value] of Object.entries(values))
+            if (String(value).trim() !== '') next.set(key, String(value));
+          next.set('page', '0');
+          setParams(next);
+        }}
+      />
+      <p className="rounded-control bg-primary-50 p-4 text-sm text-primary-700">
+        {messages.sampleNotice}
+      </p>
+      {parsed.success ? (
+        <ProductList
+          filters={parsed.data}
+          onPage={(page) => setParams(productQuery({ ...parsed.data, page }))}
+        />
       ) : (
-        <section className="rounded-card border border-neutral-200 p-8">
-          <h2 className="text-xl font-semibold">{messages.productionTitle}</h2>
-          <p className="mt-2 text-neutral-700">
-            {messages.productionDescription}
-          </p>
-        </section>
+        <p role="alert" className="text-danger">
+          {messages.invalidFilters}
+        </p>
       )}
     </div>
   );

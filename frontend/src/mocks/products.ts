@@ -1,6 +1,6 @@
 import type { Product, ProductPage } from '@/lib/api/catalog.types';
 
-export const products: Product[] = [
+const fixtures = [
   {
     id: 'oats',
     name: 'Yến mạch nguyên hạt',
@@ -75,6 +75,26 @@ export const products: Product[] = [
   },
 ];
 
+export const products: Product[] = fixtures.map((p) => ({
+  ...p,
+  description: 'Sản phẩm mẫu dành cho kiểm thử.',
+  category: { id: 1, name: 'Ngũ cốc', slug: 'ngu-coc' },
+  serving_size: p.nutrition_complete ? 100 : null,
+  serving_unit: p.nutrition_complete ? 'g' : null,
+  nutrition: p.nutrition_complete
+    ? {
+        calories: 200,
+        protein_g: 10,
+        carbs_g: 20,
+        fat_g: 5,
+        sugar_g: null,
+        fiber_g: 4,
+        sodium_mg: null,
+        source: 'test-fixture',
+      }
+    : null,
+  allergens: p.allergens_verified ? [] : null,
+}));
 export const productPage: ProductPage = {
   items: products,
   page: 0,

@@ -30,7 +30,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run dev',
+      command: screenshotsOnly ? 'npm run dev' : 'npm run dev -- --mode test',
       url: 'http://127.0.0.1:5173',
       reuseExistingServer: false,
     },
