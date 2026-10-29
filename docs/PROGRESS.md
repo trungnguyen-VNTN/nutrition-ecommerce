@@ -5,7 +5,14 @@ _Cập nhật lần cuối: 2026-10-29_ (Codex cập nhật cuối mỗi phiên)
 ## Trạng thái hiện tại
 
 - Giai đoạn: **0 – Chuẩn bị**
-- Cấu trúc repo và tài liệu đã tạo. Frontend scaffold đã có mã nguồn trên `feat/frontend-scaffold`, **chưa nghiệm thu**: dependency đã cài nhưng audit và typecheck còn lỗi. Chưa có hạ tầng.
+- Phase A hoàn tất: lint, typecheck, 29 unit tests, build và kiểm tra bundle không có mock đều xanh; audit gần nhất 0.
+- Ảnh `/products` sau sửa ở `frontend/.screenshots/products-390.png` và `products-1440.png`; không thấy tràn ngang/cắt chữ/thiếu nhãn dữ liệu. Các ghi chép lỗi bên dưới là lịch sử đã được xử lý.
+- Phase B hoàn tất: Java 21/Spring Boot 3.5.16/JDBC/Flyway, PostgreSQL arm64 local, 20 seed dev; wrapper verify xanh với đúng 2 test tích hợp fail-closed/phân trang. Đã điền O2/O5 theo quyết định người dùng.
+- Đã được duyệt PATH Docker riêng tiến trình; PostgreSQL healthy, health API UP, thử API thật trả total=20/page=8 và lọc kết hợp 4 sản phẩm; dữ liệu thiếu trả null. UTC chỉ áp dụng JVM ứng dụng/test, không đổi Windows.
+- Phase C hoàn tất: frontend gọi /api qua proxy localhost:8080; bộ lọc danh mục/calo/protein, phân trang và chi tiết với NutritionTable/AllergenBadge; MSW chỉ ở test.
+- Kiểm chứng Phase C: format, lint, typecheck, 34 unit tests, build và kiểm tra bundle không mock PASS; thử trình duyệt/API thật lọc kết hợp trả 3 sản phẩm, xóa lọc và nhãn thiếu dinh dưỡng/allergen PASS.
+- Ảnh mới từ API thật: frontend/.screenshots/product-detail-390.png và product-detail-1440.png (2/2 PASS); không chạy lại toàn bộ E2E/axe, không làm đẹp thêm.
+- Còn lại: dữ liệu local là seed tổng hợp, ảnh chỉ minh họa; chưa có auth/mua hàng. Không đổi dependency; audit gần nhất 0, không chạy lại. Bước tiếp theo: người dùng xem ảnh và commit Phase C; không có câu hỏi mở.
 
 ## Đã xong
 

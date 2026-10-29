@@ -6,7 +6,7 @@ import { AppRoutes } from './app/router';
 import './styles/globals.css';
 
 async function bootstrap() {
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV && import.meta.env.MODE === 'test') {
     const { startMocks } = await import('./mocks/browser');
     await startMocks();
   }

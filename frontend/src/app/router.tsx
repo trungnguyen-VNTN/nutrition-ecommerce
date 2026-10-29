@@ -1,5 +1,6 @@
 import { Link, Route, Routes } from 'react-router-dom';
 import { ProductsPage } from '@/features/products/products-page';
+import { ProductDetailPage } from '@/features/products/product-detail-page';
 import { Button } from '@/components/ui/button';
 import { Layout } from './layout';
 import { messages } from './messages.vi';
@@ -11,10 +12,7 @@ export function AppRoutes() {
       <Route element={<Layout />}>
         <Route index element={<PlaceholderPage title={messages.home} />} />
         <Route path="products" element={<ProductsPage />} />
-        <Route
-          path="products/:id"
-          element={<PlaceholderPage title={messages.productDetail} />}
-        />
+        <Route path="products/:id" element={<ProductDetailPage />} />
         <Route
           path="cart"
           element={<PlaceholderPage title={messages.cart} />}
