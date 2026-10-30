@@ -1,10 +1,19 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-10-29_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-10-31_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
-- Cognito: đã viết infra/cognito với đúng 4 resource và 3 outputs, state local tạm; fmt/init/validate bị chặn vì Terraform CLI chưa có trong PATH. Tiếp theo: xác định CLI và xin duyệt mạng cho init -backend=false; chưa chạy plan/apply hay truy cập credentials.
+- 2026-10-31: thêm START.bat / STOP.bat ở gốc, dùng scripts/local.ps1; tự mở Docker Desktop, chờ PostgreSQL, chạy Maven offline profile local và Vite, chờ health/HTTP rồi mở trình duyệt. Không install dependency hay build production; Maven chỉ thực hiện lifecycle cần cho spring-boot:run. Log/PID nằm trong .local-run/ (gitignored).
+- Kiểm thử thực tế PASS trên Windows PowerShell/CMD: Docker ban đầu tắt được khởi động tự động; API UP, frontend proxy trả 20 sản phẩm; START lặp lại không tạo server mới; STOP và STOP lặp lại thành công, hết listener 8080/5173, tiến trình Node độc lập vẫn sống. Cổng 5173 bị chiếm trả lỗi/exit 1. PowerShell parser và git diff --check PASS; không chạy lại test nghiệp vụ vì không sửa code ứng dụng.
+- STOP chỉ taskkill cây tiến trình có PID/thời điểm tạo khớp bản ghi START, rồi compose stop postgres; không xóa container/volume/data. Sau kiểm thử đã dừng dịch vụ project. Docker local hoạt động trong lượt này; chưa kiểm chứng lại image build từng lỗi storage. AWS vẫn chờ, Cognito/Bedrock thật chưa kiểm chứng; launcher không bổ sung cấu hình xác thực hay bypass auth.
+
+- Tiếp tục 2026-10-30: hoàn thiện API/UI admin dinh dưỡng và allergen (null không thành 0, flag hoàn chỉnh do server tính, rollback dữ liệu lỗi), CRUD danh mục với bảo vệ FK, chi tiết giao hàng chỉ ADMIN. Bộ lọc công khai hỗ trợ nhiều allergen và giữ lựa chọn khi phân trang. Đã sửa lỗi browser Cognito SRP `global is not defined` bằng ánh xạ Vite sang globalThis.
+- PASS mới: Maven offline/giới hạn heap 256 MB: 9 test JWT/RBAC, admin nutrition/allergen/đơn và AI, sau đó 1 test category liên quan; format/Checkstyle/compile/package xanh. Frontend lint/typecheck xanh; các nhóm unit liên quan 10, 2, 13 test xanh; 17 test từng timeout do thiếu RAM đã chạy lại một worker và xanh, không tăng timeout. Không chạy lại checkout/catalog đã PASS khi code không bị ảnh hưởng.
+- Browser: 45/45 Playwright (gồm axe 390/1440 và production không MSW) PASS sau sửa global; sau thêm nhiều allergen chỉ chạy lại 18/18 test liên quan, PASS. Build production trong quy trình này PASS. Smoke frontend → API → PostgreSQL thật loại peanut + milk trả 6 sản phẩm đủ dữ liệu ở cả 390/1440, API bảo vệ trả 401 khi không token, không có service worker. Ảnh: frontend/.screenshots/products-allergens-390.png và products-allergens-1440.png. Hai server kiểm tra đã dừng để nhường RAM.
+- Cognito Terraform fmt/init -backend=false/validate PASS; không plan/apply hay tạo AWS resources. Người dùng chọn giữ triển khai AWS chờ, tiếp tục local. Dockerfile/CI được giới hạn bộ nhớ/parallelism; build image linux/arm64 BLOCKED do Docker Desktop storage báo read-only file system ở bước tạo layer, chưa xác minh image hoặc CI trên GitHub. Không reset/prune/sửa cấu hình Docker Desktop.
+- Vẫn cần AWS thật: Cognito SRP và Bedrock Converse end-to-end. Biến cấu hình: COGNITO_ISSUER_URI, COGNITO_CLIENT_ID, VITE_COGNITO_USER_POOL_ID, VITE_COGNITO_CLIENT_ID; BEDROCK_MODEL_ID hoặc BEDROCK_INFERENCE_PROFILE_ID và IAM runtime. Auth/token chỉ trong bộ nhớ, backend lấy sub từ JWT; giỏ/đơn/idempotency/hoàn kho và AI chỉ đọc đã có code/test local, không có bypass auth production. app_users chỉ lưu sub vì access token không có email.
+- Tiếp tục từ đây: khắc phục filesystem Docker trước khi build lại; không chạy lại các nhóm xanh trừ khi sửa code liên quan. Còn thiếu upload ảnh S3/UI, workflow deployment/rollback và Terraform triển khai đầy đủ/TLS origin (đang chờ quyết định AWS); chưa tuyên bố MVP hoàn tất. Chưa thêm dependency trong lượt resume; audit runtime gần nhất 0 từ lượt trước, không chạy lại. Git chỉ đọc, chưa commit/push, không sửa AGENTS.md hoặc .codex. Các dòng Phase A/B/C bên dưới là lịch sử.
 
 - Giai đoạn: **0 – Chuẩn bị**
 - Phase A hoàn tất: lint, typecheck, 29 unit tests, build và kiểm tra bundle không có mock đều xanh; audit gần nhất 0.

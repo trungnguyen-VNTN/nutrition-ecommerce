@@ -13,6 +13,7 @@ node_modules/
 .idea/
 .vscode/
 *.log
+.local-run/
 
 # Frontend
 dist/
