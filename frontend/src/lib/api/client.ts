@@ -1,4 +1,5 @@
 import { messages } from '@/app/messages.vi';
+import { accessToken, signOut } from '@/features/auth/session';
 
 export class ApiError extends Error {
   constructor(public readonly status: number) {
@@ -29,10 +30,22 @@ export async function getJson(
   path: string,
   signal?: AbortSignal,
 ): Promise<unknown> {
+  return requestJson(path, { signal });
+}
+
+export async function requestJson(
+  path: string,
+  options: RequestInit = {},
+): Promise<unknown> {
+  const token = await accessToken();
+  const headers = new Headers(options.headers);
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (options.body) headers.set('Content-Type', 'application/json');
   const response = await fetch(
     new URL(`/api/${path}`, window.location.origin),
-    { signal },
+    { ...options, headers },
   );
+  if (response.status === 401) signOut();
   if (!response.ok) throw new ApiError(response.status);
   return response.json();
 }

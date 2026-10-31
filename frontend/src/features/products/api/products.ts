@@ -8,7 +8,7 @@ const categorySchema = z.object({
   name: z.string(),
   slug: z.string(),
 });
-const productSchema = z
+export const productSchema = z
   .object({
     id: z
       .union([z.string().min(1), z.number().int().positive()])
