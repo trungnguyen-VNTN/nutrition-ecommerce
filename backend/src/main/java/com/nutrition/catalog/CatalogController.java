@@ -38,8 +38,9 @@ public class CatalogController {
       @RequestParam(required = false) @Positive Long categoryId,
       @RequestParam(required = false) @DecimalMin("0") BigDecimal maxCalories,
       @RequestParam(required = false) @DecimalMin("0") BigDecimal minProtein,
-      @RequestParam(defaultValue = "") List<String> excludeAllergen) {
-    return catalog.list(page, size, categoryId, maxCalories, minProtein, excludeAllergen);
+      @RequestParam(defaultValue = "") List<String> excludeAllergen,
+      @RequestParam(defaultValue = "") @jakarta.validation.constraints.Size(max = 100) String q) {
+    return catalog.list(page, size, categoryId, maxCalories, minProtein, excludeAllergen, q);
   }
 
   @GetMapping("/products/{id}")

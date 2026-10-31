@@ -1,12 +1,12 @@
 :root {
-  --primary-50: #f0f7ec;
-  --primary-100: #ddeed3;
-  --primary-500: #4c9a2a;
-  --primary-600: #3c7d21;
-  --primary-700: #2f621a;
+  --primary-50: #edf3ec;
+  --primary-100: #dce8d8;
+  --primary-500: #53836a;
+  --primary-600: #286147;
+  --primary-700: #193e30;
   --accent-500: #f29a2e;
-  --neutral-50: #fafaf7;
-  --neutral-100: #f3f2ee;
+  --neutral-50: #fcfbf7;
+  --neutral-100: #f1eee6;
   --neutral-200: #e5e3dc;
   --neutral-500: #8a877d;
   --neutral-700: #4a483f;
@@ -63,4 +63,10 @@
   --motion-normal: 200ms;
   --motion-ease: ease-out;
   --opacity-disabled: 0.6;
+  --surface: #ffffff;
+  --font-size-display: 48px;
+  --line-display: 56px;
+  --hero-image-height: 440px;
+  --card-content-height: 320px;
+  --filter-width: 280px;
 }
