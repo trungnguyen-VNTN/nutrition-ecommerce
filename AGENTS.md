@@ -11,7 +11,7 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 - Backend: Java 21 (LTS) + Spring Boot, build bằng Maven (luôn dùng wrapper `./mvnw`). Frontend: React + TypeScript (xem frontend/AGENTS.md). DB: PostgreSQL (Flyway).
 - Image: linux/arm64. ECS Fargate runtime_platform phải khớp (cpu_architecture = "ARM64", operating_system_family = "LINUX"). Build bằng `docker buildx` với `--platform linux/arm64`; CI cần QEMU hoặc runner arm64.
 - AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình.
-- Mạng: ưu tiên VPC endpoints. NAT chỉ bật qua biến enable_nat khi spike S3 yêu cầu. ALB nằm internal; CloudFront truy cập qua VPC origin.
+- Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. NAT chỉ bật qua biến enable_nat (xem O3 trong docs/decisions.md).
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito (frontend tự làm màn hình đăng nhập/đăng ký).
 - Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
 
@@ -43,7 +43,7 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 - Viết test cùng code. Chạy test trước khi báo hoàn thành. Không báo "xong" khi test còn đỏ.
 - Một tính năng một nhánh một PR. Commit nhỏ, thông điệp rõ.
 - Không đổi phạm vi: thấy việc ngoài yêu cầu thì ghi vào docs/PROGRESS.md thay vì tự làm.
-- Kiến thức về AWS có thể đã cũ: với dịch vụ mới (Bedrock, CloudFront VPC origin, Cognito PrivateLink), kiểm chứng bằng tài liệu hoặc lệnh chỉ đọc, và nói rõ chỗ chưa chắc.
+- Kiến thức về AWS có thể đã cũ: với dịch vụ mới (Bedrock, CloudFront managed prefix list, Cognito), kiểm chứng bằng tài liệu hoặc lệnh chỉ đọc, và nói rõ chỗ chưa chắc.
 - Cuối phiên: cập nhật docs/PROGRESS.md (đã xong, đang dở, bước tiếp theo, câu hỏi mở).
 
 ## Vòng lặp bắt buộc cho mỗi tác vụ

@@ -1,0 +1,30 @@
+# Lưu LF trong repository; Windows-only scripts check out với CRLF.
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Script shell phải giữ LF để chạy được trên Linux CI.
+*.sh text eol=lf
+backend/mvnw text eol=lf
+
+# Binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.jar binary
+*.zip binary
+*.pdf binary
+
+# Generated / vendored: thu gọn trong diff GitHub
+frontend/package-lock.json linguist-generated=true -diff
+frontend/public/mockServiceWorker.js linguist-generated=true
+.claude/skills/** linguist-vendored=true
+docs/verification/** linguist-documentation=true

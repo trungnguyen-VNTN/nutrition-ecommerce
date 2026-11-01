@@ -45,6 +45,8 @@ Kết luận: tập quyết định này **nhất quán và khả thi**. Có ba 
 
 ## A.2. Chi tiết từng quyết định
 
+> **Cập nhật 2026-11-01:** mục 2 (VPC endpoints) và mục 7 (internal ALB + VPC origin) bên dưới đã được thay bằng hướng rút gọn: ALB công khai sau CloudFront, SG chỉ nhận prefix list CloudFront + header bí mật, không dùng interface VPC endpoint. Nguồn chuẩn là `docs/decisions.md` (D2, D7, O3, O6) và `docs/architecture.md`. Các bước giai đoạn 3 nhắc tới VPC origin cần đọc theo hướng mới.
+
 ### 1. Bedrock Converse + tool use trong Spring Boot ✅
 
 Hợp với MVP: JWT nằm sẵn trong request, tool chạy trong cùng process, không cần mở endpoint công khai cho agent.

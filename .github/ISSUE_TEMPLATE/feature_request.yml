@@ -1,0 +1,27 @@
+name: Đề xuất tính năng
+description: Thêm hoặc thay đổi chức năng
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vấn đề / nhu cầu
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Đề xuất
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Tiêu chí nghiệm thu
+      placeholder: '- [ ] ...'
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Phạm vi
+      options:
+        - label: Nằm trong phạm vi MVP (không có thanh toán, không tư vấn y tế)
