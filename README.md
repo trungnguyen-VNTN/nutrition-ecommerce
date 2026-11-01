@@ -35,6 +35,7 @@ Dự án đang được kiểm chứng trên local; triển khai AWS vẫn đang
 - [Trạng thái dự án](#trạng-thái-dự-án)
 - [Đóng góp](#đóng-góp)
 - [Làm việc với AI agent](#làm-việc-với-ai-agent)
+- [Giấy phép](#giấy-phép)
 
 ## Phạm vi và công nghệ
 
@@ -48,15 +49,15 @@ allergen, sản phẩm thiếu dữ liệu liên quan bị loại khỏi kết q
 
 ## Kiến trúc
 
-Kiến trúc mục tiêu trên AWS (chưa triển khai). Chi tiết mạng, gồm việc ALB
-công khai hay internal qua CloudFront VPC origin, xem
-[kiến trúc](docs/architecture.md) và [quyết định](docs/decisions.md).
+Kiến trúc mục tiêu trên AWS (chưa triển khai). ALB công khai đứng sau CloudFront,
+chỉ nhận lưu lượng từ CloudFront; chi tiết xem [kiến trúc](docs/architecture.md)
+và [quyết định](docs/decisions.md).
 
 ```mermaid
 flowchart LR
   user([Trình duyệt]) -->|HTTPS *.cloudfront.net| cf[CloudFront]
   cf -->|/ , /images/*| s3[(S3<br/>React build, ảnh)]
-  cf -->|/api/*| alb[ALB]
+  cf -->|/api/*| alb[ALB công khai<br/>chỉ nhận CloudFront]
   alb --> ecs[ECS Fargate<br/>Spring Boot]
   ecs --> rds[(RDS PostgreSQL)]
   ecs -->|Converse + tool chỉ đọc| bedrock[Bedrock Runtime]
@@ -191,9 +192,9 @@ là kết quả lịch sử, không phải audit mới.
 
 Cognito/Bedrock end-to-end với AWS thật chưa được kiểm chứng. Còn thiếu ảnh sản phẩm
 thật/upload S3, workflow deploy/rollback và hạ tầng triển khai đầy đủ.
-AWS đang chờ quyết định domain/TLS cho ALB công khai; Docker image build từng bị
-chặn bởi lỗi filesystem Docker Desktop. Chưa tuyên bố MVP đã deploy hoặc CI trên
-GitHub đã xanh. Đề xuất tách Terraform thành module/môi trường vẫn chờ duyệt.
+Chưa có domain nên CloudFront → ALB đi HTTP (rủi ro đã chấp nhận, xem O6); Docker
+image build từng bị chặn bởi lỗi filesystem Docker Desktop. Chưa tuyên bố MVP đã
+deploy. CI trên GitHub đã xanh từ 2026-11-01. Đề xuất tách Terraform thành module/môi trường vẫn chờ duyệt.
 
 ## Đóng góp
 
@@ -213,3 +214,7 @@ GitHub đã xanh. Đề xuất tách Terraform thành module/môi trường vẫ
 - [Playbook](docs/playbook.md) và [mẫu prompt](docs/prompts.md).
 - [Kiến trúc](docs/architecture.md), [quyết định](docs/decisions.md),
   [hướng dẫn UI](docs/ui-guidelines.md).
+
+## Giấy phép
+
+Phát hành theo [giấy phép MIT](LICENSE).
