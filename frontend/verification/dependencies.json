@@ -1,0 +1,684 @@
+[
+  {
+    "name": "@fontsource/be-vietnam-pro",
+    "version": "5.2.6",
+    "kind": "installed",
+    "released": "2025-06-08T01:29:21.622Z",
+    "ageDays": 507
+  },
+  {
+    "name": "@radix-ui/react-slot",
+    "version": "1.2.3",
+    "kind": "installed",
+    "released": "2025-05-20T15:20:47.291Z",
+    "ageDays": 526,
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*"
+    },
+    "dependencies": {
+      "@radix-ui/react-compose-refs": "1.1.2"
+    }
+  },
+  {
+    "name": "@tanstack/react-query",
+    "version": "5.90.2",
+    "kind": "installed",
+    "released": "2025-09-23T07:38:15.625Z",
+    "ageDays": 400,
+    "peers": {
+      "react": "^18 || ^19"
+    },
+    "dependencies": {
+      "@tanstack/query-core": "5.90.2"
+    }
+  },
+  {
+    "name": "class-variance-authority",
+    "version": "0.7.1",
+    "kind": "installed",
+    "released": "2024-11-26T08:20:34.604Z",
+    "ageDays": 701,
+    "dependencies": {
+      "clsx": "^2.1.1"
+    }
+  },
+  {
+    "name": "clsx",
+    "version": "2.1.1",
+    "kind": "installed",
+    "released": "2024-04-23T05:26:04.645Z",
+    "ageDays": 918,
+    "engines": {
+      "node": ">=6"
+    }
+  },
+  {
+    "name": "react",
+    "version": "19.2.0",
+    "kind": "installed",
+    "released": "2025-10-01T21:38:32.757Z",
+    "ageDays": 391,
+    "engines": {
+      "node": ">=0.10.0"
+    }
+  },
+  {
+    "name": "react-dom",
+    "version": "19.2.0",
+    "kind": "installed",
+    "released": "2025-10-01T21:38:42.388Z",
+    "ageDays": 391,
+    "peers": {
+      "react": "^19.2.0"
+    },
+    "dependencies": {
+      "scheduler": "^0.27.0"
+    }
+  },
+  {
+    "name": "react-hook-form",
+    "version": "7.65.0",
+    "kind": "installed",
+    "released": "2025-10-10T22:43:28.298Z",
+    "ageDays": 382,
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "peers": {
+      "react": "^16.8.0 || ^17 || ^18 || ^19"
+    }
+  },
+  {
+    "name": "react-router-dom",
+    "version": "7.9.4",
+    "kind": "installed",
+    "released": "2025-10-08T17:36:43.048Z",
+    "ageDays": 384,
+    "engines": {
+      "node": ">=20.0.0"
+    },
+    "peers": {
+      "react": ">=18",
+      "react-dom": ">=18"
+    },
+    "dependencies": {
+      "react-router": "7.9.4"
+    }
+  },
+  {
+    "name": "react-router-dom",
+    "version": "7.18.5",
+    "kind": "candidate",
+    "released": "2026-10-27T21:14:19.826Z",
+    "ageDays": 0,
+    "engines": {
+      "node": ">=20.0.0"
+    },
+    "peers": {
+      "react": ">=18",
+      "react-dom": ">=18"
+    },
+    "dependencies": {
+      "react-router": "7.18.5"
+    }
+  },
+  {
+    "name": "tailwind-merge",
+    "version": "3.3.1",
+    "kind": "installed",
+    "released": "2025-06-10T20:04:17.692Z",
+    "ageDays": 504,
+    "dependencies": {}
+  },
+  {
+    "name": "zod",
+    "version": "4.1.12",
+    "kind": "installed",
+    "released": "2025-10-06T16:30:25.760Z",
+    "ageDays": 387
+  },
+  {
+    "name": "zod",
+    "version": "4.6.7",
+    "kind": "candidate",
+    "released": "2026-10-12T16:29:37.778Z",
+    "ageDays": 16
+  },
+  {
+    "name": "@axe-core/playwright",
+    "version": "4.10.2",
+    "kind": "installed",
+    "released": "2025-06-03T17:58:10.358Z",
+    "ageDays": 511,
+    "peers": {
+      "playwright-core": ">= 1.0.0"
+    },
+    "dependencies": {
+      "axe-core": "~4.10.3"
+    }
+  },
+  {
+    "name": "@eslint/js",
+    "version": "9.39.1",
+    "kind": "installed",
+    "released": "2025-11-03T21:11:14.369Z",
+    "ageDays": 358,
+    "engines": {
+      "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+    }
+  },
+  {
+    "name": "@playwright/test",
+    "version": "1.56.1",
+    "kind": "installed",
+    "released": "2025-10-17T00:51:44.311Z",
+    "ageDays": 376,
+    "engines": {
+      "node": ">=18"
+    },
+    "dependencies": {
+      "playwright": "1.56.1"
+    }
+  },
+  {
+    "name": "@tailwindcss/vite",
+    "version": "4.1.18",
+    "kind": "installed",
+    "released": "2025-12-11T16:41:11.134Z",
+    "ageDays": 321,
+    "peers": {
+      "vite": "^5.2.0 || ^6 || ^7"
+    },
+    "dependencies": {
+      "tailwindcss": "4.1.18",
+      "@tailwindcss/node": "4.1.18",
+      "@tailwindcss/oxide": "4.1.18"
+    }
+  },
+  {
+    "name": "@testing-library/dom",
+    "version": "10.4.1",
+    "kind": "installed",
+    "released": "2025-07-27T13:23:37.151Z",
+    "ageDays": 458,
+    "engines": {
+      "node": ">=18"
+    },
+    "dependencies": {
+      "lz-string": "^1.5.0",
+      "aria-query": "5.3.0",
+      "picocolors": "1.1.1",
+      "pretty-format": "^27.0.2",
+      "@babel/runtime": "^7.12.5",
+      "@babel/code-frame": "^7.10.4",
+      "@types/aria-query": "^5.0.1",
+      "dom-accessibility-api": "^0.5.9"
+    }
+  },
+  {
+    "name": "@testing-library/jest-dom",
+    "version": "6.9.1",
+    "kind": "installed",
+    "released": "2025-10-01T20:04:22.720Z",
+    "ageDays": 391,
+    "engines": {
+      "npm": ">=6",
+      "node": ">=14",
+      "yarn": ">=1"
+    },
+    "dependencies": {
+      "redent": "^3.0.0",
+      "aria-query": "^5.0.0",
+      "css.escape": "^1.5.1",
+      "picocolors": "^1.1.1",
+      "@adobe/css-tools": "^4.4.0",
+      "dom-accessibility-api": "^0.6.3"
+    }
+  },
+  {
+    "name": "@testing-library/react",
+    "version": "16.3.0",
+    "kind": "installed",
+    "released": "2025-04-02T17:03:38.791Z",
+    "ageDays": 573,
+    "engines": {
+      "node": ">=18"
+    },
+    "peers": {
+      "react": "^18.0.0 || ^19.0.0",
+      "react-dom": "^18.0.0 || ^19.0.0",
+      "@types/react": "^18.0.0 || ^19.0.0",
+      "@types/react-dom": "^18.0.0 || ^19.0.0",
+      "@testing-library/dom": "^10.0.0"
+    },
+    "dependencies": {
+      "@babel/runtime": "^7.12.5"
+    }
+  },
+  {
+    "name": "@testing-library/user-event",
+    "version": "14.6.1",
+    "kind": "installed",
+    "released": "2025-01-21T17:35:55.574Z",
+    "ageDays": 644,
+    "engines": {
+      "npm": ">=6",
+      "node": ">=12"
+    },
+    "peers": {
+      "@testing-library/dom": ">=7.21.4"
+    },
+    "dependencies": {}
+  },
+  {
+    "name": "@types/node",
+    "version": "22.18.6",
+    "kind": "installed",
+    "released": "2025-09-18T00:04:25.740Z",
+    "ageDays": 405,
+    "peers": {},
+    "dependencies": {
+      "undici-types": "~6.21.0"
+    }
+  },
+  {
+    "name": "@types/react",
+    "version": "19.2.2",
+    "kind": "installed",
+    "released": "2025-10-07T05:34:25.017Z",
+    "ageDays": 386,
+    "peers": {},
+    "dependencies": {
+      "csstype": "^3.0.2"
+    }
+  },
+  {
+    "name": "@types/react-dom",
+    "version": "19.2.2",
+    "kind": "installed",
+    "released": "2025-10-13T14:36:46.425Z",
+    "ageDays": 380,
+    "peers": {
+      "@types/react": "^19.2.0"
+    },
+    "dependencies": {}
+  },
+  {
+    "name": "@vitejs/plugin-react",
+    "version": "5.1.2",
+    "kind": "installed",
+    "released": "2025-12-08T09:33:20.455Z",
+    "ageDays": 324,
+    "engines": {
+      "node": "^20.19.0 || >=22.12.0"
+    },
+    "peers": {
+      "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
+    },
+    "dependencies": {
+      "@babel/core": "^7.28.5",
+      "react-refresh": "^0.18.0",
+      "@types/babel__core": "^7.20.5",
+      "@rolldown/pluginutils": "1.0.0-beta.53",
+      "@babel/plugin-transform-react-jsx-self": "^7.27.1",
+      "@babel/plugin-transform-react-jsx-source": "^7.27.1"
+    }
+  },
+  {
+    "name": "eslint",
+    "version": "9.39.1",
+    "kind": "installed",
+    "released": "2025-11-03T21:26:20.550Z",
+    "ageDays": 358,
+    "engines": {
+      "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+    },
+    "peers": {
+      "jiti": "*"
+    },
+    "dependencies": {
+      "ajv": "^6.12.4",
+      "chalk": "^4.0.0",
+      "debug": "^4.3.2",
+      "espree": "^10.4.0",
+      "ignore": "^5.2.0",
+      "esquery": "^1.5.0",
+      "esutils": "^2.0.2",
+      "find-up": "^5.0.0",
+      "is-glob": "^4.0.0",
+      "minimatch": "^3.1.2",
+      "@eslint/js": "9.39.1",
+      "optionator": "^0.9.3",
+      "cross-spawn": "^7.0.6",
+      "glob-parent": "^6.0.2",
+      "imurmurhash": "^0.1.4",
+      "@eslint/core": "^0.17.0",
+      "eslint-scope": "^8.4.0",
+      "lodash.merge": "^4.6.2",
+      "@humanfs/node": "^0.16.6",
+      "@types/estree": "^1.0.6",
+      "fast-deep-equal": "^3.1.3",
+      "natural-compare": "^1.4.0",
+      "@eslint/eslintrc": "^3.3.1",
+      "file-entry-cache": "^8.0.0",
+      "@eslint/plugin-kit": "^0.4.1",
+      "eslint-visitor-keys": "^4.2.1",
+      "@eslint/config-array": "^0.21.1",
+      "@humanwhocodes/retry": "^0.4.2",
+      "escape-string-regexp": "^4.0.0",
+      "@eslint/config-helpers": "^0.4.2",
+      "@eslint-community/regexpp": "^4.12.1",
+      "@eslint-community/eslint-utils": "^4.8.0",
+      "@humanwhocodes/module-importer": "^1.0.1",
+      "json-stable-stringify-without-jsonify": "^1.0.1"
+    },
+    "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options."
+  },
+  {
+    "name": "eslint-plugin-react-hooks",
+    "version": "7.0.1",
+    "kind": "installed",
+    "released": "2025-10-24T16:55:06.287Z",
+    "ageDays": 369,
+    "engines": {
+      "node": ">=18"
+    },
+    "peers": {
+      "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0"
+    },
+    "dependencies": {
+      "zod": "^3.25.0 || ^4.0.0",
+      "@babel/core": "^7.24.4",
+      "@babel/parser": "^7.24.4",
+      "hermes-parser": "^0.25.1",
+      "zod-validation-error": "^3.5.0 || ^4.0.0"
+    }
+  },
+  {
+    "name": "eslint-plugin-react-refresh",
+    "version": "0.4.24",
+    "kind": "installed",
+    "released": "2025-10-15T08:59:37.837Z",
+    "ageDays": 378,
+    "peers": {
+      "eslint": ">=8.40"
+    }
+  },
+  {
+    "name": "globals",
+    "version": "16.4.0",
+    "kind": "installed",
+    "released": "2025-09-09T19:39:12.191Z",
+    "ageDays": 413,
+    "engines": {
+      "node": ">=18"
+    }
+  },
+  {
+    "name": "jsdom",
+    "version": "27.0.1",
+    "kind": "installed",
+    "released": "2025-10-18T06:50:56.542Z",
+    "ageDays": 375,
+    "engines": {
+      "node": ">=20"
+    },
+    "peers": {
+      "canvas": "^3.0.0"
+    },
+    "dependencies": {
+      "ws": "^8.18.3",
+      "saxes": "^6.0.0",
+      "parse5": "^8.0.0",
+      "cssstyle": "^5.3.1",
+      "data-urls": "^6.0.0",
+      "decimal.js": "^10.6.0",
+      "whatwg-url": "^15.1.0",
+      "rrweb-cssom": "^0.8.0",
+      "symbol-tree": "^3.2.4",
+      "tough-cookie": "^6.0.0",
+      "whatwg-encoding": "^3.1.1",
+      "whatwg-mimetype": "^4.0.0",
+      "http-proxy-agent": "^7.0.2",
+      "https-proxy-agent": "^7.0.6",
+      "w3c-xmlserializer": "^5.0.0",
+      "webidl-conversions": "^8.0.0",
+      "xml-name-validator": "^5.0.0",
+      "html-encoding-sniffer": "^4.0.0",
+      "@asamuzakjp/dom-selector": "^6.7.2",
+      "is-potential-custom-element-name": "^1.0.1"
+    }
+  },
+  {
+    "name": "msw",
+    "version": "2.11.5",
+    "kind": "installed",
+    "released": "2025-10-09T17:00:57.016Z",
+    "ageDays": 383,
+    "engines": {
+      "node": ">=18"
+    },
+    "peers": {
+      "typescript": ">= 4.8.x"
+    },
+    "dependencies": {
+      "yargs": "^17.7.2",
+      "cookie": "^1.0.2",
+      "graphql": "^16.8.1",
+      "rettime": "^0.7.0",
+      "statuses": "^2.0.2",
+      "type-fest": "^4.26.1",
+      "outvariant": "^1.4.3",
+      "picocolors": "^1.1.1",
+      "until-async": "^3.0.2",
+      "tough-cookie": "^6.0.0",
+      "path-to-regexp": "^6.3.0",
+      "@types/statuses": "^2.0.4",
+      "is-node-process": "^1.2.0",
+      "headers-polyfill": "^4.0.2",
+      "@inquirer/confirm": "^5.0.0",
+      "@mswjs/interceptors": "^0.39.1",
+      "strict-event-emitter": "^0.5.1",
+      "@open-draft/deferred-promise": "^2.2.0"
+    }
+  },
+  {
+    "name": "prettier",
+    "version": "3.6.2",
+    "kind": "installed",
+    "released": "2025-06-27T02:53:53.185Z",
+    "ageDays": 488,
+    "engines": {
+      "node": ">=14"
+    }
+  },
+  {
+    "name": "tailwindcss",
+    "version": "4.1.18",
+    "kind": "installed",
+    "released": "2025-12-11T16:40:50.445Z",
+    "ageDays": 321
+  },
+  {
+    "name": "typescript",
+    "version": "5.9.3",
+    "kind": "installed",
+    "released": "2025-09-30T21:19:38.784Z",
+    "ageDays": 392,
+    "engines": {
+      "node": ">=14.17"
+    }
+  },
+  {
+    "name": "typescript-eslint",
+    "version": "8.46.1",
+    "kind": "installed",
+    "released": "2025-10-13T17:05:11.723Z",
+    "ageDays": 379,
+    "engines": {
+      "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+    },
+    "peers": {
+      "eslint": "^8.57.0 || ^9.0.0",
+      "typescript": ">=4.8.4 <6.0.0"
+    },
+    "dependencies": {
+      "@typescript-eslint/utils": "8.46.1",
+      "@typescript-eslint/parser": "8.46.1",
+      "@typescript-eslint/eslint-plugin": "8.46.1",
+      "@typescript-eslint/typescript-estree": "8.46.1"
+    }
+  },
+  {
+    "name": "vite",
+    "version": "7.3.1",
+    "kind": "installed",
+    "released": "2026-01-07T06:07:43.726Z",
+    "ageDays": 294,
+    "engines": {
+      "node": "^20.19.0 || >=22.12.0"
+    },
+    "peers": {
+      "tsx": "^4.8.1",
+      "jiti": ">=1.21.0",
+      "less": "^4.0.0",
+      "sass": "^1.70.0",
+      "yaml": "^2.4.2",
+      "stylus": ">=0.54.8",
+      "terser": "^5.16.0",
+      "sugarss": "^5.0.0",
+      "@types/node": "^20.19.0 || >=22.12.0",
+      "lightningcss": "^1.21.0",
+      "sass-embedded": "^1.70.0"
+    },
+    "dependencies": {
+      "fdir": "^6.5.0",
+      "rollup": "^4.43.0",
+      "esbuild": "^0.27.0",
+      "postcss": "^8.5.6",
+      "picomatch": "^4.0.3",
+      "tinyglobby": "^0.2.15"
+    }
+  },
+  {
+    "name": "vite",
+    "version": "7.3.7",
+    "kind": "candidate",
+    "released": "2026-10-06T05:11:19.017Z",
+    "ageDays": 22,
+    "engines": {
+      "node": "^20.19.0 || >=22.12.0"
+    },
+    "peers": {
+      "tsx": "^4.8.1",
+      "jiti": ">=1.21.0",
+      "less": "^4.0.0",
+      "sass": "^1.70.0",
+      "yaml": "^2.4.2",
+      "stylus": ">=0.54.8",
+      "terser": "^5.16.0",
+      "sugarss": "^5.0.0",
+      "@types/node": "^20.19.0 || >=22.12.0",
+      "lightningcss": "^1.21.0",
+      "sass-embedded": "^1.70.0"
+    },
+    "dependencies": {
+      "fdir": "^6.5.0",
+      "rollup": "^4.43.0",
+      "esbuild": "^0.27.0 || ^0.28.0",
+      "postcss": "^8.5.6",
+      "picomatch": "^4.0.3",
+      "tinyglobby": "^0.2.15"
+    }
+  },
+  {
+    "name": "vitest",
+    "version": "4.0.18",
+    "kind": "installed",
+    "released": "2026-01-22T17:50:34.834Z",
+    "ageDays": 278,
+    "engines": {
+      "node": "^20.0.0 || ^22.0.0 || >=24.0.0"
+    },
+    "peers": {
+      "jsdom": "*",
+      "happy-dom": "*",
+      "@vitest/ui": "4.0.18",
+      "@types/node": "^20.0.0 || ^22.0.0 || >=24.0.0",
+      "@edge-runtime/vm": "*",
+      "@opentelemetry/api": "^1.9.0",
+      "@vitest/browser-preview": "4.0.18",
+      "@vitest/browser-playwright": "4.0.18",
+      "@vitest/browser-webdriverio": "4.0.18"
+    },
+    "dependencies": {
+      "obug": "^2.1.1",
+      "vite": "^6.0.0 || ^7.0.0",
+      "pathe": "^2.0.3",
+      "std-env": "^3.10.0",
+      "tinyexec": "^1.0.2",
+      "picomatch": "^4.0.3",
+      "tinybench": "^2.9.0",
+      "tinyglobby": "^0.2.15",
+      "@vitest/spy": "4.0.18",
+      "expect-type": "^1.2.2",
+      "tinyrainbow": "^3.0.3",
+      "magic-string": "^0.30.21",
+      "@vitest/utils": "4.0.18",
+      "@vitest/expect": "4.0.18",
+      "@vitest/mocker": "4.0.18",
+      "@vitest/runner": "4.0.18",
+      "es-module-lexer": "^1.7.0",
+      "@vitest/snapshot": "4.0.18",
+      "why-is-node-running": "^2.3.0",
+      "@vitest/pretty-format": "4.0.18"
+    }
+  },
+  {
+    "name": "vitest",
+    "version": "4.1.12",
+    "kind": "candidate",
+    "released": "2026-10-15T14:51:24.991Z",
+    "ageDays": 13,
+    "engines": {
+      "node": "^20.0.0 || ^22.0.0 || >=24.0.0"
+    },
+    "peers": {
+      "vite": "^6.0.0 || ^7.0.0 || ^8.0.0",
+      "jsdom": "*",
+      "happy-dom": "*",
+      "@vitest/ui": "4.1.12",
+      "@types/node": "^20.0.0 || ^22.0.0 || >=24.0.0",
+      "@edge-runtime/vm": "*",
+      "@opentelemetry/api": "^1.9.0",
+      "@vitest/coverage-v8": "4.1.12",
+      "@vitest/browser-preview": "4.1.12",
+      "@vitest/coverage-istanbul": "4.1.12",
+      "@vitest/browser-playwright": "4.1.12",
+      "@vitest/browser-webdriverio": "^4.1.11"
+    },
+    "dependencies": {
+      "obug": "^2.1.1",
+      "vite": "^6.0.0 || ^7.0.0 || ^8.0.0",
+      "pathe": "^2.0.3",
+      "std-env": "^4.0.0-rc.1",
+      "tinyexec": "^1.0.2",
+      "picomatch": "^4.0.3",
+      "tinybench": "^2.9.0",
+      "tinyglobby": "^0.2.15",
+      "@vitest/spy": "4.1.12",
+      "expect-type": "^1.3.0",
+      "tinyrainbow": "^3.1.0",
+      "magic-string": "^0.30.21",
+      "@vitest/utils": "4.1.12",
+      "@vitest/expect": "4.1.12",
+      "@vitest/mocker": "4.1.12",
+      "@vitest/runner": "4.1.12",
+      "es-module-lexer": "^2.0.0",
+      "@vitest/snapshot": "4.1.12",
+      "why-is-node-running": "^2.3.0",
+      "@vitest/pretty-format": "4.1.12"
+    }
+  }
+]
