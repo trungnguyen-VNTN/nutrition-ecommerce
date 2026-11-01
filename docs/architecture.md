@@ -15,12 +15,12 @@ Trình duyệt
    ▼
 CloudFront ──── / , /images/* ──► S3 (React build, ảnh sản phẩm; OAC, không public)
    │
-   └─ /api/* ──► VPC origin ──► internal ALB ──► ECS Fargate (Spring Boot)
+   └─ /api/* ──► ALB công khai (HTTP, chỉ nhận CloudFront + header bí mật) ──► ECS Fargate (Spring Boot)
                                                     │
                                    ┌────────────────┼──────────────────────┐
                                    ▼                ▼                      ▼
                               RDS PostgreSQL   Bedrock Runtime       Cognito (JWKS)
-                              (private)        (qua VPC endpoint)    🔎 endpoint hay NAT
+                              (private)        (endpoint công khai qua đường ra Internet 🔎)
 
 Đăng nhập: React ──► Cognito User Pool (không gán domain, không hosted UI) ──► JWT
 CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──► cập nhật ECS
@@ -33,8 +33,8 @@ CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──�
 | Edge | CloudFront | `/api/*` tắt cache, chuyển tiếp `Authorization`; `/` và `/images/*` về S3 |
 | Frontend | S3 + React | Không public, chỉ CloudFront đọc qua OAC |
 | Xác thực | Cognito User Pool | Group `USER`, `ADMIN`; app client public cho SPA |
-| Backend | ECS Fargate (Spring Boot) | Private subnet; image trong ECR; `/actuator/health` |
-| Cân bằng tải | Internal ALB | Chỉ nhận từ CloudFront VPC origin 🔎 |
+| Backend | ECS Fargate (Spring Boot) | Chỉ nhận từ ALB; image trong ECR; `/actuator/health` |
+| Cân bằng tải | ALB công khai | SG chỉ nhận managed prefix list của CloudFront; listener chỉ chuyển tiếp khi có header bí mật do CloudFront thêm |
 | Database | RDS PostgreSQL | 1 AZ cho dev, mã hóa, `deletion_protection`, mật khẩu do RDS quản lý (Secrets Manager) |
 | AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình |
 | Quan sát | CloudWatch Logs, Alarms | Không log token hay dữ liệu cá nhân |
@@ -42,18 +42,12 @@ CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──�
 
 ## 4. Mạng
 
-- VPC với public subnet (IGW, NAT nếu bật), private-app subnet, private-db subnet.
-- ALB cần subnet ở ít nhất hai AZ; DB subnet group cần ít nhất hai AZ. Task ECS và endpoint đặt ở một AZ cho dev.
-- VPC endpoints:
+Theo quyết định 2026-10-29 (`decisions.md`): ALB công khai, bỏ CloudFront VPC origin và các interface VPC endpoint riêng, vì đề bài không bắt buộc mạng riêng.
 
-| Loại | Service |
-| --- | --- |
-| Gateway | `s3` |
-| Interface | `ecr.api`, `ecr.dkr`, `logs`, `secretsmanager`, `bedrock-runtime` |
-| Interface (có điều kiện) | `cognito-idp` (user pool không được gán domain) 🔎 |
-
-- NAT Gateway: tắt mặc định (`enable_nat = false`); chỉ bật nếu spike S3 cho thấy JWKS không đi qua endpoint.
-- Security group: ALB chỉ nhận từ VPC origin; ECS chỉ nhận từ ALB; RDS chỉ nhận 5432 từ ECS; endpoint chỉ nhận 443 từ ECS.
+- VPC với public subnet (ALB, IGW) và private-db subnet. ALB và DB subnet group cần subnet ở ít nhất hai AZ.
+- Chưa có domain nên không có chứng chỉ ACM cho ALB: CloudFront → ALB đi HTTP qua Internet và mang JWT. Đây là rủi ro đã chấp nhận (O6); giảm thiểu bằng SG chỉ nhận prefix list CloudFront và header bí mật. Khi có domain: bật HTTPS cho ALB.
+- 🔎 Đường ra Internet của task ECS (kéo image ECR, gọi Bedrock, tải JWKS Cognito, ghi CloudWatch Logs): task ở public subnet có IP công khai, hoặc private subnet + NAT (`enable_nat`). Chưa chốt (O3); NAT tốn tiền theo giờ.
+- Security group: ALB chỉ nhận 80 từ prefix list CloudFront; ECS chỉ nhận từ ALB; RDS chỉ nhận 5432 từ ECS.
 
 ## 5. Luồng chính
 
