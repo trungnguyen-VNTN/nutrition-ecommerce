@@ -3,7 +3,7 @@
 Áp dụng thêm cho `AGENTS.md` gốc. Hợp đồng API: `docs/api-contract.md`. Schema: `docs/db-schema.md`. Test bắt buộc: `docs/test-plan.md`.
 
 ## Stack
-- Java <điền LTS> + Spring Boot, build <Maven|Gradle> (quyết định O5 trong docs/decisions.md; dùng wrapper `mvnw` / `gradlew`).
+- Java 21 (LTS) + Spring Boot, build Maven (quyết định O5 trong docs/decisions.md; dùng wrapper `./mvnw`, Windows: `./mvnw.cmd`).
 - PostgreSQL + Flyway (migration trong `src/main/resources/db/migration`, đặt tên `V<n>__<mô_tả>.sql`, không sửa migration đã áp dụng).
 - Kiểm thử: JUnit 5, Testcontainers (PostgreSQL thật, không dùng H2), Spring Security Test.
 - Chất lượng: Spotless (định dạng) + Checkstyle hoặc tương đương; chạy trong `verify`.
@@ -34,3 +34,8 @@ com.<org>.nutrition
 - Test phân quyền (401 / 403 / 404) cho mọi endpoint mới.
 - Test đồng thời cho trừ kho; golden test allergen khi đụng đến lọc.
 - Chạy `verify` (hoặc `check`) đầy đủ trước khi báo xong.
+
+## Chạy local
+- Tại gốc repo: `docker compose up -d --wait postgres` (PostgreSQL dev chỉ bind 127.0.0.1:5433, dùng trust authentication; không dùng cấu hình này cho môi trường public).
+- Tại backend: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`; PowerShell: `./mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"`.
+- Profile `local` thêm 20 sản phẩm giả lập; API: `http://localhost:8080/api/products`, health: `/actuator/health`. `./mvnw verify` cần DB compose đang chạy.
