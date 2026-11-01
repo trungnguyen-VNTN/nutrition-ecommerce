@@ -5,7 +5,7 @@ import { AppRoutes } from './router';
 import { messages } from './messages.vi';
 
 it.each([
-  ['/', messages.home],
+  ['/', 'Hiểu thực phẩm.Chọn điều phù hợp.'],
   ['/products', messages.products],
   ['/products/oats', 'Yến mạch nguyên hạt'],
   ['/cart', messages.cart],

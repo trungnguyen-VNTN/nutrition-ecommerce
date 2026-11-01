@@ -1,5 +1,5 @@
 export const pages = [
-  { path: '/', name: 'home', title: 'Trang chủ' },
+  { path: '/', name: 'home', title: 'Hiểu thực phẩm. Chọn điều phù hợp.' },
   { path: '/products', name: 'products', title: 'Sản phẩm' },
   {
     path: '/products/oats',

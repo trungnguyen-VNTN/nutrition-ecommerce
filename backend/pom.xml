@@ -4,6 +4,9 @@
   <groupId>com.nutrition</groupId><artifactId>nutrition-api</artifactId><version>0.0.1-SNAPSHOT</version>
   <properties><java.version>21</java.version></properties>
   <dependencies>
+    <dependency><groupId>software.amazon.awssdk</groupId><artifactId>bedrockruntime</artifactId><version>2.57.6</version></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-oauth2-resource-server</artifactId></dependency>
+    <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-test</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-validation</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-jdbc</artifactId></dependency>

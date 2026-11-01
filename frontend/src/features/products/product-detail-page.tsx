@@ -1,3 +1,4 @@
+import { AddToCart } from '@/features/commerce/cart-page';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { messages } from '@/app/messages.vi';
@@ -53,9 +54,11 @@ export function ProductDetailPage() {
                     strokeWidth="2"
                   />
                 </svg>
-                <span className="pb-3 text-xs">{messages.sampleImage}</span>
+                <span className="product-art-caption">
+                  {messages.sampleImage} · Chưa có ảnh thật
+                </span>
               </div>
-              <header className="space-y-4">
+              <header className="detail-purchase space-y-6">
                 {product.category && (
                   <p className="text-sm text-primary-700">
                     {product.category.name}
@@ -73,6 +76,7 @@ export function ProductDetailPage() {
                 <p className="text-neutral-700">
                   {product.description ?? messages.missingValue}
                 </p>
+                <AddToCart id={product.id} stock={product.stock} />
               </header>
             </div>
             <div className="grid gap-8 md:grid-cols-2">

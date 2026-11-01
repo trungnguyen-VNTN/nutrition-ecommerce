@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { messages } from '@/app/messages.vi';
 import { getCategories } from './api/products';
-import type { ProductFilters } from './api/filters';
+import { allergenOptions, type ProductFilters } from './api/filters';
 
 export function ProductFiltersForm({
   filters,
@@ -10,7 +10,7 @@ export function ProductFiltersForm({
   onClear,
 }: {
   filters: ProductFilters | null;
-  onApply: (values: Record<string, FormDataEntryValue>) => void;
+  onApply: (values: URLSearchParams) => void;
   onClear: () => void;
 }) {
   const categories = useQuery({
@@ -23,12 +23,25 @@ export function ProductFiltersForm({
   return (
     <form
       key={JSON.stringify(filters)}
-      className="grid gap-4 rounded-card border border-neutral-200 p-4 md:grid-cols-3"
+      className="grid gap-4 rounded-card border border-neutral-200 p-4 md:grid-cols-3 lg:flex lg:flex-col"
       onSubmit={(event) => {
         event.preventDefault();
-        onApply(Object.fromEntries(new FormData(event.currentTarget)));
+        const values = new URLSearchParams();
+        for (const [key, value] of new FormData(event.currentTarget))
+          if (String(value).trim() !== '') values.append(key, String(value));
+        onApply(values);
       }}
     >
+      <label className="text-sm font-medium md:col-span-3">
+        Tìm sản phẩm
+        <input
+          name="q"
+          type="search"
+          maxLength={100}
+          className={control}
+          defaultValue={filters?.q ?? ''}
+        />
+      </label>
       <div className="text-sm font-medium">
         <label htmlFor="category-filter">{messages.category}</label>
         <select
@@ -68,6 +81,31 @@ export function ProductFiltersForm({
           defaultValue={filters?.minProtein ?? ''}
         />
       </label>
+      <fieldset className="md:col-span-3">
+        <legend className="text-sm font-medium">Loại trừ allergen</legend>
+        <div className="mt-2 flex flex-wrap gap-4">
+          {allergenOptions.map((option) => (
+            <label
+              key={option.code}
+              className="flex min-h-touch items-center gap-2 text-sm"
+            >
+              <input
+                type="checkbox"
+                name="excludeAllergen"
+                value={option.code}
+                defaultChecked={
+                  filters?.excludeAllergen?.includes(option.code) ?? false
+                }
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+        <p className="text-sm text-neutral-700">
+          Sản phẩm chưa đủ dữ liệu dinh dưỡng hoặc chưa xác minh allergen sẽ bị
+          loại khi lọc.
+        </p>
+      </fieldset>
       <div className="flex flex-wrap gap-3 md:col-span-3">
         <Button type="submit">{messages.applyFilters}</Button>
         <Button variant="secondary" onClick={onClear}>
