@@ -6,10 +6,10 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 ## Bối cảnh cố định
 - Region: ap-southeast-1. Tiền tố tài nguyên: nutrition-dev. Tag: Project, Env, Owner.
 - Terraform >= 1.10, backend S3 với use_lockfile = true. Ghim phiên bản provider, commit .terraform.lock.hcl.
-- Backend: Java <điền phiên bản LTS> + Spring Boot, build bằng <Maven|Gradle>. Frontend: React. DB: PostgreSQL (Flyway).
-- Image: linux/<arm64|amd64>. ECS Fargate runtime_platform phải khớp.
+- Backend: Java 21 (LTS) + Spring Boot, build bằng Maven (luôn dùng wrapper `./mvnw`). Frontend: React + TypeScript. DB: PostgreSQL (Flyway).
+- Image: linux/arm64. ECS Fargate runtime_platform phải khớp (cpu_architecture = "ARM64").
 - AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình.
-- Mạng: ưu tiên VPC endpoints. NAT chỉ bật qua biến enable_nat khi spike S3 yêu cầu. ALB nằm internal; CloudFront truy cập qua VPC origin.
+- Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. NAT chỉ bật qua biến enable_nat (xem O3 trong docs/decisions.md).
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito.
 - Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
 
@@ -34,11 +34,23 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 - Viết test cùng code. Chạy test trước khi báo hoàn thành. Không báo "xong" khi test còn đỏ.
 - Một tính năng một nhánh một PR. Commit nhỏ, thông điệp rõ.
 - Không đổi phạm vi: thấy việc ngoài yêu cầu thì ghi vào docs/PROGRESS.md thay vì tự làm.
-- Kiến thức về AWS có thể đã cũ: với dịch vụ mới (Bedrock, CloudFront VPC origin, Cognito PrivateLink), kiểm chứng bằng tài liệu hoặc lệnh chỉ đọc, và nói rõ chỗ chưa chắc.
+- Kiến thức về AWS có thể đã cũ: với dịch vụ mới (Bedrock, CloudFront managed prefix list, Cognito), kiểm chứng bằng tài liệu hoặc lệnh chỉ đọc, và nói rõ chỗ chưa chắc.
 - Cuối phiên: cập nhật docs/PROGRESS.md (đã xong, đang dở, bước tiếp theo, câu hỏi mở).
 
+## Giao diện UI/UX
+- Với mọi tác vụ thiết kế, xây dựng, chỉnh sửa hoặc đánh giá giao diện UI/UX (trang, component, layout, màu, typography, responsive, accessibility, review UI): PHẢI dùng skill `ui-ux-pro-max` (.claude/skills/ui-ux-pro-max/) trước khi thực hiện.
+- Không áp dụng cho tác vụ backend thuần túy (API, DB, Flyway, hạ tầng Terraform, CI không liên quan UI).
+- Stack khi tra cứu skill: `--stack react`. Script tìm kiếm cần Python 3 (Windows: `python`); nếu máy chưa có Python thì dùng phần Quick Reference trong SKILL.md, không tự cài Python.
+
 ## Lệnh thường dùng
-<điền sau khi có backend / frontend: chạy local, test backend, test frontend, docker compose, terraform plan>
+- Chạy toàn bộ local trên Windows: `START.bat` / `STOP.bat`.
+- PostgreSQL local: `docker compose up -d postgres` (cổng 5433).
+- Backend chạy local: `cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+- Backend kiểm tra đầy đủ: `cd backend && ./mvnw verify` (cần PostgreSQL local).
+- Frontend chạy local: `cd frontend && npm run dev` (http://localhost:5173).
+- Frontend kiểm tra: `cd frontend && npm run format:check && npm run lint && npm run typecheck && npm test -- --maxWorkers=1 && npm run build`
+- E2E / axe: `cd frontend && npm run test:e2e`. Ảnh chụp: `npm run screenshots`.
+- Terraform: `terraform fmt -check -recursive infra`, `terraform -chdir=infra/cognito validate`, `plan -out=tfplan` rồi dừng.
 
 ## Định nghĩa "xong" của một giai đoạn
 Test xanh trong CI; deploy được lên dev; đã kiểm chứng đúng tiêu chí nghiệm thu trong playbook; không vi phạm nguyên tắc bất biến; docs/PROGRESS.md đã cập nhật.

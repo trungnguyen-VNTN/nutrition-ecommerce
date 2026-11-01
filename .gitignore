@@ -21,3 +21,11 @@ coverage/
 playwright-report/
 test-results/
 frontend/.screenshots/
+
+# Repository hygiene
+infra/**/*.exe
+.DS_Store
+Thumbs.db
+*.iml
+backend/.mvn/wrapper/maven-wrapper.jar
+!.env.example
