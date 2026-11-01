@@ -4,7 +4,7 @@ export const messages = {
   navigation: 'Điều hướng chính',
   skip: 'Đến nội dung chính',
   footer: 'Hiểu thực phẩm. Chọn điều phù hợp.',
-  footerNote: 'Bản dựng giao diện · Chưa hỗ trợ mua hàng',
+  footerNote: 'Không thanh toán trực tuyến',
   home: 'Trang chủ',
   products: 'Sản phẩm',
   productDetail: 'Chi tiết sản phẩm',

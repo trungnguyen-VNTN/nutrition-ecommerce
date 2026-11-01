@@ -26,6 +26,7 @@ public class CatalogRepository {
       FROM products p LEFT JOIN categories c ON c.id=p.category_id
       LEFT JOIN product_nutrition n ON n.product_id=p.id
       WHERE p.active
+      AND (:q = '' OR POSITION(LOWER(:q) IN LOWER(p.name)) > 0)
       AND (CAST(:category AS bigint) IS NULL OR p.category_id=:category)
       AND (CAST(:calories AS numeric) IS NULL OR n.calories<=:calories)
       AND (CAST(:protein AS numeric) IS NULL OR n.protein_g>=:protein)
@@ -59,7 +60,8 @@ public class CatalogRepository {
       Long category,
       BigDecimal calories,
       BigDecimal protein,
-      List<String> excluded) {
+      List<String> excluded,
+      String q) {
     List<String> codes = excluded.stream().distinct().toList();
     if (!codes.isEmpty()) {
       Integer known =
@@ -72,6 +74,7 @@ public class CatalogRepository {
     }
     var parameters =
         new MapSqlParameterSource()
+            .addValue("q", q.trim())
             .addValue("category", category)
             .addValue("calories", calories)
             .addValue("protein", protein)

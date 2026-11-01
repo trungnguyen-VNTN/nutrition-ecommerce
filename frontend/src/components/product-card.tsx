@@ -13,7 +13,7 @@ export function ProductCard({
 }) {
   const tone = ['green', 'grain', 'warm'][index % 3];
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-card border border-neutral-200 bg-neutral-50 shadow-sm">
+    <article className="product-card flex h-full flex-col overflow-hidden rounded-card border border-neutral-200 shadow-sm">
       <div className="product-art" data-tone={tone}>
         <svg
           viewBox="0 0 120 140"
@@ -41,24 +41,40 @@ export function ProductCard({
             strokeLinecap="round"
           />
         </svg>
-        <span className="pb-3 text-xs">{messages.sampleImage}</span>
+        <span className="product-art-caption">
+          {messages.sampleImage} · Chưa có ảnh thật
+        </span>
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        <p className="text-xs text-neutral-700">
+      <div className="product-card-body flex flex-1 flex-col gap-3 p-4">
+        <p
+          className={`stock-label text-xs ${product.stock > 0 ? 'text-success' : 'text-danger'}`}
+        >
           {product.stock > 0 ? messages.inStock : messages.outOfStock}
         </p>
         <h2 className="text-lg font-semibold">
           <Link
-            className="flex min-h-touch items-center text-neutral-900 hover:text-primary-700"
+            className="flex min-h-touch items-center justify-between gap-2 text-neutral-900 hover:text-primary-700"
             to={`/products/${product.id}`}
           >
             <span className="line-clamp-2">{product.name}</span>
+            <span aria-hidden="true" className="text-primary-700">
+              ↗
+            </span>
           </Link>
         </h2>
         <p className="text-xl font-semibold tabular-nums text-primary-700">
           {formatMoney(product.price, product.currency)}
         </p>
         <div className="mt-auto grid gap-2 border-t border-neutral-200 pt-3">
+          {product.nutrition_complete && product.nutrition && (
+            <div className="nutrition-preview">
+              <span>{product.nutrition.calories} kcal</span>
+              <span>{product.nutrition.protein_g}g protein</span>
+              <p className="w-full">
+                {messages.serving(product.serving_size!, product.serving_unit!)}
+              </p>
+            </div>
+          )}
           <div className="flex min-h-8 items-center">
             {product.nutrition_complete ? (
               <span className="text-xs text-neutral-700">
