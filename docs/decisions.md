@@ -37,6 +37,18 @@
 | S4 | CloudFront VPC origin → internal ALB hoạt động ở Singapore; provider hỗ trợ? | GĐ 3 | _chưa làm_ | | Nếu thất bại: ALB công khai + prefix list CloudFront + header bí mật |
 | S5 | Quota Bedrock đủ cho demo? | GĐ 0 | _chưa làm_ | | Nếu thiếu: xin tăng sớm |
 
+## Đề xuất, chờ duyệt — tổ chức Terraform (2026-11-01)
+
+Chuyển `infra/cognito/` thành module `infra/modules/cognito/`, được gọi từ
+`infra/envs/dev/`. Giữ nguyên tài nguyên, biến và outputs; chưa di chuyển hoặc
+sửa file Terraform trong lượt dọn repo này.
+
+Nếu chưa có state và tài nguyên thì việc đổi cấu trúc ít rủi ro. Nếu đã có state,
+địa chỉ tài nguyên sẽ thay đổi khi vào module: cần phương án migration được duyệt
+riêng để tránh Terraform đề xuất tạo lại tài nguyên. Chưa xác minh tình trạng state.
+Khi được duyệt, cần cập nhật đường dẫn trong CI, README, tài liệu và script liên quan;
+đặt cấu hình provider/backend và lockfile tại root môi trường dev phù hợp.
+
 ## Cách dùng file này
 
 - 2026-10-29: Hạ tầng rút gọn dùng ALB công khai, bỏ VPC origin và VPC endpoint riêng vì đề bài không bắt buộc mạng riêng (thay thế lựa chọn mạng riêng trước đây).
