@@ -1,0 +1,66 @@
+:root {
+  --primary-50: #f0f7ec;
+  --primary-100: #ddeed3;
+  --primary-500: #4c9a2a;
+  --primary-600: #3c7d21;
+  --primary-700: #2f621a;
+  --accent-500: #f29a2e;
+  --neutral-50: #fafaf7;
+  --neutral-100: #f3f2ee;
+  --neutral-200: #e5e3dc;
+  --neutral-500: #8a877d;
+  --neutral-700: #4a483f;
+  --neutral-900: #1f1e1a;
+  --success: #2e7d32;
+  --warning: #b26a00;
+  --danger: #c62828;
+  --info: #1f6fb2;
+  --allergen-bg: #fff3e0;
+  --allergen-border: #f29a2e;
+  --allergen-text: #8a4b00;
+
+  --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --line-xs: 16px;
+  --line-sm: 20px;
+  --line-base: 24px;
+  --line-lg: 28px;
+  --line-xl: 28px;
+  --line-2xl: 32px;
+  --line-3xl: 36px;
+  --line-4xl: 44px;
+
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --corner-control: 8px;
+  --corner-card: 12px;
+  --corner-pill: 999px;
+  --container-width: 1200px;
+  --reading-width: 70ch;
+  --touch-target: 44px;
+  --border-width: 1px;
+  --focus-width: 2px;
+  --focus-offset: 4px;
+  --elevation-sm: 0 1px 3px
+    color-mix(in srgb, var(--neutral-900) 8%, transparent);
+  --elevation-md: 0 4px 12px
+    color-mix(in srgb, var(--neutral-900) 12%, transparent);
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-ease: ease-out;
+  --opacity-disabled: 0.6;
+}

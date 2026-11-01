@@ -1,0 +1,2557 @@
+{
+  "version": "0.0.0",
+  "name": "nutrition-frontend",
+  "dependencies": {
+    "@axe-core/playwright": {
+      "version": "4.10.2",
+      "overridden": false,
+      "dependencies": {
+        "axe-core": {
+          "version": "4.10.3",
+          "overridden": false
+        },
+        "playwright-core": {
+          "version": "1.56.1",
+          "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.56.1.tgz",
+          "overridden": true
+        }
+      }
+    },
+    "@eslint/js": {
+      "version": "9.39.1",
+      "overridden": false
+    },
+    "@fontsource/be-vietnam-pro": {
+      "version": "5.2.6",
+      "overridden": false
+    },
+    "@playwright/test": {
+      "version": "1.56.1",
+      "overridden": false,
+      "dependencies": {
+        "playwright": {
+          "version": "1.56.1",
+          "overridden": false,
+          "dependencies": {
+            "fsevents": {},
+            "playwright-core": {
+              "version": "1.56.1"
+            }
+          }
+        }
+      }
+    },
+    "@radix-ui/react-slot": {
+      "version": "1.2.3",
+      "overridden": false,
+      "dependencies": {
+        "@radix-ui/react-compose-refs": {
+          "version": "1.1.2",
+          "overridden": false,
+          "dependencies": {
+            "@types/react": {
+              "version": "19.2.2"
+            },
+            "react": {
+              "version": "19.2.0"
+            }
+          }
+        },
+        "@types/react": {
+          "version": "19.2.2"
+        },
+        "react": {
+          "version": "19.2.0"
+        }
+      }
+    },
+    "@tailwindcss/vite": {
+      "version": "4.1.18",
+      "overridden": false,
+      "dependencies": {
+        "@tailwindcss/node": {
+          "version": "4.1.18",
+          "overridden": false,
+          "dependencies": {
+            "@jridgewell/remapping": {
+              "version": "2.3.5",
+              "overridden": false,
+              "dependencies": {
+                "@jridgewell/gen-mapping": {
+                  "version": "0.3.13",
+                  "overridden": false,
+                  "dependencies": {
+                    "@jridgewell/sourcemap-codec": {
+                      "version": "1.6.0"
+                    },
+                    "@jridgewell/trace-mapping": {
+                      "version": "0.3.31"
+                    }
+                  }
+                },
+                "@jridgewell/trace-mapping": {
+                  "version": "0.3.31",
+                  "overridden": false,
+                  "dependencies": {
+                    "@jridgewell/resolve-uri": {
+                      "version": "3.1.2",
+                      "overridden": false
+                    },
+                    "@jridgewell/sourcemap-codec": {
+                      "version": "1.6.0"
+                    }
+                  }
+                }
+              }
+            },
+            "enhanced-resolve": {
+              "version": "5.26.0",
+              "overridden": false,
+              "dependencies": {
+                "graceful-fs": {
+                  "version": "4.2.11",
+                  "overridden": false
+                },
+                "tapable": {
+                  "version": "2.3.3",
+                  "overridden": false
+                }
+              }
+            },
+            "jiti": {
+              "version": "2.7.0"
+            },
+            "lightningcss": {
+              "version": "1.30.2"
+            },
+            "magic-string": {
+              "version": "0.30.21"
+            },
+            "source-map-js": {
+              "version": "1.2.2",
+              "overridden": false
+            },
+            "tailwindcss": {
+              "version": "4.1.18"
+            }
+          }
+        },
+        "@tailwindcss/oxide": {
+          "version": "4.1.18",
+          "overridden": false,
+          "dependencies": {
+            "@tailwindcss/oxide-android-arm64": {},
+            "@tailwindcss/oxide-darwin-arm64": {},
+            "@tailwindcss/oxide-darwin-x64": {},
+            "@tailwindcss/oxide-freebsd-x64": {},
+            "@tailwindcss/oxide-linux-arm-gnueabihf": {},
+            "@tailwindcss/oxide-linux-arm64-gnu": {},
+            "@tailwindcss/oxide-linux-arm64-musl": {},
+            "@tailwindcss/oxide-linux-x64-gnu": {},
+            "@tailwindcss/oxide-linux-x64-musl": {},
+            "@tailwindcss/oxide-wasm32-wasi": {},
+            "@tailwindcss/oxide-win32-arm64-msvc": {},
+            "@tailwindcss/oxide-win32-x64-msvc": {
+              "version": "4.1.18",
+              "overridden": false
+            }
+          }
+        },
+        "tailwindcss": {
+          "version": "4.1.18"
+        },
+        "vite": {
+          "version": "7.3.7"
+        }
+      }
+    },
+    "@tanstack/react-query": {
+      "version": "5.90.2",
+      "overridden": false,
+      "dependencies": {
+        "@tanstack/query-core": {
+          "version": "5.90.2",
+          "overridden": false
+        },
+        "react": {
+          "version": "19.2.0"
+        }
+      }
+    },
+    "@testing-library/dom": {
+      "version": "10.4.1",
+      "overridden": false,
+      "dependencies": {
+        "@babel/code-frame": {
+          "version": "7.29.7",
+          "overridden": false,
+          "dependencies": {
+            "@babel/helper-validator-identifier": {
+              "version": "7.29.7",
+              "overridden": false
+            },
+            "js-tokens": {
+              "version": "4.0.0",
+              "overridden": false
+            },
+            "picocolors": {
+              "version": "1.1.1"
+            }
+          }
+        },
+        "@babel/runtime": {
+          "version": "7.29.10",
+          "overridden": false
+        },
+        "@types/aria-query": {
+          "version": "5.0.4",
+          "overridden": false
+        },
+        "aria-query": {
+          "version": "5.3.0",
+          "overridden": false,
+          "dependencies": {
+            "dequal": {
+              "version": "2.0.3",
+              "overridden": false
+            }
+          }
+        },
+        "dom-accessibility-api": {
+          "version": "0.5.16",
+          "overridden": false
+        },
+        "lz-string": {
+          "version": "1.5.0",
+          "overridden": false
+        },
+        "picocolors": {
+          "version": "1.1.1",
+          "overridden": false
+        },
+        "pretty-format": {
+          "version": "27.5.1",
+          "overridden": false,
+          "dependencies": {
+            "ansi-regex": {
+              "version": "5.0.1",
+              "overridden": false
+            },
+            "ansi-styles": {
+              "version": "5.2.0",
+              "overridden": false
+            },
+            "react-is": {
+              "version": "17.0.2",
+              "overridden": false
+            }
+          }
+        }
+      }
+    },
+    "@testing-library/jest-dom": {
+      "version": "6.9.1",
+      "overridden": false,
+      "dependencies": {
+        "@adobe/css-tools": {
+          "version": "4.5.0",
+          "overridden": false
+        },
+        "aria-query": {
+          "version": "5.3.0"
+        },
+        "css.escape": {
+          "version": "1.5.1",
+          "overridden": false
+        },
+        "dom-accessibility-api": {
+          "version": "0.6.3",
+          "overridden": false
+        },
+        "picocolors": {
+          "version": "1.1.1"
+        },
+        "redent": {
+          "version": "3.0.0",
+          "overridden": false,
+          "dependencies": {
+            "indent-string": {
+              "version": "4.0.0",
+              "overridden": false
+            },
+            "strip-indent": {
+              "version": "3.0.0",
+              "overridden": false,
+              "dependencies": {
+                "min-indent": {
+                  "version": "1.0.1",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "@testing-library/react": {
+      "version": "16.3.0",
+      "overridden": false,
+      "dependencies": {
+        "@babel/runtime": {
+          "version": "7.29.10"
+        },
+        "@testing-library/dom": {
+          "version": "10.4.1"
+        },
+        "@types/react-dom": {
+          "version": "19.2.2"
+        },
+        "@types/react": {
+          "version": "19.2.2"
+        },
+        "react-dom": {
+          "version": "19.2.0"
+        },
+        "react": {
+          "version": "19.2.0"
+        }
+      }
+    },
+    "@testing-library/user-event": {
+      "version": "14.6.1",
+      "resolved": "https://registry.npmjs.org/@testing-library/user-event/-/user-event-14.6.1.tgz",
+      "overridden": false,
+      "dependencies": {
+        "@testing-library/dom": {
+          "version": "10.4.1"
+        }
+      }
+    },
+    "@types/node": {
+      "version": "22.18.6",
+      "overridden": false,
+      "dependencies": {
+        "undici-types": {
+          "version": "6.21.0",
+          "overridden": false
+        }
+      }
+    },
+    "@types/react-dom": {
+      "version": "19.2.2",
+      "overridden": false,
+      "dependencies": {
+        "@types/react": {
+          "version": "19.2.2"
+        }
+      }
+    },
+    "@types/react": {
+      "version": "19.2.2",
+      "overridden": false,
+      "dependencies": {
+        "csstype": {
+          "version": "3.2.3",
+          "overridden": false
+        }
+      }
+    },
+    "@vitejs/plugin-react": {
+      "version": "5.1.2",
+      "overridden": false,
+      "dependencies": {
+        "@babel/core": {
+          "version": "7.29.7",
+          "overridden": false,
+          "dependencies": {
+            "@babel/code-frame": {
+              "version": "7.29.7"
+            },
+            "@babel/generator": {
+              "version": "7.29.8",
+              "overridden": false,
+              "dependencies": {
+                "@babel/parser": {
+                  "version": "7.29.11"
+                },
+                "@babel/types": {
+                  "version": "7.29.11"
+                },
+                "@jridgewell/gen-mapping": {
+                  "version": "0.3.13"
+                },
+                "@jridgewell/trace-mapping": {
+                  "version": "0.3.31"
+                },
+                "jsesc": {
+                  "version": "3.1.0",
+                  "overridden": false
+                }
+              }
+            },
+            "@babel/helper-compilation-targets": {
+              "version": "7.29.7",
+              "overridden": false,
+              "dependencies": {
+                "@babel/compat-data": {
+                  "version": "7.29.7",
+                  "overridden": false
+                },
+                "@babel/helper-validator-option": {
+                  "version": "7.29.7",
+                  "overridden": false
+                },
+                "browserslist": {
+                  "version": "4.29.5",
+                  "overridden": false,
+                  "dependencies": {
+                    "baseline-browser-mapping": {
+                      "version": "2.11.34",
+                      "overridden": false
+                    },
+                    "caniuse-lite": {
+                      "version": "1.0.30001819",
+                      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001819.tgz",
+                      "overridden": false
+                    },
+                    "electron-to-chromium": {
+                      "version": "1.5.467",
+                      "overridden": false
+                    },
+                    "node-releases": {
+                      "version": "2.0.60",
+                      "overridden": false
+                    },
+                    "update-browserslist-db": {
+                      "version": "1.3.4",
+                      "overridden": false,
+                      "dependencies": {
+                        "browserslist": {
+                          "version": "4.29.5"
+                        },
+                        "escalade": {
+                          "version": "3.2.0"
+                        },
+                        "picocolors": {
+                          "version": "1.1.1"
+                        }
+                      }
+                    }
+                  }
+                },
+                "lru-cache": {
+                  "version": "5.1.1",
+                  "overridden": false,
+                  "dependencies": {
+                    "yallist": {
+                      "version": "3.1.1",
+                      "overridden": false
+                    }
+                  }
+                },
+                "semver": {
+                  "version": "6.3.1"
+                }
+              }
+            },
+            "@babel/helper-module-transforms": {
+              "version": "7.29.7",
+              "overridden": false,
+              "dependencies": {
+                "@babel/core": {
+                  "version": "7.29.7"
+                },
+                "@babel/helper-module-imports": {
+                  "version": "7.29.7",
+                  "overridden": false,
+                  "dependencies": {
+                    "@babel/traverse": {
+                      "version": "7.29.10"
+                    },
+                    "@babel/types": {
+                      "version": "7.29.11"
+                    }
+                  }
+                },
+                "@babel/helper-validator-identifier": {
+                  "version": "7.29.7"
+                },
+                "@babel/traverse": {
+                  "version": "7.29.10"
+                }
+              }
+            },
+            "@babel/helpers": {
+              "version": "7.29.10",
+              "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-7.29.10.tgz",
+              "overridden": false,
+              "dependencies": {
+                "@babel/template": {
+                  "version": "7.29.7"
+                },
+                "@babel/types": {
+                  "version": "7.29.11"
+                }
+              }
+            },
+            "@babel/parser": {
+              "version": "7.29.11"
+            },
+            "@babel/template": {
+              "version": "7.29.7",
+              "overridden": false,
+              "dependencies": {
+                "@babel/code-frame": {
+                  "version": "7.29.7"
+                },
+                "@babel/parser": {
+                  "version": "7.29.11"
+                },
+                "@babel/types": {
+                  "version": "7.29.11"
+                }
+              }
+            },
+            "@babel/traverse": {
+              "version": "7.29.10",
+              "overridden": false,
+              "dependencies": {
+                "@babel/code-frame": {
+                  "version": "7.29.7"
+                },
+                "@babel/generator": {
+                  "version": "7.29.8"
+                },
+                "@babel/helper-globals": {
+                  "version": "7.29.7",
+                  "overridden": false
+                },
+                "@babel/parser": {
+                  "version": "7.29.11"
+                },
+                "@babel/template": {
+                  "version": "7.29.7"
+                },
+                "@babel/types": {
+                  "version": "7.29.11"
+                },
+                "debug": {
+                  "version": "4.4.3"
+                }
+              }
+            },
+            "@babel/types": {
+              "version": "7.29.11",
+              "overridden": false,
+              "dependencies": {
+                "@babel/helper-string-parser": {
+                  "version": "7.29.11",
+                  "overridden": false
+                },
+                "@babel/helper-validator-identifier": {
+                  "version": "7.29.7"
+                }
+              }
+            },
+            "@jridgewell/remapping": {
+              "version": "2.3.5"
+            },
+            "convert-source-map": {
+              "version": "2.0.0",
+              "overridden": false
+            },
+            "debug": {
+              "version": "4.4.3"
+            },
+            "gensync": {
+              "version": "1.0.0-beta.2",
+              "overridden": false
+            },
+            "json5": {
+              "version": "2.2.3",
+              "overridden": false
+            },
+            "semver": {
+              "version": "6.3.1",
+              "overridden": false
+            }
+          }
+        },
+        "@babel/plugin-transform-react-jsx-self": {
+          "version": "7.29.7",
+          "overridden": false,
+          "dependencies": {
+            "@babel/core": {
+              "version": "7.29.7"
+            },
+            "@babel/helper-plugin-utils": {
+              "version": "7.29.7",
+              "overridden": false
+            }
+          }
+        },
+        "@babel/plugin-transform-react-jsx-source": {
+          "version": "7.29.7",
+          "overridden": false,
+          "dependencies": {
+            "@babel/core": {
+              "version": "7.29.7"
+            },
+            "@babel/helper-plugin-utils": {
+              "version": "7.29.7"
+            }
+          }
+        },
+        "@rolldown/pluginutils": {
+          "version": "1.0.0-beta.53",
+          "overridden": false
+        },
+        "@types/babel__core": {
+          "version": "7.20.5",
+          "overridden": false,
+          "dependencies": {
+            "@babel/parser": {
+              "version": "7.29.11"
+            },
+            "@babel/types": {
+              "version": "7.29.11"
+            },
+            "@types/babel__generator": {
+              "version": "7.27.0",
+              "overridden": false,
+              "dependencies": {
+                "@babel/types": {
+                  "version": "7.29.11"
+                }
+              }
+            },
+            "@types/babel__template": {
+              "version": "7.4.4",
+              "overridden": false,
+              "dependencies": {
+                "@babel/parser": {
+                  "version": "7.29.11"
+                },
+                "@babel/types": {
+                  "version": "7.29.11"
+                }
+              }
+            },
+            "@types/babel__traverse": {
+              "version": "7.28.0",
+              "overridden": false,
+              "dependencies": {
+                "@babel/types": {
+                  "version": "7.29.11"
+                }
+              }
+            }
+          }
+        },
+        "react-refresh": {
+          "version": "0.18.0",
+          "overridden": false
+        },
+        "vite": {
+          "version": "7.3.7"
+        }
+      }
+    },
+    "class-variance-authority": {
+      "version": "0.7.1",
+      "overridden": false,
+      "dependencies": {
+        "clsx": {
+          "version": "2.1.1"
+        }
+      }
+    },
+    "clsx": {
+      "version": "2.1.1",
+      "overridden": false
+    },
+    "eslint-plugin-react-hooks": {
+      "version": "7.0.1",
+      "overridden": false,
+      "dependencies": {
+        "@babel/core": {
+          "version": "7.29.7"
+        },
+        "@babel/parser": {
+          "version": "7.29.11",
+          "overridden": false,
+          "dependencies": {
+            "@babel/types": {
+              "version": "7.29.11"
+            }
+          }
+        },
+        "eslint": {
+          "version": "9.39.1"
+        },
+        "hermes-parser": {
+          "version": "0.25.1",
+          "overridden": false,
+          "dependencies": {
+            "hermes-estree": {
+              "version": "0.25.1",
+              "overridden": false
+            }
+          }
+        },
+        "zod-validation-error": {
+          "version": "4.0.2",
+          "overridden": false,
+          "dependencies": {
+            "zod": {
+              "version": "4.6.7"
+            }
+          }
+        },
+        "zod": {
+          "version": "4.6.7"
+        }
+      }
+    },
+    "eslint-plugin-react-refresh": {
+      "version": "0.4.24",
+      "overridden": false,
+      "dependencies": {
+        "eslint": {
+          "version": "9.39.1"
+        }
+      }
+    },
+    "eslint": {
+      "version": "9.39.1",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.1.tgz",
+      "overridden": false,
+      "dependencies": {
+        "@eslint-community/eslint-utils": {
+          "version": "4.10.1",
+          "overridden": false,
+          "dependencies": {
+            "eslint-visitor-keys": {
+              "version": "3.4.3",
+              "overridden": false
+            },
+            "eslint": {
+              "version": "9.39.1"
+            }
+          }
+        },
+        "@eslint-community/regexpp": {
+          "version": "4.12.2",
+          "overridden": false
+        },
+        "@eslint/config-array": {
+          "version": "0.21.2",
+          "overridden": false,
+          "dependencies": {
+            "@eslint/object-schema": {
+              "version": "2.1.7",
+              "overridden": false
+            },
+            "debug": {
+              "version": "4.4.3"
+            },
+            "minimatch": {
+              "version": "3.1.5"
+            }
+          }
+        },
+        "@eslint/config-helpers": {
+          "version": "0.4.2",
+          "overridden": false,
+          "dependencies": {
+            "@eslint/core": {
+              "version": "0.17.0"
+            }
+          }
+        },
+        "@eslint/core": {
+          "version": "0.17.0",
+          "overridden": false,
+          "dependencies": {
+            "@types/json-schema": {
+              "version": "7.0.15",
+              "overridden": false
+            }
+          }
+        },
+        "@eslint/eslintrc": {
+          "version": "3.3.7",
+          "overridden": false,
+          "dependencies": {
+            "ajv": {
+              "version": "6.15.0"
+            },
+            "debug": {
+              "version": "4.4.3"
+            },
+            "espree": {
+              "version": "10.4.0"
+            },
+            "globals": {
+              "version": "14.0.0",
+              "overridden": false
+            },
+            "ignore": {
+              "version": "5.3.2"
+            },
+            "import-fresh": {
+              "version": "3.3.1",
+              "overridden": false,
+              "dependencies": {
+                "parent-module": {
+                  "version": "1.0.1",
+                  "overridden": false,
+                  "dependencies": {
+                    "callsites": {
+                      "version": "3.1.0",
+                      "overridden": false
+                    }
+                  }
+                },
+                "resolve-from": {
+                  "version": "4.0.0",
+                  "overridden": false
+                }
+              }
+            },
+            "js-yaml": {
+              "version": "4.3.2",
+              "overridden": false,
+              "dependencies": {
+                "argparse": {
+                  "version": "2.0.1",
+                  "overridden": false
+                }
+              }
+            },
+            "minimatch": {
+              "version": "3.1.5"
+            },
+            "strip-json-comments": {
+              "version": "3.1.1",
+              "overridden": false
+            }
+          }
+        },
+        "@eslint/js": {
+          "version": "9.39.1"
+        },
+        "@eslint/plugin-kit": {
+          "version": "0.4.1",
+          "overridden": false,
+          "dependencies": {
+            "@eslint/core": {
+              "version": "0.17.0"
+            },
+            "levn": {
+              "version": "0.4.1",
+              "overridden": false,
+              "dependencies": {
+                "prelude-ls": {
+                  "version": "1.2.1"
+                },
+                "type-check": {
+                  "version": "0.4.0"
+                }
+              }
+            }
+          }
+        },
+        "@humanfs/node": {
+          "version": "0.16.8",
+          "overridden": false,
+          "dependencies": {
+            "@humanfs/core": {
+              "version": "0.19.2",
+              "overridden": false,
+              "dependencies": {
+                "@humanfs/types": {
+                  "version": "0.15.0"
+                }
+              }
+            },
+            "@humanfs/types": {
+              "version": "0.15.0",
+              "overridden": false
+            },
+            "@humanwhocodes/retry": {
+              "version": "0.4.3"
+            }
+          }
+        },
+        "@humanwhocodes/module-importer": {
+          "version": "1.0.1",
+          "overridden": false
+        },
+        "@humanwhocodes/retry": {
+          "version": "0.4.3",
+          "overridden": false
+        },
+        "@types/estree": {
+          "version": "1.0.9",
+          "overridden": false
+        },
+        "ajv": {
+          "version": "6.15.0",
+          "overridden": false,
+          "dependencies": {
+            "fast-deep-equal": {
+              "version": "3.1.3"
+            },
+            "fast-json-stable-stringify": {
+              "version": "2.1.0",
+              "overridden": false
+            },
+            "json-schema-traverse": {
+              "version": "0.4.1",
+              "overridden": false
+            },
+            "uri-js": {
+              "version": "4.4.1",
+              "overridden": false,
+              "dependencies": {
+                "punycode": {
+                  "version": "2.3.1",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "chalk": {
+          "version": "4.1.2",
+          "overridden": false,
+          "dependencies": {
+            "ansi-styles": {
+              "version": "4.3.0",
+              "overridden": false,
+              "dependencies": {
+                "color-convert": {
+                  "version": "2.0.1",
+                  "overridden": false,
+                  "dependencies": {
+                    "color-name": {
+                      "version": "1.1.4",
+                      "overridden": false
+                    }
+                  }
+                }
+              }
+            },
+            "supports-color": {
+              "version": "7.2.0",
+              "overridden": false,
+              "dependencies": {
+                "has-flag": {
+                  "version": "4.0.0",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "cross-spawn": {
+          "version": "7.0.6",
+          "overridden": false,
+          "dependencies": {
+            "path-key": {
+              "version": "3.1.1",
+              "overridden": false
+            },
+            "shebang-command": {
+              "version": "2.0.0",
+              "overridden": false,
+              "dependencies": {
+                "shebang-regex": {
+                  "version": "3.0.0",
+                  "overridden": false
+                }
+              }
+            },
+            "which": {
+              "version": "2.0.2",
+              "overridden": false,
+              "dependencies": {
+                "isexe": {
+                  "version": "2.0.0",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "debug": {
+          "version": "4.4.3",
+          "overridden": false,
+          "dependencies": {
+            "ms": {
+              "version": "2.1.3",
+              "overridden": false
+            }
+          }
+        },
+        "escape-string-regexp": {
+          "version": "4.0.0",
+          "overridden": false
+        },
+        "eslint-scope": {
+          "version": "8.4.0",
+          "overridden": false,
+          "dependencies": {
+            "esrecurse": {
+              "version": "4.3.0",
+              "overridden": false,
+              "dependencies": {
+                "estraverse": {
+                  "version": "5.3.0"
+                }
+              }
+            },
+            "estraverse": {
+              "version": "5.3.0",
+              "overridden": false
+            }
+          }
+        },
+        "eslint-visitor-keys": {
+          "version": "4.2.1",
+          "overridden": false
+        },
+        "espree": {
+          "version": "10.4.0",
+          "overridden": false,
+          "dependencies": {
+            "acorn-jsx": {
+              "version": "5.3.2",
+              "overridden": false,
+              "dependencies": {
+                "acorn": {
+                  "version": "8.19.0"
+                }
+              }
+            },
+            "acorn": {
+              "version": "8.19.0",
+              "overridden": false
+            },
+            "eslint-visitor-keys": {
+              "version": "4.2.1"
+            }
+          }
+        },
+        "esquery": {
+          "version": "1.7.0",
+          "overridden": false,
+          "dependencies": {
+            "estraverse": {
+              "version": "5.3.0"
+            }
+          }
+        },
+        "esutils": {
+          "version": "2.0.3",
+          "overridden": false
+        },
+        "fast-deep-equal": {
+          "version": "3.1.3",
+          "overridden": false
+        },
+        "file-entry-cache": {
+          "version": "8.0.0",
+          "overridden": false,
+          "dependencies": {
+            "flat-cache": {
+              "version": "4.0.1",
+              "overridden": false,
+              "dependencies": {
+                "flatted": {
+                  "version": "3.4.4",
+                  "overridden": false
+                },
+                "keyv": {
+                  "version": "4.5.4",
+                  "overridden": false,
+                  "dependencies": {
+                    "json-buffer": {
+                      "version": "3.0.1",
+                      "overridden": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "find-up": {
+          "version": "5.0.0",
+          "overridden": false,
+          "dependencies": {
+            "locate-path": {
+              "version": "6.0.0",
+              "overridden": false,
+              "dependencies": {
+                "p-locate": {
+                  "version": "5.0.0",
+                  "overridden": false,
+                  "dependencies": {
+                    "p-limit": {
+                      "version": "3.1.0",
+                      "overridden": false,
+                      "dependencies": {
+                        "yocto-queue": {
+                          "version": "0.1.0",
+                          "overridden": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "path-exists": {
+              "version": "4.0.0",
+              "overridden": false
+            }
+          }
+        },
+        "glob-parent": {
+          "version": "6.0.2",
+          "overridden": false,
+          "dependencies": {
+            "is-glob": {
+              "version": "4.0.3"
+            }
+          }
+        },
+        "ignore": {
+          "version": "5.3.2",
+          "overridden": false
+        },
+        "imurmurhash": {
+          "version": "0.1.4",
+          "overridden": false
+        },
+        "is-glob": {
+          "version": "4.0.3",
+          "overridden": false,
+          "dependencies": {
+            "is-extglob": {
+              "version": "2.1.1",
+              "overridden": false
+            }
+          }
+        },
+        "jiti": {
+          "version": "2.7.0",
+          "overridden": false
+        },
+        "json-stable-stringify-without-jsonify": {
+          "version": "1.0.1",
+          "overridden": false
+        },
+        "lodash.merge": {
+          "version": "4.6.2",
+          "overridden": false
+        },
+        "minimatch": {
+          "version": "3.1.5",
+          "overridden": false,
+          "dependencies": {
+            "brace-expansion": {
+              "version": "1.1.21",
+              "overridden": false,
+              "dependencies": {
+                "balanced-match": {
+                  "version": "1.0.2",
+                  "overridden": false
+                },
+                "concat-map": {
+                  "version": "0.0.1",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "natural-compare": {
+          "version": "1.4.0",
+          "overridden": false
+        },
+        "optionator": {
+          "version": "0.9.4",
+          "overridden": false,
+          "dependencies": {
+            "deep-is": {
+              "version": "0.1.4",
+              "overridden": false
+            },
+            "fast-levenshtein": {
+              "version": "2.0.6",
+              "overridden": false
+            },
+            "levn": {
+              "version": "0.4.1"
+            },
+            "prelude-ls": {
+              "version": "1.2.1",
+              "overridden": false
+            },
+            "type-check": {
+              "version": "0.4.0",
+              "overridden": false,
+              "dependencies": {
+                "prelude-ls": {
+                  "version": "1.2.1"
+                }
+              }
+            },
+            "word-wrap": {
+              "version": "1.2.5",
+              "overridden": false
+            }
+          }
+        }
+      }
+    },
+    "globals": {
+      "version": "16.4.0",
+      "overridden": false
+    },
+    "jsdom": {
+      "version": "27.0.1",
+      "resolved": "https://registry.npmjs.org/jsdom/-/jsdom-27.0.1.tgz",
+      "overridden": false,
+      "dependencies": {
+        "@asamuzakjp/dom-selector": {
+          "version": "6.8.1",
+          "overridden": false,
+          "dependencies": {
+            "@asamuzakjp/nwsapi": {
+              "version": "2.3.9",
+              "overridden": false
+            },
+            "bidi-js": {
+              "version": "1.1.0",
+              "overridden": false,
+              "dependencies": {
+                "require-from-string": {
+                  "version": "2.0.2",
+                  "overridden": false
+                }
+              }
+            },
+            "css-tree": {
+              "version": "3.2.1",
+              "resolved": "https://registry.npmjs.org/css-tree/-/css-tree-3.2.1.tgz",
+              "overridden": false,
+              "dependencies": {
+                "mdn-data": {
+                  "version": "2.27.1",
+                  "resolved": "https://registry.npmjs.org/mdn-data/-/mdn-data-2.27.1.tgz",
+                  "overridden": false
+                },
+                "source-map-js": {
+                  "version": "1.2.2"
+                }
+              }
+            },
+            "is-potential-custom-element-name": {
+              "version": "1.0.1"
+            },
+            "lru-cache": {
+              "version": "11.5.3",
+              "overridden": false
+            }
+          }
+        },
+        "canvas": {},
+        "cssstyle": {
+          "version": "5.3.7",
+          "overridden": false,
+          "dependencies": {
+            "@asamuzakjp/css-color": {
+              "version": "4.1.2",
+              "overridden": false,
+              "dependencies": {
+                "@csstools/css-calc": {
+                  "version": "3.4.3",
+                  "overridden": false,
+                  "dependencies": {
+                    "@csstools/css-parser-algorithms": {
+                      "version": "4.0.2"
+                    },
+                    "@csstools/css-tokenizer": {
+                      "version": "4.0.2"
+                    }
+                  }
+                },
+                "@csstools/css-color-parser": {
+                  "version": "4.2.6",
+                  "overridden": false,
+                  "dependencies": {
+                    "@csstools/color-helpers": {
+                      "version": "6.1.2",
+                      "overridden": false
+                    },
+                    "@csstools/css-calc": {
+                      "version": "3.4.3"
+                    },
+                    "@csstools/css-parser-algorithms": {
+                      "version": "4.0.2"
+                    },
+                    "@csstools/css-tokenizer": {
+                      "version": "4.0.2"
+                    }
+                  }
+                },
+                "@csstools/css-parser-algorithms": {
+                  "version": "4.0.2",
+                  "overridden": false,
+                  "dependencies": {
+                    "@csstools/css-tokenizer": {
+                      "version": "4.0.2"
+                    }
+                  }
+                },
+                "@csstools/css-tokenizer": {
+                  "version": "4.0.2",
+                  "overridden": false
+                },
+                "lru-cache": {
+                  "version": "11.5.3",
+                  "overridden": false
+                }
+              }
+            },
+            "@csstools/css-syntax-patches-for-csstree": {
+              "version": "1.1.15",
+              "overridden": false,
+              "dependencies": {
+                "css-tree": {
+                  "version": "3.2.1"
+                }
+              }
+            },
+            "css-tree": {
+              "version": "3.2.1"
+            },
+            "lru-cache": {
+              "version": "11.5.3",
+              "overridden": false
+            }
+          }
+        },
+        "data-urls": {
+          "version": "6.0.1",
+          "overridden": false,
+          "dependencies": {
+            "whatwg-mimetype": {
+              "version": "5.0.0",
+              "overridden": false
+            },
+            "whatwg-url": {
+              "version": "15.1.0"
+            }
+          }
+        },
+        "decimal.js": {
+          "version": "10.6.0",
+          "overridden": false
+        },
+        "html-encoding-sniffer": {
+          "version": "4.0.0",
+          "overridden": false,
+          "dependencies": {
+            "whatwg-encoding": {
+              "version": "3.1.1"
+            }
+          }
+        },
+        "http-proxy-agent": {
+          "version": "7.0.2",
+          "overridden": false,
+          "dependencies": {
+            "agent-base": {
+              "version": "7.1.4",
+              "overridden": false
+            },
+            "debug": {
+              "version": "4.4.3"
+            }
+          }
+        },
+        "https-proxy-agent": {
+          "version": "7.0.6",
+          "overridden": false,
+          "dependencies": {
+            "agent-base": {
+              "version": "7.1.4"
+            },
+            "debug": {
+              "version": "4.4.3"
+            }
+          }
+        },
+        "is-potential-custom-element-name": {
+          "version": "1.0.1",
+          "overridden": false
+        },
+        "parse5": {
+          "version": "8.0.1",
+          "overridden": false,
+          "dependencies": {
+            "entities": {
+              "version": "8.1.0",
+              "overridden": false
+            }
+          }
+        },
+        "rrweb-cssom": {
+          "version": "0.8.0",
+          "overridden": false
+        },
+        "saxes": {
+          "version": "6.0.0",
+          "overridden": false,
+          "dependencies": {
+            "xmlchars": {
+              "version": "2.2.0",
+              "overridden": false
+            }
+          }
+        },
+        "symbol-tree": {
+          "version": "3.2.4",
+          "overridden": false
+        },
+        "tough-cookie": {
+          "version": "6.0.2",
+          "overridden": false,
+          "dependencies": {
+            "tldts": {
+              "version": "7.4.19",
+              "overridden": false,
+              "dependencies": {
+                "tldts-core": {
+                  "version": "7.4.20",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "w3c-xmlserializer": {
+          "version": "5.0.0",
+          "overridden": false,
+          "dependencies": {
+            "xml-name-validator": {
+              "version": "5.0.0"
+            }
+          }
+        },
+        "webidl-conversions": {
+          "version": "8.0.1",
+          "overridden": false
+        },
+        "whatwg-encoding": {
+          "version": "3.1.1",
+          "overridden": false,
+          "dependencies": {
+            "iconv-lite": {
+              "version": "0.6.3",
+              "overridden": false,
+              "dependencies": {
+                "safer-buffer": {
+                  "version": "2.1.2",
+                  "overridden": false
+                }
+              }
+            }
+          }
+        },
+        "whatwg-mimetype": {
+          "version": "4.0.0",
+          "overridden": false
+        },
+        "whatwg-url": {
+          "version": "15.1.0",
+          "overridden": false,
+          "dependencies": {
+            "tr46": {
+              "version": "6.0.0",
+              "overridden": false,
+              "dependencies": {
+                "punycode": {
+                  "version": "2.3.1"
+                }
+              }
+            },
+            "webidl-conversions": {
+              "version": "8.0.1"
+            }
+          }
+        },
+        "ws": {
+          "version": "8.22.0",
+          "overridden": false,
+          "dependencies": {
+            "bufferutil": {},
+            "utf-8-validate": {}
+          }
+        },
+        "xml-name-validator": {
+          "version": "5.0.0",
+          "overridden": false
+        }
+      }
+    },
+    "msw": {
+      "version": "2.11.5",
+      "overridden": false,
+      "dependencies": {
+        "@inquirer/confirm": {
+          "version": "5.1.21",
+          "overridden": false,
+          "dependencies": {
+            "@inquirer/core": {
+              "version": "10.3.2",
+              "overridden": false,
+              "dependencies": {
+                "@inquirer/ansi": {
+                  "version": "1.0.2",
+                  "overridden": false
+                },
+                "@inquirer/figures": {
+                  "version": "1.0.15",
+                  "overridden": false
+                },
+                "@inquirer/type": {
+                  "version": "3.0.10"
+                },
+                "@types/node": {
+                  "version": "22.18.6"
+                },
+                "cli-width": {
+                  "version": "4.1.0",
+                  "overridden": false
+                },
+                "mute-stream": {
+                  "version": "2.0.0",
+                  "overridden": false
+                },
+                "signal-exit": {
+                  "version": "4.1.0",
+                  "overridden": false
+                },
+                "wrap-ansi": {
+                  "version": "6.2.0",
+                  "overridden": false,
+                  "dependencies": {
+                    "ansi-styles": {
+                      "version": "4.3.0"
+                    },
+                    "string-width": {
+                      "version": "4.2.3"
+                    },
+                    "strip-ansi": {
+                      "version": "6.0.1"
+                    }
+                  }
+                },
+                "yoctocolors-cjs": {
+                  "version": "2.1.3",
+                  "overridden": false
+                }
+              }
+            },
+            "@inquirer/type": {
+              "version": "3.0.10",
+              "overridden": false,
+              "dependencies": {
+                "@types/node": {
+                  "version": "22.18.6"
+                }
+              }
+            },
+            "@types/node": {
+              "version": "22.18.6"
+            }
+          }
+        },
+        "@mswjs/interceptors": {
+          "version": "0.39.8",
+          "overridden": false,
+          "dependencies": {
+            "@open-draft/deferred-promise": {
+              "version": "2.2.0"
+            },
+            "@open-draft/logger": {
+              "version": "0.3.0",
+              "overridden": false,
+              "dependencies": {
+                "is-node-process": {
+                  "version": "1.2.0"
+                },
+                "outvariant": {
+                  "version": "1.4.3"
+                }
+              }
+            },
+            "@open-draft/until": {
+              "version": "2.1.0",
+              "overridden": false
+            },
+            "is-node-process": {
+              "version": "1.2.0"
+            },
+            "outvariant": {
+              "version": "1.4.3"
+            },
+            "strict-event-emitter": {
+              "version": "0.5.1"
+            }
+          }
+        },
+        "@open-draft/deferred-promise": {
+          "version": "2.2.0",
+          "overridden": false
+        },
+        "@types/statuses": {
+          "version": "2.0.6",
+          "overridden": false
+        },
+        "cookie": {
+          "version": "1.1.1",
+          "overridden": false
+        },
+        "graphql": {
+          "version": "16.14.2",
+          "overridden": false
+        },
+        "headers-polyfill": {
+          "version": "4.0.3",
+          "overridden": false
+        },
+        "is-node-process": {
+          "version": "1.2.0",
+          "overridden": false
+        },
+        "outvariant": {
+          "version": "1.4.3",
+          "overridden": false
+        },
+        "path-to-regexp": {
+          "version": "6.3.0",
+          "overridden": false
+        },
+        "picocolors": {
+          "version": "1.1.1"
+        },
+        "rettime": {
+          "version": "0.7.0",
+          "overridden": false
+        },
+        "statuses": {
+          "version": "2.0.2",
+          "overridden": false
+        },
+        "strict-event-emitter": {
+          "version": "0.5.1",
+          "overridden": false
+        },
+        "tough-cookie": {
+          "version": "6.0.2"
+        },
+        "type-fest": {
+          "version": "4.41.0",
+          "overridden": false
+        },
+        "typescript": {
+          "version": "5.9.3"
+        },
+        "until-async": {
+          "version": "3.0.2",
+          "overridden": false
+        },
+        "yargs": {
+          "version": "17.7.3",
+          "overridden": false,
+          "dependencies": {
+            "cliui": {
+              "version": "8.0.1",
+              "overridden": false,
+              "dependencies": {
+                "string-width": {
+                  "version": "4.2.3"
+                },
+                "strip-ansi": {
+                  "version": "6.0.1",
+                  "overridden": false,
+                  "dependencies": {
+                    "ansi-regex": {
+                      "version": "5.0.1"
+                    }
+                  }
+                },
+                "wrap-ansi": {
+                  "version": "7.0.0",
+                  "overridden": false,
+                  "dependencies": {
+                    "ansi-styles": {
+                      "version": "4.3.0"
+                    },
+                    "string-width": {
+                      "version": "4.2.3"
+                    },
+                    "strip-ansi": {
+                      "version": "6.0.1"
+                    }
+                  }
+                }
+              }
+            },
+            "escalade": {
+              "version": "3.2.0",
+              "overridden": false
+            },
+            "get-caller-file": {
+              "version": "2.0.5",
+              "overridden": false
+            },
+            "require-directory": {
+              "version": "2.1.1",
+              "overridden": false
+            },
+            "string-width": {
+              "version": "4.2.3",
+              "overridden": false,
+              "dependencies": {
+                "emoji-regex": {
+                  "version": "8.0.0",
+                  "overridden": false
+                },
+                "is-fullwidth-code-point": {
+                  "version": "3.0.0",
+                  "overridden": false
+                },
+                "strip-ansi": {
+                  "version": "6.0.1"
+                }
+              }
+            },
+            "y18n": {
+              "version": "5.0.8",
+              "overridden": false
+            },
+            "yargs-parser": {
+              "version": "21.1.1",
+              "overridden": false
+            }
+          }
+        }
+      }
+    },
+    "prettier": {
+      "version": "3.6.2",
+      "overridden": false
+    },
+    "react-dom": {
+      "version": "19.2.0",
+      "overridden": false,
+      "dependencies": {
+        "react": {
+          "version": "19.2.0"
+        },
+        "scheduler": {
+          "version": "0.27.0",
+          "overridden": false
+        }
+      }
+    },
+    "react-hook-form": {
+      "version": "7.65.0",
+      "overridden": false,
+      "dependencies": {
+        "react": {
+          "version": "19.2.0"
+        }
+      }
+    },
+    "react-router-dom": {
+      "version": "7.18.4",
+      "resolved": "https://registry.npmjs.org/react-router-dom/-/react-router-dom-7.18.4.tgz",
+      "overridden": false,
+      "dependencies": {
+        "react-dom": {
+          "version": "19.2.0"
+        },
+        "react-router": {
+          "version": "7.18.4",
+          "resolved": "https://registry.npmjs.org/react-router/-/react-router-7.18.4.tgz",
+          "overridden": false,
+          "dependencies": {
+            "cookie": {
+              "version": "1.1.1"
+            },
+            "react-dom": {
+              "version": "19.2.0"
+            },
+            "react": {
+              "version": "19.2.0"
+            },
+            "set-cookie-parser": {
+              "version": "2.7.3",
+              "resolved": "https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.7.3.tgz",
+              "overridden": false
+            }
+          }
+        },
+        "react": {
+          "version": "19.2.0"
+        }
+      }
+    },
+    "react": {
+      "version": "19.2.0",
+      "overridden": false
+    },
+    "tailwind-merge": {
+      "version": "3.3.1",
+      "overridden": false
+    },
+    "tailwindcss": {
+      "version": "4.1.18",
+      "overridden": false
+    },
+    "typescript-eslint": {
+      "version": "8.46.1",
+      "overridden": false,
+      "dependencies": {
+        "@typescript-eslint/eslint-plugin": {
+          "version": "8.46.1",
+          "overridden": false,
+          "dependencies": {
+            "@eslint-community/regexpp": {
+              "version": "4.12.2"
+            },
+            "@typescript-eslint/parser": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/scope-manager": {
+              "version": "8.46.1",
+              "overridden": false,
+              "dependencies": {
+                "@typescript-eslint/types": {
+                  "version": "8.46.1"
+                },
+                "@typescript-eslint/visitor-keys": {
+                  "version": "8.46.1"
+                }
+              }
+            },
+            "@typescript-eslint/type-utils": {
+              "version": "8.46.1",
+              "overridden": false,
+              "dependencies": {
+                "@typescript-eslint/types": {
+                  "version": "8.46.1"
+                },
+                "@typescript-eslint/typescript-estree": {
+                  "version": "8.46.1"
+                },
+                "@typescript-eslint/utils": {
+                  "version": "8.46.1"
+                },
+                "debug": {
+                  "version": "4.4.3"
+                },
+                "eslint": {
+                  "version": "9.39.1"
+                },
+                "ts-api-utils": {
+                  "version": "2.5.0"
+                },
+                "typescript": {
+                  "version": "5.9.3"
+                }
+              }
+            },
+            "@typescript-eslint/utils": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/visitor-keys": {
+              "version": "8.46.1",
+              "overridden": false,
+              "dependencies": {
+                "@typescript-eslint/types": {
+                  "version": "8.46.1"
+                },
+                "eslint-visitor-keys": {
+                  "version": "4.2.1"
+                }
+              }
+            },
+            "eslint": {
+              "version": "9.39.1"
+            },
+            "graphemer": {
+              "version": "1.4.0",
+              "overridden": false
+            },
+            "ignore": {
+              "version": "7.0.14",
+              "overridden": false
+            },
+            "natural-compare": {
+              "version": "1.4.0"
+            },
+            "ts-api-utils": {
+              "version": "2.5.0",
+              "overridden": false,
+              "dependencies": {
+                "typescript": {
+                  "version": "5.9.3"
+                }
+              }
+            },
+            "typescript": {
+              "version": "5.9.3"
+            }
+          }
+        },
+        "@typescript-eslint/parser": {
+          "version": "8.46.1",
+          "overridden": false,
+          "dependencies": {
+            "@typescript-eslint/scope-manager": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/types": {
+              "version": "8.46.1",
+              "overridden": false
+            },
+            "@typescript-eslint/typescript-estree": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/visitor-keys": {
+              "version": "8.46.1"
+            },
+            "debug": {
+              "version": "4.4.3"
+            },
+            "eslint": {
+              "version": "9.39.1"
+            },
+            "typescript": {
+              "version": "5.9.3"
+            }
+          }
+        },
+        "@typescript-eslint/typescript-estree": {
+          "version": "8.46.1",
+          "overridden": false,
+          "dependencies": {
+            "@typescript-eslint/project-service": {
+              "version": "8.46.1",
+              "overridden": false,
+              "dependencies": {
+                "@typescript-eslint/tsconfig-utils": {
+                  "version": "8.46.1"
+                },
+                "@typescript-eslint/types": {
+                  "version": "8.46.1"
+                },
+                "debug": {
+                  "version": "4.4.3"
+                },
+                "typescript": {
+                  "version": "5.9.3"
+                }
+              }
+            },
+            "@typescript-eslint/tsconfig-utils": {
+              "version": "8.46.1",
+              "overridden": false,
+              "dependencies": {
+                "typescript": {
+                  "version": "5.9.3"
+                }
+              }
+            },
+            "@typescript-eslint/types": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/visitor-keys": {
+              "version": "8.46.1"
+            },
+            "debug": {
+              "version": "4.4.3"
+            },
+            "fast-glob": {
+              "version": "3.3.3",
+              "overridden": false,
+              "dependencies": {
+                "@nodelib/fs.stat": {
+                  "version": "2.0.5",
+                  "overridden": false
+                },
+                "@nodelib/fs.walk": {
+                  "version": "1.2.8",
+                  "overridden": false,
+                  "dependencies": {
+                    "@nodelib/fs.scandir": {
+                      "version": "2.1.5",
+                      "overridden": false,
+                      "dependencies": {
+                        "@nodelib/fs.stat": {
+                          "version": "2.0.5"
+                        },
+                        "run-parallel": {
+                          "version": "1.2.0",
+                          "overridden": false,
+                          "dependencies": {
+                            "queue-microtask": {
+                              "version": "1.2.3",
+                              "overridden": false
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "fastq": {
+                      "version": "1.20.3",
+                      "overridden": false,
+                      "dependencies": {
+                        "reusify": {
+                          "version": "1.1.0",
+                          "overridden": false
+                        }
+                      }
+                    }
+                  }
+                },
+                "glob-parent": {
+                  "version": "5.1.2",
+                  "overridden": false,
+                  "dependencies": {
+                    "is-glob": {
+                      "version": "4.0.3"
+                    }
+                  }
+                },
+                "merge2": {
+                  "version": "1.4.1",
+                  "overridden": false
+                },
+                "micromatch": {
+                  "version": "4.0.8",
+                  "overridden": false,
+                  "dependencies": {
+                    "braces": {
+                      "version": "3.0.3",
+                      "overridden": false,
+                      "dependencies": {
+                        "fill-range": {
+                          "version": "7.1.1",
+                          "overridden": false,
+                          "dependencies": {
+                            "to-regex-range": {
+                              "version": "5.0.1",
+                              "overridden": false,
+                              "dependencies": {
+                                "is-number": {
+                                  "version": "7.0.0",
+                                  "overridden": false
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "picomatch": {
+                      "version": "2.3.2",
+                      "overridden": false
+                    }
+                  }
+                }
+              }
+            },
+            "is-glob": {
+              "version": "4.0.3"
+            },
+            "minimatch": {
+              "version": "9.0.9",
+              "overridden": false,
+              "dependencies": {
+                "brace-expansion": {
+                  "version": "2.1.7",
+                  "overridden": false,
+                  "dependencies": {
+                    "balanced-match": {
+                      "version": "1.0.2"
+                    }
+                  }
+                }
+              }
+            },
+            "semver": {
+              "version": "7.8.5",
+              "overridden": false
+            },
+            "ts-api-utils": {
+              "version": "2.5.0"
+            },
+            "typescript": {
+              "version": "5.9.3"
+            }
+          }
+        },
+        "@typescript-eslint/utils": {
+          "version": "8.46.1",
+          "overridden": false,
+          "dependencies": {
+            "@eslint-community/eslint-utils": {
+              "version": "4.10.1"
+            },
+            "@typescript-eslint/scope-manager": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/types": {
+              "version": "8.46.1"
+            },
+            "@typescript-eslint/typescript-estree": {
+              "version": "8.46.1"
+            },
+            "eslint": {
+              "version": "9.39.1"
+            },
+            "typescript": {
+              "version": "5.9.3"
+            }
+          }
+        },
+        "eslint": {
+          "version": "9.39.1"
+        },
+        "typescript": {
+          "version": "5.9.3"
+        }
+      }
+    },
+    "typescript": {
+      "version": "5.9.3",
+      "overridden": false
+    },
+    "vite": {
+      "version": "7.3.7",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-7.3.7.tgz",
+      "overridden": true,
+      "dependencies": {
+        "@types/node": {
+          "version": "22.18.6"
+        },
+        "esbuild": {
+          "version": "0.28.1",
+          "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.28.1.tgz",
+          "overridden": true,
+          "dependencies": {
+            "@esbuild/aix-ppc64": {},
+            "@esbuild/android-arm": {},
+            "@esbuild/android-arm64": {},
+            "@esbuild/android-x64": {},
+            "@esbuild/darwin-arm64": {},
+            "@esbuild/darwin-x64": {},
+            "@esbuild/freebsd-arm64": {},
+            "@esbuild/freebsd-x64": {},
+            "@esbuild/linux-arm": {},
+            "@esbuild/linux-arm64": {},
+            "@esbuild/linux-ia32": {},
+            "@esbuild/linux-loong64": {},
+            "@esbuild/linux-mips64el": {},
+            "@esbuild/linux-ppc64": {},
+            "@esbuild/linux-riscv64": {},
+            "@esbuild/linux-s390x": {},
+            "@esbuild/linux-x64": {},
+            "@esbuild/netbsd-arm64": {},
+            "@esbuild/netbsd-x64": {},
+            "@esbuild/openbsd-arm64": {},
+            "@esbuild/openbsd-x64": {},
+            "@esbuild/openharmony-arm64": {},
+            "@esbuild/sunos-x64": {},
+            "@esbuild/win32-arm64": {},
+            "@esbuild/win32-ia32": {},
+            "@esbuild/win32-x64": {
+              "version": "0.28.1",
+              "resolved": "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.28.1.tgz",
+              "overridden": false
+            }
+          }
+        },
+        "fdir": {
+          "version": "6.5.0",
+          "overridden": false,
+          "dependencies": {
+            "picomatch": {
+              "version": "4.0.7"
+            }
+          }
+        },
+        "fsevents": {},
+        "jiti": {
+          "version": "2.7.0"
+        },
+        "less": {},
+        "lightningcss": {
+          "version": "1.30.2",
+          "overridden": false,
+          "dependencies": {
+            "detect-libc": {
+              "version": "2.1.2",
+              "overridden": false
+            },
+            "lightningcss-android-arm64": {},
+            "lightningcss-darwin-arm64": {},
+            "lightningcss-darwin-x64": {},
+            "lightningcss-freebsd-x64": {},
+            "lightningcss-linux-arm-gnueabihf": {},
+            "lightningcss-linux-arm64-gnu": {},
+            "lightningcss-linux-arm64-musl": {},
+            "lightningcss-linux-x64-gnu": {},
+            "lightningcss-linux-x64-musl": {},
+            "lightningcss-win32-arm64-msvc": {},
+            "lightningcss-win32-x64-msvc": {
+              "version": "1.30.2",
+              "overridden": false
+            }
+          }
+        },
+        "picomatch": {
+          "version": "4.0.7",
+          "overridden": false
+        },
+        "postcss": {
+          "version": "8.5.32",
+          "overridden": false,
+          "dependencies": {
+            "nanoid": {
+              "version": "3.3.20",
+              "overridden": false
+            },
+            "picocolors": {
+              "version": "1.1.1"
+            },
+            "source-map-js": {
+              "version": "1.2.2"
+            }
+          }
+        },
+        "rollup": {
+          "version": "4.66.0",
+          "overridden": false,
+          "dependencies": {
+            "@napi-rs/lzma-linux-x64-gnu": {},
+            "@rollup/rollup-android-arm-eabi": {},
+            "@rollup/rollup-android-arm64": {},
+            "@rollup/rollup-darwin-arm64": {},
+            "@rollup/rollup-darwin-x64": {},
+            "@rollup/rollup-freebsd-arm64": {},
+            "@rollup/rollup-freebsd-x64": {},
+            "@rollup/rollup-linux-arm-gnueabihf": {},
+            "@rollup/rollup-linux-arm-musleabihf": {},
+            "@rollup/rollup-linux-arm64-gnu": {},
+            "@rollup/rollup-linux-arm64-musl": {},
+            "@rollup/rollup-linux-loong64-gnu": {},
+            "@rollup/rollup-linux-loong64-musl": {},
+            "@rollup/rollup-linux-ppc64-gnu": {},
+            "@rollup/rollup-linux-ppc64-musl": {},
+            "@rollup/rollup-linux-riscv64-gnu": {},
+            "@rollup/rollup-linux-riscv64-musl": {},
+            "@rollup/rollup-linux-s390x-gnu": {},
+            "@rollup/rollup-linux-x64-gnu": {},
+            "@rollup/rollup-linux-x64-musl": {},
+            "@rollup/rollup-openbsd-x64": {},
+            "@rollup/rollup-openharmony-arm64": {},
+            "@rollup/rollup-win32-arm64-msvc": {},
+            "@rollup/rollup-win32-ia32-msvc": {},
+            "@rollup/rollup-win32-x64-gnu": {
+              "version": "4.66.0",
+              "overridden": false
+            },
+            "@rollup/rollup-win32-x64-msvc": {
+              "version": "4.66.0",
+              "overridden": false
+            },
+            "@types/estree": {
+              "version": "1.0.9"
+            },
+            "fsevents": {}
+          }
+        },
+        "sass-embedded": {},
+        "sass": {},
+        "stylus": {},
+        "sugarss": {},
+        "terser": {},
+        "tinyglobby": {
+          "version": "0.2.17",
+          "overridden": false,
+          "dependencies": {
+            "fdir": {
+              "version": "6.5.0",
+              "overridden": false,
+              "dependencies": {
+                "picomatch": {
+                  "version": "4.0.7"
+                }
+              }
+            },
+            "picomatch": {
+              "version": "4.0.7",
+              "overridden": false
+            }
+          }
+        },
+        "tsx": {},
+        "yaml": {}
+      }
+    },
+    "vitest": {
+      "version": "4.1.12",
+      "resolved": "https://registry.npmjs.org/vitest/-/vitest-4.1.12.tgz",
+      "overridden": true,
+      "dependencies": {
+        "@edge-runtime/vm": {},
+        "@opentelemetry/api": {},
+        "@types/node": {
+          "version": "22.18.6"
+        },
+        "@vitest/browser-playwright": {},
+        "@vitest/browser-preview": {},
+        "@vitest/browser-webdriverio": {},
+        "@vitest/coverage-istanbul": {},
+        "@vitest/coverage-v8": {},
+        "@vitest/expect": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "@standard-schema/spec": {
+              "version": "1.1.0",
+              "resolved": "https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz",
+              "overridden": false
+            },
+            "@types/chai": {
+              "version": "5.2.3",
+              "resolved": "https://registry.npmjs.org/@types/chai/-/chai-5.2.3.tgz",
+              "overridden": false,
+              "dependencies": {
+                "@types/deep-eql": {
+                  "version": "4.0.2",
+                  "resolved": "https://registry.npmjs.org/@types/deep-eql/-/deep-eql-4.0.2.tgz",
+                  "overridden": false
+                },
+                "assertion-error": {
+                  "version": "2.0.1",
+                  "resolved": "https://registry.npmjs.org/assertion-error/-/assertion-error-2.0.1.tgz",
+                  "overridden": false
+                }
+              }
+            },
+            "@vitest/spy": {
+              "version": "4.1.12"
+            },
+            "@vitest/utils": {
+              "version": "4.1.12"
+            },
+            "chai": {
+              "version": "6.3.0",
+              "resolved": "https://registry.npmjs.org/chai/-/chai-6.3.0.tgz",
+              "overridden": false
+            },
+            "tinyrainbow": {
+              "version": "3.2.0"
+            }
+          }
+        },
+        "@vitest/mocker": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "@vitest/spy": {
+              "version": "4.1.12"
+            },
+            "estree-walker": {
+              "version": "3.0.3",
+              "resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-3.0.3.tgz",
+              "overridden": false,
+              "dependencies": {
+                "@types/estree": {
+                  "version": "1.0.9"
+                }
+              }
+            },
+            "magic-string": {
+              "version": "0.30.21"
+            },
+            "msw": {
+              "version": "2.11.5"
+            },
+            "vite": {
+              "version": "7.3.7"
+            }
+          }
+        },
+        "@vitest/pretty-format": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "tinyrainbow": {
+              "version": "3.2.0"
+            }
+          }
+        },
+        "@vitest/runner": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "@vitest/utils": {
+              "version": "4.1.12"
+            },
+            "pathe": {
+              "version": "2.0.3"
+            }
+          }
+        },
+        "@vitest/snapshot": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "@vitest/pretty-format": {
+              "version": "4.1.12"
+            },
+            "@vitest/utils": {
+              "version": "4.1.12"
+            },
+            "magic-string": {
+              "version": "0.30.21"
+            },
+            "pathe": {
+              "version": "2.0.3"
+            }
+          }
+        },
+        "@vitest/spy": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.12.tgz",
+          "overridden": false
+        },
+        "@vitest/ui": {},
+        "@vitest/utils": {
+          "version": "4.1.12",
+          "resolved": "https://registry.npmjs.org/@vitest/utils/-/utils-4.1.12.tgz",
+          "overridden": false,
+          "dependencies": {
+            "@vitest/pretty-format": {
+              "version": "4.1.12"
+            },
+            "convert-source-map": {
+              "version": "2.0.0"
+            },
+            "tinyrainbow": {
+              "version": "3.2.0"
+            }
+          }
+        },
+        "es-module-lexer": {
+          "version": "2.3.2",
+          "resolved": "https://registry.npmjs.org/es-module-lexer/-/es-module-lexer-2.3.2.tgz",
+          "overridden": false
+        },
+        "expect-type": {
+          "version": "1.4.0",
+          "overridden": false
+        },
+        "happy-dom": {},
+        "jsdom": {
+          "version": "27.0.1"
+        },
+        "magic-string": {
+          "version": "0.30.21",
+          "overridden": false,
+          "dependencies": {
+            "@jridgewell/sourcemap-codec": {
+              "version": "1.6.0",
+              "overridden": false
+            }
+          }
+        },
+        "obug": {
+          "version": "2.2.1",
+          "overridden": false
+        },
+        "pathe": {
+          "version": "2.0.3",
+          "resolved": "https://registry.npmjs.org/pathe/-/pathe-2.0.3.tgz",
+          "overridden": false
+        },
+        "picomatch": {
+          "version": "4.0.7",
+          "overridden": false
+        },
+        "std-env": {
+          "version": "4.3.0",
+          "resolved": "https://registry.npmjs.org/std-env/-/std-env-4.3.0.tgz",
+          "overridden": false
+        },
+        "tinybench": {
+          "version": "2.9.0",
+          "overridden": false
+        },
+        "tinyexec": {
+          "version": "1.3.1",
+          "overridden": false
+        },
+        "tinyglobby": {
+          "version": "0.2.17"
+        },
+        "tinyrainbow": {
+          "version": "3.2.0",
+          "resolved": "https://registry.npmjs.org/tinyrainbow/-/tinyrainbow-3.2.0.tgz",
+          "overridden": false
+        },
+        "vite": {
+          "version": "7.3.7"
+        },
+        "why-is-node-running": {
+          "version": "2.3.0",
+          "overridden": false,
+          "dependencies": {
+            "siginfo": {
+              "version": "2.0.0",
+              "overridden": false
+            },
+            "stackback": {
+              "version": "0.0.2",
+              "overridden": false
+            }
+          }
+        }
+      }
+    },
+    "zod": {
+      "version": "4.6.7",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
+      "overridden": false
+    }
+  }
+}
