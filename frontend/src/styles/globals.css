@@ -1,0 +1,151 @@
+@import '@fontsource/be-vietnam-pro/400.css';
+@import '@fontsource/be-vietnam-pro/500.css';
+@import '@fontsource/be-vietnam-pro/600.css';
+@import '@fontsource/be-vietnam-pro/700.css';
+@import 'tailwindcss';
+@import './tokens.css';
+
+@theme inline {
+  --color-*: initial;
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-accent-500: var(--accent-500);
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-900: var(--neutral-900);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-allergen-bg: var(--allergen-bg);
+  --color-allergen-border: var(--allergen-border);
+  --color-allergen-text: var(--allergen-text);
+  --font-sans: var(--font-body);
+  --text-*: initial;
+  --text-xs: var(--font-size-xs);
+  --text-xs--line-height: var(--line-xs);
+  --text-sm: var(--font-size-sm);
+  --text-sm--line-height: var(--line-sm);
+  --text-base: var(--font-size-base);
+  --text-base--line-height: var(--line-base);
+  --text-lg: var(--font-size-lg);
+  --text-lg--line-height: var(--line-lg);
+  --text-xl: var(--font-size-xl);
+  --text-xl--line-height: var(--line-xl);
+  --text-2xl: var(--font-size-2xl);
+  --text-2xl--line-height: var(--line-2xl);
+  --text-3xl: var(--font-size-3xl);
+  --text-3xl--line-height: var(--line-3xl);
+  --text-4xl: var(--font-size-4xl);
+  --text-4xl--line-height: var(--line-4xl);
+  --spacing: var(--space-1);
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-touch: var(--touch-target);
+  --radius-*: initial;
+  --radius-control: var(--corner-control);
+  --radius-card: var(--corner-card);
+  --radius-pill: var(--corner-pill);
+  --shadow-*: initial;
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --container-page: var(--container-width);
+  --container-copy: var(--reading-width);
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--neutral-50);
+    color: var(--neutral-900);
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-base);
+  }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--primary-600);
+    outline-offset: var(--focus-offset);
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-disabled);
+  }
+}
+
+@layer components {
+  .page-container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+  }
+  .control-transition {
+    transition: background-color var(--motion-fast) var(--motion-ease);
+  }
+  .nav-link[aria-current='page'] {
+    color: var(--primary-700);
+    background: var(--primary-50);
+  }
+  .skip-link {
+    position: fixed;
+    top: var(--space-4);
+    left: var(--space-4);
+    z-index: 10;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+  .product-art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-bottom: var(--border-width) solid var(--neutral-200);
+  }
+  .product-art[data-tone='grain'] {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+  }
+  .product-art[data-tone='warm'] {
+    background: var(--allergen-bg);
+    color: var(--allergen-text);
+  }
+  .product-art svg {
+    width: 45%;
+    height: 65%;
+  }
+  @media (width >= 768px) {
+    .page-container {
+      padding-inline: var(--space-6);
+    }
+  }
+  @media (width >= 1024px) {
+    .page-container {
+      padding-inline: var(--space-8);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .control-transition {
+      transition: none;
+    }
+  }
+}
