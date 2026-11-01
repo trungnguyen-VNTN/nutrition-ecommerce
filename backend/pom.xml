@@ -21,7 +21,7 @@
       <configuration><systemPropertyVariables><user.timezone>UTC</user.timezone></systemPropertyVariables></configuration>
     </plugin>
     <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin>
-    <plugin><groupId>com.diffplug.spotless</groupId><artifactId>spotless-maven-plugin</artifactId><version>2.43.0</version>
+    <plugin><groupId>com.diffplug.spotless</groupId><artifactId>spotless-maven-plugin</artifactId><version>3.10.4</version>
       <configuration><java><googleJavaFormat><version>1.24.0</version></googleJavaFormat><removeUnusedImports/></java></configuration>
       <executions><execution><goals><goal>check</goal></goals><phase>validate</phase></execution></executions>
     </plugin>
