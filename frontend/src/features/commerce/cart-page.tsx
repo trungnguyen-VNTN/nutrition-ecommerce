@@ -1,3 +1,4 @@
+import { ArrowRight, ShoppingCartSimple } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -38,10 +39,10 @@ export function CartPage() {
           </p>
         </div>
         <Link
-          className="inline-flex min-h-touch items-center text-sm font-semibold text-primary-700 underline"
+          className="inline-flex min-h-touch items-center gap-2 text-sm font-semibold text-primary-700 underline"
           to="/products"
         >
-          Tiếp tục mua sắm →
+          Tiếp tục mua sắm <ArrowRight />
         </Link>
       </header>
       {!identity ? (
@@ -59,9 +60,7 @@ export function CartPage() {
         />
       ) : cart.data.items.length === 0 ? (
         <div className="space-y-4 rounded-card bg-primary-50 p-8 text-center">
-          <span className="text-3xl text-primary-700" aria-hidden="true">
-            ◇
-          </span>
+          <ShoppingCartSimple className="icon mx-auto text-4xl text-primary-700" />
           <h2 className="text-xl font-semibold">Giỏ hàng trống.</h2>
           <p className="text-neutral-700">
             Khám phá thực phẩm và xem dữ liệu dinh dưỡng trước khi chọn.
