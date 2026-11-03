@@ -12,6 +12,10 @@ export const messages = {
   orders: 'Đơn hàng',
   login: 'Đăng nhập',
   chat: 'Tra cứu AI',
+  askAi: 'Hỏi AI',
+  adminArea: 'Không gian quản trị',
+  adminNavigation: 'Quản trị cửa hàng',
+  viewStore: 'Xem cửa hàng',
   admin: 'Quản trị',
   placeholder:
     'Trang đang được chuẩn bị. Chức năng sẽ được bổ sung ở giai đoạn tiếp theo.',
