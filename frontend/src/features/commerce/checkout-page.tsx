@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
@@ -43,9 +44,9 @@ export function CheckoutPage() {
       <header className="space-y-3 border-b border-neutral-200 pb-6">
         <Link
           to="/cart"
-          className="inline-flex min-h-touch items-center text-sm text-primary-700 underline"
+          className="inline-flex min-h-touch items-center gap-2 text-sm text-primary-700 underline"
         >
-          ← Quay lại giỏ hàng
+          <ArrowLeft /> Quay lại giỏ hàng
         </Link>
         <h1 className="text-3xl font-semibold">Đặt hàng</h1>
         <p className="text-neutral-700">

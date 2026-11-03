@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { CaretDown, Funnel, X } from '@phosphor-icons/react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProductFiltersForm } from './product-filters';
@@ -15,6 +17,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage } from '@/lib/api/client';
 import { useProducts } from './hooks/use-products';
 
+const filterKeys = [
+  'q',
+  'categoryId',
+  'maxCalories',
+  'minProtein',
+  'excludeAllergen',
+];
+
 function ProductList({
   filters,
   onPage,
@@ -30,15 +40,15 @@ function ProductList({
           {messages.loading}
         </p>
         <Skeleton className="mb-6 h-[var(--line-sm)] w-1/3 sm:w-1/6" />
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
           {Array.from({ length: 8 }, (_, index) => (
             <div
               key={index}
-              className="overflow-hidden rounded-card border border-neutral-200"
+              className="product-card overflow-hidden rounded-card border border-neutral-200"
               data-testid="product-skeleton"
             >
-              <Skeleton className="aspect-[4/3] rounded-none" />
-              <div className="product-card-body flex flex-col gap-3 p-4">
+              <Skeleton className="product-art rounded-none" />
+              <div className="product-card-body flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="h-touch w-full" />
                 <Skeleton className="h-[var(--line-xl)] w-1/2" />
@@ -67,7 +77,7 @@ function ProductList({
       <p className="mb-6 text-sm text-neutral-700" role="status">
         {messages.sampleCount(query.data.total)}
       </p>
-      <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid gap-3 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
         {query.data.items.map((product, index) => (
           <li key={product.id}>
             <ProductCard product={product} index={index} />
@@ -109,6 +119,10 @@ export function ProductsPage() {
     ...Object.fromEntries(params),
     excludeAllergen: params.getAll('excludeAllergen'),
   });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const activeFilters = Array.from(params.entries()).filter(
+    ([key, value]) => filterKeys.includes(key) && value !== '',
+  ).length;
   return (
     <div className="space-y-8">
       <header className="max-w-copy space-y-3">
@@ -125,29 +139,52 @@ export function ProductsPage() {
           className="filter-panel rounded-card"
           aria-label="Bộ lọc sản phẩm"
         >
-          <ProductFiltersForm
-            filters={parsed.success ? parsed.data : null}
-            onClear={() => setParams({})}
-            onApply={(values) => {
-              const next = new URLSearchParams(values);
-              next.set('page', '0');
-              setParams(next);
-            }}
-          />
+          {/* Progressive disclosure: filters fold away on phones and tablets. */}
+          <Button
+            variant="secondary"
+            className="w-full justify-between lg:hidden"
+            aria-expanded={filtersOpen}
+            aria-controls="product-filters"
+            onClick={() => setFiltersOpen(!filtersOpen)}
+          >
+            <span className="inline-flex items-center gap-2">
+              <Funnel />
+              {messages.filters}
+              {activeFilters > 0 && (
+                <span className="text-xs font-medium">
+                  · {messages.activeFilters(activeFilters)}
+                </span>
+              )}
+            </span>
+            <CaretDown
+              className={`icon control-transition ${filtersOpen ? 'rotate-180' : ''}`}
+            />
+          </Button>
+          <div
+            id="product-filters"
+            className={filtersOpen ? 'mt-3 lg:mt-0' : 'hidden lg:block'}
+          >
+            <ProductFiltersForm
+              filters={parsed.success ? parsed.data : null}
+              onClear={() => {
+                setParams({});
+                setFiltersOpen(false);
+              }}
+              onApply={(values) => {
+                const next = new URLSearchParams(values);
+                next.set('page', '0');
+                setParams(next);
+                setFiltersOpen(false);
+              }}
+            />
+          </div>
         </aside>
         <div className="min-w-0">
           {parsed.success && (
             <div className="mb-4 flex flex-wrap gap-2">
               {Array.from(params.entries())
                 .filter(
-                  ([key, value]) =>
-                    [
-                      'q',
-                      'categoryId',
-                      'maxCalories',
-                      'minProtein',
-                      'excludeAllergen',
-                    ].includes(key) && value !== '',
+                  ([key, value]) => filterKeys.includes(key) && value !== '',
                 )
                 .map(([key, value]) => (
                   <Button
@@ -176,7 +213,7 @@ export function ProductsPage() {
                             ?.label ?? value)
                         : value}
                     </span>
-                    <span aria-hidden="true">×</span>
+                    <X />
                   </Button>
                 ))}
             </div>

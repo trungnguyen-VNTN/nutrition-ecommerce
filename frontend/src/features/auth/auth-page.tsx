@@ -1,3 +1,4 @@
+import { LockSimple } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -177,9 +178,7 @@ export function AuthPage({ register = false }: { register?: boolean }) {
 export function SignInRequired() {
   return (
     <div className="mx-auto max-w-copy space-y-4 rounded-card border border-neutral-200 bg-primary-50 p-8 text-center">
-      <span aria-hidden="true" className="text-3xl text-primary-700">
-        ↗
-      </span>
+      <LockSimple className="icon mx-auto text-4xl text-primary-700" />
       <h2 className="text-xl font-semibold">
         Dành riêng cho tài khoản của bạn
       </h2>
