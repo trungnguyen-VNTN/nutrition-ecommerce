@@ -62,11 +62,16 @@
   --motion-fast: 150ms;
   --motion-normal: 200ms;
   --motion-ease: ease-out;
-  --opacity-disabled: 0.6;
+  --opacity-disabled: 0.5;
+  --bottom-nav-height: 64px;
+  --product-thumb: 104px;
+  --z-sticky: 20;
+  --z-skip: 100;
   --surface: #ffffff;
   --font-size-display: 48px;
   --line-display: 56px;
   --hero-image-height: 440px;
   --card-content-height: 320px;
+  --card-content-height-compact: 296px;
   --filter-width: 280px;
 }

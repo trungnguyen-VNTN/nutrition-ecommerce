@@ -6,6 +6,8 @@
 ## 1. Định hướng
 - Tinh thần: tươi, sạch, minh bạch. Nhiều khoảng trắng, ảnh sản phẩm là nhân vật chính, số liệu dinh dưỡng dễ quét mắt.
 - Tránh: bố cục mặc định "template", gradient lòe loẹt, quá nhiều màu nhấn, bóng đổ nặng, icon lẫn nhiều bộ.
+- Icon: một bộ duy nhất là Phosphor, nét `regular`; icon trang trí cạnh chữ ẩn khỏi trình đọc màn hình.
+- Điều hướng: dưới 768px dùng thanh tab dưới cùng (5 mục, icon + chữ, có vùng an toàn); từ 768px là hàng menu trong header. Dưới 1024px bộ lọc sản phẩm gập sau nút "Bộ lọc".
 - Ưu tiên: rõ ràng > trang trí. Mỗi màn hình có một hành động chính nổi bật.
 
 ## 2. Design tokens
