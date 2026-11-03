@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
@@ -129,10 +130,10 @@ export function OrderDetailPage({ admin = false }: { admin?: boolean }) {
     <section className="space-y-6">
       <header className="space-y-3">
         <Link
-          className="inline-flex min-h-touch items-center text-sm text-primary-700 underline"
+          className="inline-flex min-h-touch items-center gap-2 text-sm text-primary-700 underline"
           to={admin ? '/admin' : '/orders'}
         >
-          ← {admin ? 'Quản trị' : 'Tất cả đơn hàng'}
+          <ArrowLeft /> {admin ? 'Quản trị' : 'Tất cả đơn hàng'}
         </Link>
         <h1 className="text-3xl font-semibold">Chi tiết đơn hàng</h1>
       </header>

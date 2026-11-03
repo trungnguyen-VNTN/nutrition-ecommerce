@@ -1,3 +1,4 @@
+import { Package } from '@phosphor-icons/react';
 import { messages } from '@/app/messages.vi';
 import { Button } from '@/components/ui/button';
 
@@ -7,9 +8,7 @@ export function EmptyState({ onRefresh }: { onRefresh: () => void }) {
       className="rounded-card border border-neutral-200 p-8 text-center"
       aria-labelledby="empty-title"
     >
-      <span aria-hidden="true" className="text-3xl text-primary-700">
-        ◇
-      </span>
+      <Package className="icon mx-auto text-4xl text-primary-700" />
       <h2 id="empty-title" className="mt-4 text-xl font-semibold">
         {messages.emptyTitle}
       </h2>
