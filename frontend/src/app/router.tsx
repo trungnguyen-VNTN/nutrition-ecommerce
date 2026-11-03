@@ -1,17 +1,57 @@
-import { ProductDataPage } from '@/features/admin/product-data-page';
-import { ChatPage } from '@/features/chat/chat-page';
-import { AdminPage } from '@/features/admin/admin-page';
-import { HomePage } from '@/features/home/home-page';
-import { AuthPage } from '@/features/auth/auth-page';
-import { CartPage } from '@/features/commerce/cart-page';
-import { CheckoutPage } from '@/features/commerce/checkout-page';
-import { OrdersPage, OrderDetailPage } from '@/features/commerce/orders-page';
+import { lazy } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import { ProductsPage } from '@/features/products/products-page';
-import { ProductDetailPage } from '@/features/products/product-detail-page';
+import { HomePage } from '@/features/home/home-page';
 import { Button } from '@/components/ui/button';
 import { Layout } from './layout';
 import { messages } from './messages.vi';
+
+// Route-level splitting: only the home page ships in the entry bundle.
+const ProductsPage = lazy(() =>
+  import('@/features/products/products-page').then((m) => ({
+    default: m.ProductsPage,
+  })),
+);
+const ProductDetailPage = lazy(() =>
+  import('@/features/products/product-detail-page').then((m) => ({
+    default: m.ProductDetailPage,
+  })),
+);
+const CartPage = lazy(() =>
+  import('@/features/commerce/cart-page').then((m) => ({
+    default: m.CartPage,
+  })),
+);
+const CheckoutPage = lazy(() =>
+  import('@/features/commerce/checkout-page').then((m) => ({
+    default: m.CheckoutPage,
+  })),
+);
+const OrdersPage = lazy(() =>
+  import('@/features/commerce/orders-page').then((m) => ({
+    default: m.OrdersPage,
+  })),
+);
+const OrderDetailPage = lazy(() =>
+  import('@/features/commerce/orders-page').then((m) => ({
+    default: m.OrderDetailPage,
+  })),
+);
+const AuthPage = lazy(() =>
+  import('@/features/auth/auth-page').then((m) => ({ default: m.AuthPage })),
+);
+const ChatPage = lazy(() =>
+  import('@/features/chat/chat-page').then((m) => ({ default: m.ChatPage })),
+);
+const AdminPage = lazy(() =>
+  import('@/features/admin/admin-page').then((m) => ({
+    default: m.AdminPage,
+  })),
+);
+const ProductDataPage = lazy(() =>
+  import('@/features/admin/product-data-page').then((m) => ({
+    default: m.ProductDataPage,
+  })),
+);
 
 export function AppRoutes() {
   return (

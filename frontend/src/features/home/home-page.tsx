@@ -1,3 +1,4 @@
+import { ArrowRight, ArrowUpRight } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ export function HomePage() {
     retry: false,
   });
   return (
-    <div className="space-y-12">
+    <div className="space-y-10 md:space-y-12">
       <section className="hero" aria-label="Trang chủ">
         <div className="hero-copy">
           <p className="eyebrow">THỰC PHẨM MINH BẠCH · LỰA CHỌN MỖI NGÀY</p>
@@ -35,7 +36,7 @@ export function HomePage() {
           <div className="flex flex-wrap gap-3">
             <Button asChild>
               <Link to="/products">
-                Khám phá sản phẩm <span aria-hidden="true">↗</span>
+                Khám phá sản phẩm <ArrowRight />
               </Link>
             </Button>
             <Button asChild variant="secondary">
@@ -85,9 +86,9 @@ export function HomePage() {
           </div>
           <Link
             to="/products"
-            className="inline-flex min-h-touch items-center text-sm font-semibold text-primary-700"
+            className="inline-flex min-h-touch items-center gap-2 text-sm font-semibold text-primary-700"
           >
-            Xem tất cả →
+            Xem tất cả <ArrowRight />
           </Link>
         </div>
         {categories.isPending ? (
@@ -102,7 +103,7 @@ export function HomePage() {
             Danh mục đang được cập nhật. Bạn vẫn có thể xem tất cả sản phẩm.
           </p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {categories.data.map((category) => (
               <Link
                 className="category-link"
@@ -110,7 +111,7 @@ export function HomePage() {
                 to={`/products?categoryId=${category.id}`}
               >
                 <span>{category.name}</span>
-                <span aria-hidden="true">↗</span>
+                <ArrowUpRight className="icon text-primary-700" />
               </Link>
             ))}
           </div>
@@ -125,7 +126,9 @@ export function HomePage() {
             </h2>
           </div>
           <Button asChild variant="ghost">
-            <Link to="/products">Xem danh sách →</Link>
+            <Link to="/products">
+              Xem danh sách <ArrowRight />
+            </Link>
           </Button>
         </div>
         {query.isPending ? (
@@ -142,7 +145,7 @@ export function HomePage() {
         ) : query.data.items.length === 0 ? (
           <p>Chưa có sản phẩm đang bán.</p>
         ) : (
-          <ul className="home-products grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {query.data.items.slice(0, 4).map((product, index) => (
               <li key={product.id}>
                 <ProductCard product={product} index={index} />
@@ -168,7 +171,9 @@ export function HomePage() {
             “Tìm sản phẩm có ít nhất 10g protein mỗi khẩu phần.”
           </p>
           <Button asChild variant="secondary">
-            <Link to="/chat">Bắt đầu tra cứu →</Link>
+            <Link to="/chat">
+              Bắt đầu tra cứu <ArrowRight />
+            </Link>
           </Button>
         </div>
       </section>

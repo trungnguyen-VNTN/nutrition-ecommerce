@@ -7,6 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/error-state';
 import { NutritionTable } from '@/components/nutrition-table';
 import { AllergenBadge } from '@/components/allergen-badge';
+import { ProductArt } from '@/components/product-art';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { apiErrorMessage } from '@/lib/api/client';
 import { formatMoney } from '@/lib/format';
 import { getProduct } from './api/products';
@@ -22,7 +24,10 @@ export function ProductDetailPage() {
   return (
     <div className="space-y-6">
       <Button asChild variant="ghost">
-        <Link to="/products">{messages.backProducts}</Link>
+        <Link to="/products">
+          <ArrowLeft />
+          {messages.backProducts}
+        </Link>
       </Button>
       {query.isPending ? (
         <section aria-label={messages.loading} aria-busy="true">
@@ -41,23 +46,10 @@ export function ProductDetailPage() {
         product && (
           <>
             <div className="grid items-start gap-8 md:grid-cols-2">
-              <div className="product-art overflow-hidden rounded-card border border-neutral-200">
-                <svg
-                  role="img"
-                  aria-label={messages.illustration(product.name)}
-                  viewBox="0 0 120 140"
-                >
-                  <path
-                    d="M28 12h64l6 116H22Z M28 24h64 M25 112h70 M60 88V52 M60 64c-15 0-18-12-18-12 14 0 18 12 18 12Z M60 76c15 0 18-12 18-12-14 0-18 12-18 12Z"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-                <span className="product-art-caption">
-                  {messages.sampleImage} · Chưa có ảnh thật
-                </span>
-              </div>
+              <ProductArt
+                name={product.name}
+                className="overflow-hidden rounded-card border border-neutral-200"
+              />
               <header className="detail-purchase space-y-6">
                 {product.category && (
                   <p className="text-sm text-primary-700">
