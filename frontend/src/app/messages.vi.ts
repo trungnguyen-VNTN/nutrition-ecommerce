@@ -74,6 +74,11 @@ export const messages = {
   outOfStock: 'Hết hàng',
   illustration: (name: string) => `Hình minh họa bao bì ${name}`,
   sampleImage: 'Hình minh họa',
+  noPhoto: 'Chưa có ảnh thật',
+  cartCount: (count: number) => `${count} sản phẩm trong giỏ`,
+  loadingPage: 'Đang tải trang',
+  filters: 'Bộ lọc',
+  activeFilters: (count: number) => `${count} đang áp dụng`,
   apiErrors: {
     unauthorized: 'Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.',
     forbidden: 'Bạn không có quyền xem nội dung này.',

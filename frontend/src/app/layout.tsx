@@ -1,8 +1,18 @@
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { signOut, useSession } from '@/features/auth/session';
-import { getCart } from '@/features/commerce/api';
-import { useEffect, useRef } from 'react';
+import {
+  ChatCircleText,
+  GearSix,
+  House,
+  Leaf,
+  MagnifyingGlass,
+  Receipt,
+  ShoppingCartSimple,
+  SignIn,
+  SignOut,
+  Storefront,
+  type Icon,
+} from '@phosphor-icons/react';
 import {
   Link,
   NavLink,
@@ -10,18 +20,22 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { signOut, useSession } from '@/features/auth/session';
+import { getCart } from '@/features/commerce/api';
 import { messages } from './messages.vi';
 
-const links = [
-  ['/', messages.home],
-  ['/products', messages.products],
-  ['/cart', messages.cart],
-  ['/orders', messages.orders],
-  ['/chat', messages.chat],
-  ['/admin', messages.admin],
-] as const;
+const links: readonly (readonly [string, string, Icon])[] = [
+  ['/', messages.home, House],
+  ['/products', messages.products, Storefront],
+  ['/chat', messages.chat, ChatCircleText],
+  ['/cart', messages.cart, ShoppingCartSimple],
+  ['/orders', messages.orders, Receipt],
+  ['/admin', messages.admin, GearSix],
+];
+
 export function Layout() {
-  const { pathname } = useLocation();
   const navigate = useNavigate();
   const identity = useSession();
   const cache = useQueryClient();
@@ -35,17 +49,8 @@ export function Layout() {
     (total, item) => total + item.quantity,
     0,
   );
-  const main = useRef<HTMLElement>(null);
-  const previousPath = useRef(pathname);
-  useEffect(() => {
-    const title =
-      main.current?.querySelector('h1')?.textContent ?? messages.brand;
-    document.title = `${title} · Nutrition`;
-    if (previousPath.current !== pathname) main.current?.focus();
-    previousPath.current = pathname;
-  }, [pathname]);
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="app-shell flex min-h-dvh flex-col">
       <a
         className="skip-link rounded-control bg-primary-700 p-4 text-neutral-50"
         href="#main"
@@ -53,21 +58,21 @@ export function Layout() {
         {messages.skip}
       </a>
       <header className="site-header border-b border-neutral-200">
-        <div className="page-container flex flex-wrap items-center justify-between gap-4 py-4">
+        <div className="page-container flex flex-wrap items-center justify-between gap-x-4 gap-y-3 py-3 md:py-4">
           <Link
             to="/"
             aria-label={`${messages.brand} — ${messages.home}`}
             className="flex min-h-touch items-center gap-3 text-primary-700"
           >
-            <span aria-hidden="true" className="brand-mark text-3xl">
-              ✳
+            <span aria-hidden="true" className="brand-mark text-2xl">
+              <Leaf weight="fill" />
             </span>
             <span>
               <span className="block text-2xl font-bold">
                 {messages.brand}
                 <span className="text-accent-500">.</span>
               </span>
-              <span className="block text-xs text-neutral-700">
+              <span className="brand-tagline block text-xs text-neutral-700">
                 {messages.tagline}
               </span>
             </span>
@@ -92,64 +97,88 @@ export function Layout() {
               type="search"
               maxLength={100}
               placeholder="Bạn đang tìm thực phẩm nào?"
-              className="min-h-touch rounded-control border border-neutral-200 bg-neutral-50 px-3 text-sm"
+              className="min-h-touch rounded-control border border-neutral-200 bg-neutral-50 px-3 text-base md:text-sm"
             />
-            <Button variant="secondary" type="submit">
-              Tìm kiếm
+            <Button variant="secondary" type="submit" aria-label="Tìm kiếm">
+              <MagnifyingGlass />
+              <span className="hidden sm:inline">Tìm kiếm</span>
             </Button>
           </form>
-          {identity ? (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                signOut();
-                cache.clear();
-              }}
-            >
-              Đăng xuất
-            </Button>
-          ) : (
-            <NavLink
-              to="/login"
-              className="inline-flex min-h-touch items-center rounded-control border border-neutral-200 px-4 text-sm font-semibold text-primary-700 hover:bg-primary-50"
-            >
-              {messages.login}
-            </NavLink>
-          )}
+          <div className="flex items-center gap-2">
+            {identity?.admin && (
+              <Button asChild variant="ghost" className="md:hidden">
+                <Link to="/admin">
+                  <GearSix />
+                  {messages.admin}
+                </Link>
+              </Button>
+            )}
+            {identity ? (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  signOut();
+                  cache.clear();
+                }}
+              >
+                <SignOut />
+                Đăng xuất
+              </Button>
+            ) : (
+              <NavLink
+                to="/login"
+                className="control-transition inline-flex min-h-touch items-center gap-2 rounded-control border border-neutral-200 px-4 text-sm font-semibold text-primary-700 hover:bg-primary-50"
+              >
+                <SignIn />
+                {messages.login}
+              </NavLink>
+            )}
+          </div>
         </div>
-        <nav
-          aria-label={messages.navigation}
-          className="page-container flex flex-wrap gap-2 pb-3"
-        >
+        <nav aria-label={messages.navigation} className="site-nav">
           {links
             .filter(([to]) => to !== '/admin' || identity?.admin)
-            .map(([to, label]) => (
+            .map(([to, label, Glyph]) => (
               <NavLink
                 key={to}
                 to={to}
                 end={to === '/'}
-                className="nav-link inline-flex min-h-touch items-center gap-2 rounded-control px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                // Bottom bar keeps five tabs; admins reach admin from the header on phones.
+                className={`nav-link control-transition min-h-touch items-center rounded-control font-medium text-neutral-700 hover:bg-neutral-100 ${to === '/admin' ? 'hidden md:inline-flex' : 'inline-flex'}`}
               >
-                {label}
-                {to === '/cart' && count !== undefined && (
-                  <span
-                    aria-label={`${count} sản phẩm trong giỏ`}
-                    className="rounded-pill bg-primary-100 px-2 text-xs text-primary-700"
-                  >
-                    {count}
-                  </span>
+                {({ isActive }) => (
+                  <>
+                    <Glyph
+                      className="icon text-xl md:text-base"
+                      weight={isActive ? 'fill' : 'regular'}
+                    />
+                    {label}
+                    {to === '/cart' && count !== undefined && count > 0 && (
+                      <>
+                        <span aria-hidden="true" className="nav-badge">
+                          {count}
+                        </span>
+                        <span className="sr-only">
+                          : {messages.cartCount(count)}
+                        </span>
+                      </>
+                    )}
+                  </>
                 )}
               </NavLink>
             ))}
         </nav>
       </header>
+      <CartAnnouncer count={count} />
       <main
-        ref={main}
         id="main"
         tabIndex={-1}
-        className="page-container flex-1 py-8 md:py-12"
+        className="page-container flex-1 py-6 md:py-12"
       >
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+          <RouteEffects />
+        </Suspense>
       </main>
       <footer className="site-footer mt-12">
         <div className="page-container grid gap-8 py-12 md:grid-cols-3">
@@ -182,5 +211,49 @@ export function Layout() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Runs after the (lazy) route content has rendered, so the h1 exists.
+function RouteEffects() {
+  const { pathname } = useLocation();
+  const previousPath = useRef(pathname);
+  useEffect(() => {
+    const main = document.getElementById('main');
+    const title = main?.querySelector('h1')?.textContent ?? messages.brand;
+    document.title = `${title} · Nutrition`;
+    if (previousPath.current !== pathname) main?.focus();
+    previousPath.current = pathname;
+  }, [pathname]);
+  return null;
+}
+
+function RouteFallback() {
+  return (
+    <div
+      aria-busy="true"
+      aria-label={messages.loadingPage}
+      className="space-y-6"
+    >
+      <Skeleton className="h-10 w-2/3" />
+      <Skeleton className="h-64" />
+    </div>
+  );
+}
+
+// Announces cart changes politely; the first load stays silent.
+function CartAnnouncer({ count }: { count: number | undefined }) {
+  const [previous, setPrevious] = useState(count);
+  const [message, setMessage] = useState('');
+  // Adjust state during render (React's pattern for reacting to prop changes).
+  if (previous !== count) {
+    setPrevious(count);
+    if (previous !== undefined && count !== undefined)
+      setMessage(messages.cartCount(count));
+  }
+  return (
+    <p className="sr-only" aria-live="polite">
+      {message}
+    </p>
   );
 }

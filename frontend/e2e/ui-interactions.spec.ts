@@ -82,7 +82,9 @@ test('cart quantity updates shared indicator and checkout opens the created orde
   });
   await page.goto('/cart');
   await page.getByRole('button', { name: 'Tăng Yến mạch nguyên hạt' }).click();
-  await expect(page.getByLabel('3 sản phẩm trong giỏ')).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /^Giỏ hàng\s*:\s*3 sản phẩm trong giỏ$/ }),
+  ).toBeVisible();
   await page.getByRole('link', { name: 'Tiếp tục đặt hàng' }).click();
   await page.getByLabel('Người nhận').fill('Khách kiểm thử');
   await page.getByLabel('Số điện thoại').fill('0900000000');
