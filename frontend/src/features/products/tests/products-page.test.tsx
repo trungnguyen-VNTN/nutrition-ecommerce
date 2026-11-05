@@ -86,4 +86,18 @@ describe('mock catalog', () => {
       messages.apiErrors.unavailable,
     );
   });
+
+  it('folds filters behind a toggle that reports active filters', async () => {
+    const user = userEvent.setup();
+    renderApp(
+      <ProductsPage />,
+      '/products?maxCalories=150&excludeAllergen=milk',
+    );
+    const toggle = screen.getByRole('button', { name: /Bộ lọc/ });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveTextContent(messages.activeFilters(2));
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByLabelText(messages.maxCalories)).toHaveValue(150);
+  });
 });

@@ -33,8 +33,8 @@ test('keyboard users can skip navigation and open a product', async ({
   ).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('main')).toBeFocused();
-  // Search, category, two numeric inputs, six allergen choices and two filter actions precede the list.
-  for (let index = 0; index < 12; index++) await page.keyboard.press('Tab');
+  // Search, three group toggles, category, two numeric inputs, six allergen choices and two filter actions precede the list.
+  for (let index = 0; index < 15; index++) await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   const product = page.getByRole('link', { name: 'Yến mạch nguyên hạt' });
   await expect(product).toBeFocused();

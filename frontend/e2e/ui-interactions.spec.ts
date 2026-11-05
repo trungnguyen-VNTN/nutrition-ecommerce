@@ -82,7 +82,9 @@ test('cart quantity updates shared indicator and checkout opens the created orde
   });
   await page.goto('/cart');
   await page.getByRole('button', { name: 'Tăng Yến mạch nguyên hạt' }).click();
-  await expect(page.getByLabel('3 sản phẩm trong giỏ')).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /^Giỏ hàng\s*:\s*3 sản phẩm trong giỏ$/ }),
+  ).toBeVisible();
   await page.getByRole('link', { name: 'Tiếp tục đặt hàng' }).click();
   await page.getByLabel('Người nhận').fill('Khách kiểm thử');
   await page.getByLabel('Số điện thoại').fill('0900000000');
@@ -91,6 +93,9 @@ test('cart quantity updates shared indicator and checkout opens the created orde
     .fill('Địa chỉ kiểm thử giao diện');
   await page.getByRole('button', { name: 'Xác nhận đặt hàng' }).click();
   await expect(page).toHaveURL(/\/orders\/12$/);
+  await expect(
+    page.getByRole('heading', { name: 'Đặt hàng thành công!' }),
+  ).toBeVisible();
   await expect(
     page.getByText('Địa chỉ kiểm thử giao diện', { exact: true }),
   ).toBeVisible();
@@ -116,4 +121,51 @@ test('admin can filter products and cancel hiding without sending a mutation', a
   await expect(
     page.getByRole('heading', { name: 'Yến mạch nguyên hạt', exact: true }),
   ).toBeVisible();
+});
+
+test('filter sheet on phones traps focus and closes predictably', async ({
+  page,
+}) => {
+  await installReviewFixtures(page, false);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/products');
+  await expect(page.getByRole('article').first()).toBeVisible();
+  const toggle = page.getByRole('button', { name: /^Bộ lọc/ });
+  await toggle.click();
+  const sheet = page.getByRole('dialog', { name: 'Bộ lọc' });
+  await expect(sheet).toBeVisible();
+  const close = page.getByRole('button', { name: 'Đóng bộ lọc' });
+  await expect(close).toBeFocused();
+
+  // Tab wraps inside the sheet in both directions.
+  await page.keyboard.press('Shift+Tab');
+  const clear = page.getByRole('button', { name: 'Xóa bộ lọc', exact: true });
+  await expect(clear).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+
+  // The sheet covers the dock and its last action is reachable.
+  await clear.scrollIntoViewIfNeeded();
+  await expect(clear).toBeInViewport();
+  const box = await sheet.boundingBox();
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(844);
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).overflow),
+  ).toBe('hidden');
+
+  await page.keyboard.press('Escape');
+  await expect(sheet).toBeHidden();
+  await expect(toggle).toBeFocused();
+
+  await toggle.click();
+  await page.mouse.click(195, 20);
+  await expect(sheet).toBeHidden();
+
+  // Filters still apply from the sheet and it closes afterwards.
+  await toggle.click();
+  await page.getByRole('checkbox', { name: 'Sữa', exact: true }).check();
+  await page.getByRole('button', { name: 'Áp dụng', exact: true }).click();
+  await expect(sheet).toBeHidden();
+  await expect(page).toHaveURL(/excludeAllergen=milk/);
+  await expect(toggle).toContainText('1 đang áp dụng');
 });
