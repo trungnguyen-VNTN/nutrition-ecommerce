@@ -3,26 +3,6 @@
  * Delete each block when its page is rewritten.
  */
 @layer components {
-  .product-art {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3;
-    background: var(--primary-50);
-    color: var(--primary-700);
-    border-bottom: var(--border-width) solid var(--neutral-200);
-  }
-  .product-art[data-tone='grain'] {
-    background: var(--neutral-100);
-    color: var(--neutral-700);
-  }
-  .product-art[data-tone='warm'] {
-    background: var(--allergen-bg);
-    color: var(--allergen-text);
-  }
-  .product-art svg {
-    width: 45%;
-    height: 65%;
-  }
   .hero {
     display: grid;
     overflow: hidden;
@@ -116,73 +96,6 @@
     background: var(--primary-700);
     color: var(--neutral-50);
   }
-  .product-card {
-    transition:
-      box-shadow var(--motion-normal) var(--motion-ease),
-      border-color var(--motion-normal) var(--motion-ease);
-    background: var(--surface);
-  }
-  .product-card:hover {
-    box-shadow: var(--elevation-md);
-    border-color: var(--primary-500);
-  }
-  /* Fixed body height keeps cards even and lets skeletons match loaded geometry. */
-  .product-card-body {
-    min-height: var(--card-content-height-compact);
-  }
-  @media (width >= 640px) {
-    .product-card-body {
-      min-height: var(--card-content-height);
-    }
-  }
-  .product-art {
-    position: relative;
-    overflow: hidden;
-    background: var(--neutral-100);
-    border: 0;
-  }
-  .product-art svg {
-    width: 35%;
-    height: 60%;
-  }
-  .product-art::before {
-    content: '';
-    position: absolute;
-    width: 65%;
-    aspect-ratio: 1;
-    border: var(--border-width) solid currentColor;
-    opacity: 0.12;
-    border-radius: 50%;
-  }
-  .product-art-caption {
-    position: absolute;
-    bottom: var(--space-3);
-    font-size: var(--font-size-xs);
-  }
-  .stock-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-  .stock-label::before {
-    content: '';
-    width: var(--space-2);
-    height: var(--space-2);
-    background: currentColor;
-    border-radius: 50%;
-  }
-  .nutrition-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    font-size: var(--font-size-xs);
-    color: var(--neutral-700);
-  }
-  .nutrition-preview span {
-    padding: var(--space-1) var(--space-2);
-    background: var(--neutral-100);
-    border-radius: var(--corner-control);
-  }
   .catalog-layout {
     display: grid;
     gap: var(--space-8);
@@ -256,58 +169,6 @@
   }
 }
 /* Product card: compact row with thumbnail on phones, stacked card from sm. */
-@layer components {
-  .product-card {
-    display: grid;
-    grid-template-columns: var(--product-thumb) minmax(0, 1fr);
-    height: 100%;
-  }
-  .product-card .product-art {
-    aspect-ratio: auto;
-    height: 100%;
-    min-height: var(--product-thumb);
-  }
-  .product-card .product-art svg {
-    width: 60%;
-    height: auto;
-  }
-  .product-card .product-art::before {
-    width: 80%;
-  }
-  .product-card .product-art-caption {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  @media (width >= 640px) {
-    .product-card {
-      display: flex;
-      flex-direction: column;
-    }
-    .product-card .product-art {
-      aspect-ratio: 4 / 3;
-      height: auto;
-    }
-    .product-card .product-art svg {
-      width: 35%;
-      height: 60%;
-    }
-    .product-card .product-art::before {
-      width: 65%;
-    }
-    .product-card .product-art-caption {
-      width: auto;
-      height: auto;
-      overflow: visible;
-      clip-path: none;
-      white-space: normal;
-    }
-  }
-}
-
 @layer components {
   @media (width < 768px) {
     .hero-image img {

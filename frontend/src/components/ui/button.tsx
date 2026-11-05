@@ -9,10 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-600 text-neutral-50 hover:bg-primary-700',
-        secondary: 'bg-primary-50 text-primary-700 hover:bg-primary-100',
-        ghost: 'text-neutral-700 hover:bg-neutral-100',
-        destructive: 'bg-danger text-neutral-50',
+        primary: 'bg-brand text-cream hover:bg-brand-strong',
+        secondary: 'bg-lime-soft text-ink hover:bg-lime',
+        outline: 'border border-ink bg-surface text-ink hover:bg-sunken',
+        ghost: 'text-ink hover:bg-sunken',
+        destructive: 'bg-danger text-cream hover:brightness-90',
+        // Brand CTA: one per screen (docs/ui-guidelines.md §1).
+        sticker:
+          'sticker border-2 border-ink bg-lime px-5 font-bold text-ink shadow-sticker hover:bg-lime-strong',
       },
     },
     defaultVariants: { variant: 'primary' },

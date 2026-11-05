@@ -30,7 +30,7 @@
 | `--macro-carb` / `-tint` | `#A87C06` / `#F8ECC4` | carbohydrate | 3.8:1 |
 | `--macro-fat` / `-tint` | `#7B5CC9` / `#EBE4F8` | chất béo | 5.0:1 |
 | `--macro-fiber` / `-tint` | `#2F8A4C` / `#DCEFDF` | chất xơ | 4.3:1 |
-| `--success` | `#2E7D32` | còn hàng, thành công | 4.9:1 |
+| `--success` / `-tint` | `#276E2B` / `#E3F1E1` | còn hàng, thành công | 5.9:1 trên kem, 5.4:1 trên tint |
 | `--warning` / `-tint` | `#8A4F00` / `#FFF1DC` | dữ liệu thiếu / chưa xác minh, allergen | 5.9:1 |
 | `--danger` / `-tint` | `#B3261E` / `#FCE8E6` | lỗi, hết hàng, hủy | 5.6:1 |
 

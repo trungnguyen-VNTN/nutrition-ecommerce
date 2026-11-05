@@ -31,6 +31,7 @@ it.each([
   ['cream', 'brand'],
   ['ink', 'lime'],
   ['success', 'cream'],
+  ['success', 'success-tint'],
   ['warning', 'warning-tint'],
   ['danger', 'danger-tint'],
 ])('text %s on %s meets 4.5:1', (fg, bg) => {

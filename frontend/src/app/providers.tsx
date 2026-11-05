@@ -1,6 +1,7 @@
 import { useState, type PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { IconContext } from '@phosphor-icons/react';
+import { ToastProvider } from '@/components/ui/toast';
 
 // One icon family, one stroke weight; icons scale with text and are decorative by default.
 const iconDefaults = {
@@ -15,7 +16,7 @@ export function Providers({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={client}>
       <IconContext.Provider value={iconDefaults}>
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </IconContext.Provider>
     </QueryClientProvider>
   );
