@@ -35,13 +35,14 @@ export function Field({
     <div className={cn('text-sm', className)}>
       <label htmlFor={id} className="font-semibold">
         {label}
-        {required && (
-          <span aria-hidden="true" className="text-danger">
-            {' '}
-            *
-          </span>
-        )}
       </label>
+      {/* Outside the label so its accessible name stays exactly the label text. */}
+      {required && (
+        <span aria-hidden="true" className="text-danger">
+          {' '}
+          *
+        </span>
+      )}
       {children({
         id,
         'aria-describedby': describedBy,
