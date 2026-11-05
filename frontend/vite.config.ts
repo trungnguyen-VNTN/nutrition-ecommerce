@@ -17,4 +17,20 @@ export default defineConfig(({ command }) => ({
     proxy: { '/api': 'http://127.0.0.1:8080' },
   },
   preview: { host: '127.0.0.1', port: 4173, strictPort: true },
+  build: {
+    rollupOptions: {
+      output: {
+        // Stable vendor chunks cache across deploys; app code changes more often.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/amazon-cognito|[\\/]buffer[\\/]|@aws-crypto|js-cookie/.test(id))
+            return 'vendor-auth';
+          if (/[\\/](react|react-dom|react-router|scheduler)[\\/]/.test(id))
+            return 'vendor-react';
+          if (/@tanstack|[\\/]zod[\\/]/.test(id)) return 'vendor-data';
+          return undefined;
+        },
+      },
+    },
+  },
 }));

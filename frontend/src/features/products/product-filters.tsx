@@ -1,8 +1,23 @@
+import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { CaretDown } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
+import { controlClass } from '@/components/ui/field';
 import { messages } from '@/app/messages.vi';
 import { getCategories } from './api/products';
 import { allergenOptions, type ProductFilters } from './api/filters';
+
+function Group({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <details open className="group border-t border-line">
+      <summary className="flex min-h-touch list-none items-center justify-between gap-2 font-semibold [&::-webkit-details-marker]:hidden">
+        {title}
+        <CaretDown className="icon control-transition group-open:rotate-180" />
+      </summary>
+      <div className="space-y-3 pb-4">{children}</div>
+    </details>
+  );
+}
 
 export function ProductFiltersForm({
   filters,
@@ -18,12 +33,10 @@ export function ProductFiltersForm({
     queryFn: ({ signal }) => getCategories(signal),
     retry: false,
   });
-  const control =
-    'mt-2 min-h-touch w-full rounded-control border border-neutral-200 bg-neutral-50 px-3 text-base';
   return (
     <form
       key={JSON.stringify(filters)}
-      className="grid gap-4 rounded-card border border-neutral-200 p-4 md:grid-cols-3 lg:flex lg:flex-col"
+      className="space-y-3 text-sm"
       onSubmit={(event) => {
         event.preventDefault();
         const values = new URLSearchParams();
@@ -32,22 +45,24 @@ export function ProductFiltersForm({
         onApply(values);
       }}
     >
-      <label className="text-sm font-medium md:col-span-3">
+      <label className="block pb-1 font-semibold">
         Tìm sản phẩm
         <input
           name="q"
           type="search"
           maxLength={100}
-          className={control}
+          className={controlClass}
           defaultValue={filters?.q ?? ''}
         />
       </label>
-      <div className="text-sm font-medium">
-        <label htmlFor="category-filter">{messages.category}</label>
+      <Group title={messages.category}>
+        <label htmlFor="category-filter" className="sr-only">
+          {messages.category}
+        </label>
         <select
           id="category-filter"
           name="categoryId"
-          className={control}
+          className={`${controlClass} mt-0`}
           defaultValue={filters?.categoryId ?? ''}
           disabled={categories.isPending}
         >
@@ -58,68 +73,72 @@ export function ProductFiltersForm({
             </option>
           ))}
         </select>
-      </div>
-      <label className="text-sm font-medium">
-        {messages.maxCalories}
-        <input
-          name="maxCalories"
-          type="number"
-          min="0"
-          step="any"
-          className={control}
-          defaultValue={filters?.maxCalories ?? ''}
-        />
-      </label>
-      <label className="text-sm font-medium">
-        {messages.minProtein}
-        <input
-          name="minProtein"
-          type="number"
-          min="0"
-          step="any"
-          className={control}
-          defaultValue={filters?.minProtein ?? ''}
-        />
-      </label>
-      <fieldset className="md:col-span-3">
-        <legend className="text-sm font-medium">Loại trừ allergen</legend>
-        <div className="mt-2 flex flex-wrap gap-4">
-          {allergenOptions.map((option) => (
-            <label
-              key={option.code}
-              className="flex min-h-touch items-center gap-2 text-sm"
-            >
-              <input
-                type="checkbox"
-                name="excludeAllergen"
-                value={option.code}
-                defaultChecked={
-                  filters?.excludeAllergen?.includes(option.code) ?? false
-                }
-              />
-              {option.label}
-            </label>
-          ))}
-        </div>
-        <p className="text-sm text-neutral-700">
+        {categories.isError && (
+          <p className="text-danger">
+            {messages.categoriesError}{' '}
+            <Button variant="ghost" onClick={() => void categories.refetch()}>
+              {messages.retry}
+            </Button>
+          </p>
+        )}
+      </Group>
+      <Group title="Dinh dưỡng">
+        <label className="block font-medium">
+          {messages.maxCalories}
+          <input
+            name="maxCalories"
+            type="number"
+            min="0"
+            step="any"
+            className={controlClass}
+            defaultValue={filters?.maxCalories ?? ''}
+          />
+        </label>
+        <label className="block font-medium">
+          {messages.minProtein}
+          <input
+            name="minProtein"
+            type="number"
+            min="0"
+            step="any"
+            className={controlClass}
+            defaultValue={filters?.minProtein ?? ''}
+          />
+        </label>
+      </Group>
+      <Group title="Loại trừ allergen">
+        <fieldset>
+          <legend className="sr-only">Loại trừ allergen</legend>
+          <div className="flex flex-wrap gap-2">
+            {allergenOptions.map((option) => (
+              <label
+                key={option.code}
+                className="control-transition flex min-h-touch items-center gap-2 rounded-control border border-line-strong px-3 has-checked:border-ink has-checked:bg-lime"
+              >
+                <input
+                  type="checkbox"
+                  name="excludeAllergen"
+                  value={option.code}
+                  defaultChecked={
+                    filters?.excludeAllergen?.includes(option.code) ?? false
+                  }
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <p className="text-ink-muted">
           Sản phẩm chưa đủ dữ liệu dinh dưỡng hoặc chưa xác minh allergen sẽ bị
           loại khi lọc.
         </p>
-      </fieldset>
-      <div className="flex flex-wrap gap-3 md:col-span-3">
+      </Group>
+      <div className="sticky -bottom-4 flex flex-wrap gap-3 border-t border-line bg-surface py-3 md:static md:pb-0">
         <Button type="submit">{messages.applyFilters}</Button>
-        <Button variant="secondary" onClick={onClear}>
+        <Button variant="outline" onClick={onClear}>
           {messages.clearFilters}
         </Button>
       </div>
-      {categories.isError && (
-        <p className="text-sm text-danger md:col-span-3">
-          {messages.categoriesError}{' '}
-          <Button variant="ghost" onClick={() => void categories.refetch()}>
-            {messages.retry}
-          </Button>
-        </p>
-      )}
     </form>
   );
 }

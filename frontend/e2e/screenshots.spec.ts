@@ -50,7 +50,11 @@ for (const width of [390, 768, 1440]) {
           },
         );
       }
-      const directory = join(process.cwd(), '.screenshots', 'v2');
+      const directory = join(
+        process.cwd(),
+        '.screenshots',
+        process.env.SCREENSHOT_SET ?? 'v2',
+      );
       await mkdir(directory, { recursive: true });
 
       await page.goto(path);

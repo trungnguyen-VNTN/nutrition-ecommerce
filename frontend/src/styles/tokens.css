@@ -1,42 +1,61 @@
+/* Design tokens: "Nutrition Label" direction (docs/ui-guidelines.md §2, D11). */
 :root {
-  --primary-50: #edf3ec;
-  --primary-100: #dce8d8;
-  --primary-500: #53836a;
-  --primary-600: #286147;
-  --primary-700: #193e30;
-  --accent-500: #f29a2e;
-  --neutral-50: #fcfbf7;
-  --neutral-100: #f1eee6;
-  --neutral-200: #e5e3dc;
-  --neutral-500: #8a877d;
-  --neutral-700: #4a483f;
-  --neutral-900: #1f1e1a;
-  --success: #2e7d32;
-  --warning: #b26a00;
-  --danger: #c62828;
-  --info: #1f6fb2;
-  --allergen-bg: #fff3e0;
-  --allergen-border: #f29a2e;
-  --allergen-text: #8a4b00;
+  /* Colour */
+  --cream: #faf9f3;
+  --surface: #ffffff;
+  --ink: #19392e;
+  --ink-muted: #566a5c;
+  --brand: #194734;
+  --brand-strong: #0f3324;
+  --lime: #d8ed9d;
+  --lime-strong: #c3e277;
+  --lime-soft: #eef6d8;
+  --line: #dde5d8;
+  --line-strong: #75897a;
+  --sunken: #f1efe6;
 
-  --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  --macro-protein: #d9572b;
+  --macro-protein-tint: #fbe3d8;
+  --macro-carb: #a87c06;
+  --macro-carb-tint: #f8ecc4;
+  --macro-fat: #7b5cc9;
+  --macro-fat-tint: #ebe4f8;
+  --macro-fiber: #2f8a4c;
+  --macro-fiber-tint: #dcefdf;
+
+  --success: #276e2b;
+  --success-tint: #e3f1e1;
+  --warning: #8a4f00;
+  --warning-tint: #fff1dc;
+  --danger: #b3261e;
+  --danger-tint: #fce8e6;
+  --info: #1f6fb2;
+
+  /* Type */
+  --font-heading:
+    'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-base: 16px;
   --font-size-lg: 18px;
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
-  --font-size-4xl: 36px;
+  --font-size-3xl: 32px;
+  --font-size-4xl: 44px;
+  --font-size-display: 64px;
   --line-xs: 16px;
   --line-sm: 20px;
   --line-base: 24px;
   --line-lg: 28px;
   --line-xl: 28px;
   --line-2xl: 32px;
-  --line-3xl: 36px;
-  --line-4xl: 44px;
+  --line-3xl: 38px;
+  --line-4xl: 50px;
+  --line-display: 68px;
+  --tracking-display: -0.02em;
 
+  /* Space, shape, layers */
   --space-0: 0px;
   --space-1: 4px;
   --space-2: 8px;
@@ -46,27 +65,43 @@
   --space-8: 32px;
   --space-12: 48px;
   --space-16: 64px;
-  --corner-control: 8px;
-  --corner-card: 12px;
+  --space-24: 96px;
+  --corner-control: 10px;
+  --corner-card: 18px;
+  --corner-sheet: 28px;
   --corner-pill: 999px;
-  --container-width: 1200px;
+  --container-width: 1240px;
   --reading-width: 70ch;
   --touch-target: 44px;
   --border-width: 1px;
+  --border-strong: 2px;
   --focus-width: 2px;
-  --focus-offset: 4px;
-  --elevation-sm: 0 1px 3px
-    color-mix(in srgb, var(--neutral-900) 8%, transparent);
-  --elevation-md: 0 4px 12px
-    color-mix(in srgb, var(--neutral-900) 12%, transparent);
-  --motion-fast: 150ms;
-  --motion-normal: 200ms;
-  --motion-ease: ease-out;
-  --opacity-disabled: 0.6;
-  --surface: #ffffff;
-  --font-size-display: 48px;
-  --line-display: 56px;
-  --hero-image-height: 440px;
-  --card-content-height: 320px;
+  --focus-offset: 3px;
+  --elevation-sticker: 3px 3px 0 var(--ink);
+  --elevation-sticker-pressed: 1px 1px 0 var(--ink);
+  --elevation-float: 0 12px 32px color-mix(in srgb, var(--ink) 22%, transparent);
+  --z-header: 10;
+  --z-dock: 20;
+  --z-sheet: 40;
+  --z-toast: 60;
+  --z-skip: 100;
+
+  /* Motion */
+  --motion-press: 120ms;
+  --motion-fast: 200ms;
+  --motion-enter: 280ms;
+  --motion-exit: 180ms;
+  --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --opacity-disabled: 0.5;
+
+  /* Layout */
+  --header-height: 64px;
+  --dock-height: 64px;
+  --dock-gap: 12px;
+  --admin-nav-width: 220px;
+
+  --product-thumb: 104px;
+  --card-content-height: 240px;
+  --card-content-height-compact: 216px;
   --filter-width: 280px;
 }
