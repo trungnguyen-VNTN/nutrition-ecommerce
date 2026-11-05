@@ -21,9 +21,6 @@ export type AdminProduct = z.infer<typeof adminProductSchema>;
 
 export const adminPageSize = 20;
 
-export const adminInput =
-  'mt-2 block min-h-touch w-full rounded-control border border-neutral-200 bg-neutral-50 px-3';
-
 export function adminRequest({
   path,
   method,
