@@ -12,7 +12,7 @@ import {
 import { messages } from '@/app/messages.vi';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
-import { ProductCard } from '@/components/product-card';
+import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage } from '@/lib/api/client';
 import { useProducts } from './hooks/use-products';
@@ -42,22 +42,7 @@ function ProductList({
         <Skeleton className="mb-6 h-[var(--line-sm)] w-1/3 sm:w-1/6" />
         <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
           {Array.from({ length: 8 }, (_, index) => (
-            <div
-              key={index}
-              className="product-card overflow-hidden rounded-card border border-neutral-200"
-              data-testid="product-skeleton"
-            >
-              <Skeleton className="product-art rounded-none" />
-              <div className="product-card-body flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-touch w-full" />
-                <Skeleton className="h-[var(--line-xl)] w-1/2" />
-                <div className="mt-auto grid gap-2 border-t border-neutral-200 pt-3">
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                </div>
-              </div>
-            </div>
+            <ProductCardSkeleton key={index} />
           ))}
         </div>
       </section>

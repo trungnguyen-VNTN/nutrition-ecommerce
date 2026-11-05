@@ -48,7 +48,7 @@ export function ProductDetailPage() {
             <div className="grid items-start gap-8 md:grid-cols-2">
               <ProductArt
                 name={product.name}
-                className="overflow-hidden rounded-card border border-neutral-200"
+                className="aspect-[4/3] rounded-card border border-line"
               />
               <header className="detail-purchase space-y-6">
                 {product.category && (
