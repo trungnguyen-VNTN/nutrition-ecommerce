@@ -1,8 +1,13 @@
-import { ArrowRight, ShoppingCartSimple } from '@phosphor-icons/react';
+import { ArrowRight, ShoppingCartSimple, Trash } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { EmptyState } from '@/components/empty-state';
+import { ProductArt } from '@/components/product-art';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Qty } from '@/components/ui/qty';
+import { useToast } from '@/components/ui/toast-context';
 import { controlClass } from '@/components/ui/field';
 import { ErrorState } from '@/components/error-state';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +20,7 @@ import { changeCart, getCart } from './api';
 export function CartPage() {
   const identity = useSession();
   const cache = useQueryClient();
+  const toast = useToast();
   const key = ['cart', identity?.sub];
   const cart = useQuery({
     queryKey: key,
@@ -25,22 +31,23 @@ export function CartPage() {
   const change = useMutation({
     mutationFn: ({ id, quantity }: { id: number; quantity: number | null }) =>
       changeCart(id, quantity),
-    onSuccess: (data) => cache.setQueryData(key, data),
+    onSuccess: (data, { quantity }) => {
+      cache.setQueryData(key, data);
+      if (quantity === null) toast('Đã xóa sản phẩm khỏi giỏ.');
+    },
   });
   return (
     <section className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-neutral-200 pb-6">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-primary-700">
-            Mua sắm có chọn lọc
-          </p>
-          <h1 className="text-3xl font-semibold">Giỏ hàng</h1>
-          <p className="text-neutral-700">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="space-y-3">
+          <p className="eyebrow">Mua sắm có chọn lọc</p>
+          <h1 className="text-4xl font-extrabold">Giỏ hàng</h1>
+          <p className="text-ink-muted">
             Những lựa chọn dành cho bữa ăn của bạn.
           </p>
         </div>
         <Link
-          className="inline-flex min-h-touch items-center gap-2 text-sm font-semibold text-primary-700 underline"
+          className="inline-flex min-h-touch items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4"
           to="/products"
         >
           Tiếp tục mua sắm <ArrowRight />
@@ -49,127 +56,114 @@ export function CartPage() {
       {!identity ? (
         <SignInRequired />
       ) : cart.isPending ? (
-        <div className="space-y-4">
-          <Skeleton className="h-16" />
-          <Skeleton className="h-16" />
-          <Skeleton className="h-16" />
+        <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="space-y-3">
+            <Skeleton className="h-28 rounded-card" />
+            <Skeleton className="h-28 rounded-card" />
+          </div>
+          <Skeleton className="h-64 rounded-card" />
         </div>
       ) : cart.isError ? (
         <ErrorState
           description={apiErrorMessage(cart.error)}
+          error={cart.error}
           onRetry={() => void cart.refetch()}
         />
       ) : cart.data.items.length === 0 ? (
-        <div className="space-y-4 rounded-card bg-primary-50 p-8 text-center">
-          <ShoppingCartSimple className="icon mx-auto text-4xl text-primary-700" />
-          <h2 className="text-xl font-semibold">Giỏ hàng trống.</h2>
-          <p className="text-neutral-700">
-            Khám phá thực phẩm và xem dữ liệu dinh dưỡng trước khi chọn.
-          </p>
-          <Button asChild>
-            <Link to="/products">Chọn sản phẩm</Link>
-          </Button>
-        </div>
+        <EmptyState
+          icon={<ShoppingCartSimple />}
+          title="Giỏ hàng trống."
+          description="Khám phá thực phẩm và xem dữ liệu dinh dưỡng trước khi chọn."
+          action={
+            <Button asChild>
+              <Link to="/products">Chọn sản phẩm</Link>
+            </Button>
+          }
+        />
       ) : (
-        <div className="grid items-start gap-8 lg:grid-cols-3">
-          <ul className="space-y-4 lg:col-span-2">
-            {cart.data.items.map((item) => (
-              <li
-                key={item.product_id}
-                className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 py-6"
-              >
-                <div className="min-w-0 space-y-2">
-                  <Link
-                    to={`/products/${item.product_id}`}
-                    className="text-lg font-semibold text-primary-700 hover:underline"
-                  >
-                    {item.name}
-                  </Link>
-                  <p className="text-sm text-neutral-700">
-                    {formatMoney(item.price, item.currency)} / sản phẩm
-                  </p>
-                  {(!item.active || item.stock < item.quantity) && (
-                    <p role="alert" className="text-danger">
-                      Sản phẩm không đủ hàng hoặc đã ngừng bán.
+        <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_340px]">
+          <ul className="space-y-3">
+            {cart.data.items.map((item, index) => (
+              <li key={item.product_id}>
+                <Card className="grid grid-cols-[72px_minmax(0,1fr)] gap-x-4 gap-y-3 sm:grid-cols-[96px_minmax(0,1fr)_auto] sm:items-center">
+                  <ProductArt
+                    name={item.name}
+                    index={index}
+                    caption={false}
+                    className="aspect-square rounded-control"
+                  />
+                  <div className="min-w-0 space-y-1">
+                    <Link
+                      to={`/products/${item.product_id}`}
+                      className="font-display text-lg font-bold text-ink underline-offset-4 hover:underline"
+                    >
+                      {item.name}
+                    </Link>
+                    <p className="text-sm text-ink-muted tabular-nums">
+                      {formatMoney(item.price, item.currency)} / sản phẩm
                     </p>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    variant="secondary"
-                    aria-label={`Giảm ${item.name}`}
-                    disabled={change.isPending || item.quantity <= 1}
-                    onClick={() =>
-                      change.mutate({
-                        id: item.product_id,
-                        quantity: item.quantity - 1,
-                      })
-                    }
-                  >
-                    −
-                  </Button>
-                  <span
-                    className="min-w-touch text-center font-semibold tabular-nums"
-                    aria-label={`Số lượng ${item.name}`}
-                  >
-                    {item.quantity}
-                  </span>
-                  <Button
-                    variant="secondary"
-                    aria-label={`Tăng ${item.name}`}
-                    disabled={
-                      change.isPending ||
-                      item.quantity >= Math.min(item.stock, 99)
-                    }
-                    onClick={() =>
-                      change.mutate({
-                        id: item.product_id,
-                        quantity: item.quantity + 1,
-                      })
-                    }
-                  >
-                    +
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    disabled={change.isPending}
-                    onClick={() =>
-                      change.mutate({ id: item.product_id, quantity: null })
-                    }
-                  >
-                    Xóa
-                  </Button>
-                </div>
+                    {(!item.active || item.stock < item.quantity) && (
+                      <p
+                        role="alert"
+                        className="text-sm font-medium text-danger"
+                      >
+                        Sản phẩm không đủ hàng hoặc đã ngừng bán.
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-span-2 flex flex-wrap items-center justify-between gap-3 sm:col-span-1 sm:flex-col sm:items-end">
+                    <Qty
+                      value={item.quantity}
+                      max={Math.min(item.stock, 99)}
+                      label={item.name}
+                      disabled={change.isPending}
+                      onChange={(quantity) =>
+                        change.mutate({ id: item.product_id, quantity })
+                      }
+                    />
+                    <Button
+                      variant="ghost"
+                      disabled={change.isPending}
+                      aria-label={`Xóa ${item.name}`}
+                      onClick={() =>
+                        change.mutate({ id: item.product_id, quantity: null })
+                      }
+                    >
+                      <Trash />
+                      Xóa
+                    </Button>
+                  </div>
+                </Card>
               </li>
             ))}
           </ul>
-          <aside className="space-y-6 rounded-card bg-primary-50 p-6">
-            <h2 className="text-xl font-semibold">Tóm tắt giỏ hàng</h2>
+          <Card as="aside" className="space-y-4 md:sticky md:top-32">
+            <h2 className="text-xl font-bold">Tóm tắt giỏ hàng</h2>
             <div className="flex justify-between gap-4 text-sm">
               <span>Số sản phẩm</span>
               <span className="font-semibold tabular-nums">
                 {cart.data.items.reduce((sum, item) => sum + item.quantity, 0)}
               </span>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-neutral-200 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
               <span>Tạm tính</span>
-              <strong className="text-2xl tabular-nums">
+              <strong className="font-display text-2xl font-extrabold tabular-nums">
                 {formatMoney(cart.data.total, cart.data.items[0]!.currency)}
               </strong>
             </div>
-            <Button className="w-full" asChild>
+            <Button className="w-full" asChild variant="sticker">
               <Link to="/checkout">Tiếp tục đặt hàng</Link>
             </Button>
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-ink-muted">
               Giá và tồn kho được kiểm tra lại khi đặt hàng. Chưa có thanh toán
               trực tuyến.
             </p>
-          </aside>
+          </Card>
         </div>
       )}
       {change.isError && (
         <p
-          className="rounded-control border border-danger p-4 text-danger"
+          className="rounded-control border border-danger bg-danger-tint p-4 text-danger"
           role="alert"
         >
           {apiErrorMessage(change.error)}
@@ -233,7 +227,7 @@ export function AddToCart({ id, stock }: { id: string; stock: number }) {
       </form>
       {mutation.isSuccess && (
         <p
-          className="rounded-control bg-primary-50 p-4 text-sm text-primary-700"
+          className="rounded-control bg-lime-soft p-4 text-sm text-ink"
           role="status"
         >
           Đã thêm vào giỏ.{' '}
