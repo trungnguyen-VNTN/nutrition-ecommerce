@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { controlClass } from '@/components/ui/field';
 import { ErrorState } from '@/components/error-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatMoney } from '@/lib/format';
@@ -191,7 +192,7 @@ export function AddToCart({ id, stock }: { id: string; stock: number }) {
   });
   if (!identity)
     return (
-      <Button asChild>
+      <Button asChild variant="sticker">
         <Link to="/login">Đăng nhập để thêm vào giỏ</Link>
       </Button>
     );
@@ -204,10 +205,10 @@ export function AddToCart({ id, stock }: { id: string; stock: number }) {
           if (valid && !mutation.isPending) mutation.mutate(amount);
         }}
       >
-        <label className="block text-sm font-medium">
+        <label className="block text-sm font-semibold">
           Số lượng
           <input
-            className="mt-2 block min-h-touch rounded-control border border-neutral-200 bg-neutral-50 px-3 py-2 tabular-nums"
+            className={`${controlClass} w-24 tabular-nums`}
             type="number"
             min={1}
             max={maximum}
@@ -221,7 +222,12 @@ export function AddToCart({ id, stock }: { id: string; stock: number }) {
             }}
           />
         </label>
-        <Button type="submit" disabled={!valid} loading={mutation.isPending}>
+        <Button
+          type="submit"
+          variant="sticker"
+          disabled={!valid}
+          loading={mutation.isPending}
+        >
           Thêm vào giỏ
         </Button>
       </form>

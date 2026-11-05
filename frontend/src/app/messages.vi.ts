@@ -42,7 +42,7 @@ export const messages = {
   previous: 'Trang trước',
   next: 'Trang sau',
   pageNumber: (page: number, total: number) => `Trang ${page} / ${total}`,
-  backProducts: 'Về danh sách sản phẩm',
+  breadcrumb: 'Đường dẫn trang',
   nutritionHeading: 'Dinh dưỡng',
   allergensHeading: 'Thông tin allergen',
   serving: (size: number, unit: string) =>
@@ -97,6 +97,14 @@ export const messages = {
   cartCount: (count: number) => `${count} sản phẩm trong giỏ`,
   loadingPage: 'Đang tải trang',
   filters: 'Bộ lọc',
+  closeFilters: 'Đóng bộ lọc',
+  clearAllFilters: 'Bỏ tất cả bộ lọc',
+  filteredEmpty:
+    'Không có sản phẩm khớp bộ lọc. Sản phẩm chưa đủ dữ liệu sẽ không hiển thị khi lọc.',
+  energyEstimate: 'Tỉ lệ ước tính từ gram protein, carb và chất béo.',
+  missingNotNone:
+    'Thông tin thiếu không đồng nghĩa với không chứa chất gây dị ứng.',
+  related: 'Có thể bạn cũng thích',
   activeFilters: (count: number) => `${count} đang áp dụng`,
   apiErrors: {
     unauthorized: 'Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.',
