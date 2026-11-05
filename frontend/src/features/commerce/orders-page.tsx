@@ -255,7 +255,14 @@ export function OrderDetailPage({ admin = false }: { admin?: boolean }) {
               <Button
                 variant="destructive"
                 loading={cancel.isPending}
-                onClick={() => cancel.mutate()}
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      `Hủy đơn #${query.data.id}? Thao tác này không hoàn tác được.`,
+                    )
+                  )
+                    cancel.mutate();
+                }}
               >
                 Hủy đơn hàng
               </Button>
