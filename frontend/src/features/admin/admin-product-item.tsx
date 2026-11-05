@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/field';
+import { Tag } from '@/components/ui/tag';
 import { formatMoney } from '@/lib/format';
-import { adminInput, type AdminProduct } from './admin-api';
+import type { AdminProduct } from './admin-api';
 
-export function AdminProductItem({
+export function AdminProductRow({
   product,
   busy,
   onEdit,
@@ -17,50 +19,33 @@ export function AdminProductItem({
   onStock: (stock: number) => void;
 }) {
   return (
-    <li className="space-y-4 rounded-card border border-neutral-200 p-4 md:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="text-lg font-semibold">{product.name}</h3>
-          <p className="mt-2 font-semibold tabular-nums text-primary-700">
-            {formatMoney(product.price, product.currency)}
-          </p>
-        </div>
-        <span className="rounded-pill bg-neutral-100 px-3 py-2 text-xs font-medium">
+    <tr className="border-t border-line align-middle">
+      <td className="p-3">
+        <h3 className="font-bold">{product.name}</h3>
+      </td>
+      <td className="p-3 font-semibold whitespace-nowrap tabular-nums">
+        {formatMoney(product.price, product.currency)}
+      </td>
+      <td className="p-3">
+        <Tag tone={product.active ? 'success' : 'neutral'}>
           {product.active ? 'Đang bán' : 'Đã ẩn'}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-3">
-        <Button variant="secondary" onClick={onEdit}>
-          Sửa
-        </Button>
-        <Button asChild variant="ghost">
-          <Link to={`/admin/products/${product.id}`}>
-            Dinh dưỡng và allergen
-          </Link>
-        </Button>
-        <Button
-          variant="ghost"
-          disabled={busy || !product.active}
-          onClick={() => {
-            if (window.confirm(`Ẩn sản phẩm “${product.name}” khỏi cửa hàng?`))
-              onHide();
+        </Tag>
+      </td>
+      <td className="p-3">
+        <form
+          className="flex items-center gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onStock(Number(new FormData(event.currentTarget).get('stock')));
           }}
         >
-          Ẩn
-        </Button>
-      </div>
-      <form
-        className="flex flex-wrap items-end gap-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onStock(Number(new FormData(event.currentTarget).get('stock')));
-        }}
-      >
-        <label>
-          Tồn kho
-          <input
+          <label className="sr-only" htmlFor={`stock-${product.id}`}>
+            Tồn kho {product.name}
+          </label>
+          <Input
+            id={`stock-${product.id}`}
             key={product.stock}
-            className={adminInput}
+            className="mt-0 w-24 tabular-nums"
             name="stock"
             type="number"
             required
@@ -68,11 +53,41 @@ export function AdminProductItem({
             max={1000000}
             defaultValue={product.stock}
           />
-        </label>
-        <Button type="submit" disabled={busy}>
-          Lưu tồn kho
-        </Button>
-      </form>
-    </li>
+          <Button
+            type="submit"
+            variant="outline"
+            className="whitespace-nowrap"
+            disabled={busy}
+          >
+            Lưu tồn kho
+          </Button>
+        </form>
+      </td>
+      <td className="p-3">
+        <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+          <Button variant="secondary" onClick={onEdit}>
+            Sửa
+          </Button>
+          <Button asChild variant="ghost">
+            <Link to={`/admin/products/${product.id}`}>
+              Dinh dưỡng và allergen
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-danger"
+            disabled={busy || !product.active}
+            onClick={() => {
+              if (
+                window.confirm(`Ẩn sản phẩm “${product.name}” khỏi cửa hàng?`)
+              )
+                onHide();
+            }}
+          >
+            Ẩn
+          </Button>
+        </div>
+      </td>
+    </tr>
   );
 }

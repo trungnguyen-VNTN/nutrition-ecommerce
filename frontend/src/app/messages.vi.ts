@@ -17,8 +17,6 @@ export const messages = {
   adminNavigation: 'Quản trị cửa hàng',
   viewStore: 'Xem cửa hàng',
   admin: 'Quản trị',
-  placeholder:
-    'Trang đang được chuẩn bị. Chức năng sẽ được bổ sung ở giai đoạn tiếp theo.',
   medicalNote: 'Thông tin tham khảo, không phải tư vấn y tế',
   notFound: 'Không tìm thấy trang',
   notFoundDescription: 'Đường dẫn này chưa có trong bản dựng giao diện.',

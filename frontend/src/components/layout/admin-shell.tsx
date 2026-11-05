@@ -46,7 +46,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         ))}
         <Link
           to="/products"
-          className="text-ink-muted md:mt-2 md:border-t md:border-line md:pt-2"
+          className="text-ink-muted md:mt-2 md:rounded-none md:border-t md:border-line md:pt-2"
         >
           <ArrowSquareOut />
           {messages.viewStore}

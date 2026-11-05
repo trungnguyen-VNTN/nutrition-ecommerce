@@ -1,9 +1,12 @@
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Field, Input, Select, Textarea } from '@/components/ui/field';
 import { ErrorState } from '@/components/error-state';
 import { getCategories } from '@/features/products/api/products';
 import { apiErrorMessage } from '@/lib/api/client';
-import { adminInput, type AdminProduct } from './admin-api';
+import type { AdminProduct } from './admin-api';
 
 export function AdminProductForm({
   editing,
@@ -21,18 +24,25 @@ export function AdminProductForm({
     queryFn: ({ signal }) => getCategories(signal),
     retry: false,
   });
+  const name = useRef<HTMLInputElement>(null);
+  // The form sits below the table: bring it to the user when "Sửa" is pressed.
+  useEffect(() => {
+    if (editing) name.current?.focus();
+  }, [editing]);
   if (categories.isError)
     return (
       <ErrorState
         description={apiErrorMessage(categories.error)}
+        error={categories.error}
         onRetry={() => void categories.refetch()}
       />
     );
   return (
-    <form
+    <Card
+      as="form"
       key={editing?.id ?? 'new'}
-      className="space-y-4 rounded-card bg-neutral-100 p-4 md:p-6"
-      onSubmit={(event) => {
+      className="grid gap-4 sm:grid-cols-2"
+      onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         onSave({
@@ -44,56 +54,57 @@ export function AdminProductForm({
         });
       }}
     >
-      <label className="block">
-        Tên sản phẩm
-        <input
-          className={adminInput}
-          name="name"
-          required
-          maxLength={200}
-          defaultValue={editing?.name}
-        />
-      </label>
-      <label className="block">
-        Mô tả
-        <textarea
-          className={adminInput}
-          name="description"
-          maxLength={2000}
-          defaultValue={editing?.description ?? ''}
-        />
-      </label>
-      <label className="block">
-        Giá (VND)
-        <input
-          className={adminInput}
-          type="number"
-          name="price"
-          min={0}
-          max={9999999999.99}
-          step="0.01"
-          required
-          defaultValue={editing?.price}
-        />
-      </label>
-      <div>
-        <label htmlFor="admin-category">Danh mục</label>
-        <select
-          id="admin-category"
-          className={adminInput}
-          name="category_id"
-          required
-          defaultValue={editing?.category_id ?? ''}
-        >
-          <option value="">Chọn danh mục</option>
-          {categories.data?.map((category) => (
-            <option value={category.id} key={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <label className="flex min-h-touch items-center gap-3">
+      <Field label="Tên sản phẩm" required className="sm:col-span-2">
+        {(control) => (
+          <Input
+            {...control}
+            ref={name}
+            name="name"
+            maxLength={200}
+            defaultValue={editing?.name}
+          />
+        )}
+      </Field>
+      <Field label="Mô tả" className="sm:col-span-2">
+        {(control) => (
+          <Textarea
+            {...control}
+            name="description"
+            maxLength={2000}
+            defaultValue={editing?.description ?? ''}
+          />
+        )}
+      </Field>
+      <Field label="Giá (VND)" required>
+        {(control) => (
+          <Input
+            {...control}
+            type="number"
+            name="price"
+            min={0}
+            max={9999999999.99}
+            step="0.01"
+            defaultValue={editing?.price}
+          />
+        )}
+      </Field>
+      <Field label="Danh mục" required>
+        {(control) => (
+          <Select
+            {...control}
+            name="category_id"
+            defaultValue={editing?.category_id ?? ''}
+          >
+            <option value="">Chọn danh mục</option>
+            {categories.data?.map((category) => (
+              <option value={category.id} key={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </Select>
+        )}
+      </Field>
+      <label className="flex min-h-touch items-center gap-3 text-sm font-semibold sm:col-span-2">
         <input
           name="active"
           type="checkbox"
@@ -101,21 +112,23 @@ export function AdminProductForm({
         />
         Cho phép hiển thị
       </label>
-      <p className="text-sm text-neutral-700">
+      <p className="text-sm text-ink-muted sm:col-span-2">
         Sản phẩm mới có tồn kho 0 và chưa xác minh dinh dưỡng/allergen.
       </p>
-      <Button
-        type="submit"
-        loading={saving}
-        disabled={!categories.data?.length}
-      >
-        Lưu sản phẩm
-      </Button>
-      {editing && (
-        <Button variant="ghost" onClick={onCancel}>
-          Hủy sửa
+      <div className="flex flex-wrap gap-3 sm:col-span-2">
+        <Button
+          type="submit"
+          loading={saving}
+          disabled={!categories.data?.length}
+        >
+          Lưu sản phẩm
         </Button>
-      )}
-    </form>
+        {editing && (
+          <Button variant="ghost" onClick={onCancel}>
+            Hủy sửa
+          </Button>
+        )}
+      </div>
+    </Card>
   );
 }

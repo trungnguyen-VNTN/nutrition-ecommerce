@@ -1,3 +1,4 @@
+import { Note } from '@/components/ui/note';
 import { useSession } from '@/features/auth/session';
 import { SignInRequired } from '@/features/auth/auth-page';
 import { AdminOrders } from './admin-orders';
@@ -10,11 +11,9 @@ export function AdminPage() {
   return (
     <section className="space-y-8">
       <header className="space-y-3">
-        <p className="text-sm font-semibold text-primary-700">
-          Nutrition · Không gian vận hành
-        </p>
-        <h1 className="text-3xl font-semibold">Quản trị</h1>
-        <p className="max-w-copy text-neutral-700">
+        <p className="eyebrow">Nutrition · Không gian vận hành</p>
+        <h1 className="text-4xl font-extrabold">Quản trị</h1>
+        <p className="max-w-copy text-ink-muted">
           Quản lý danh mục, giữ dữ liệu sản phẩm rõ ràng và theo dõi từng bước
           xử lý đơn hàng.
         </p>
@@ -22,7 +21,9 @@ export function AdminPage() {
       {!identity ? (
         <SignInRequired />
       ) : !identity.admin ? (
-        <p role="alert">Bạn không có quyền quản trị.</p>
+        <Note tone="error" role="alert">
+          Bạn không có quyền quản trị.
+        </Note>
       ) : (
         <div className="space-y-12">
           <AdminProducts />
