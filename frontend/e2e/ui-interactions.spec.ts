@@ -94,6 +94,9 @@ test('cart quantity updates shared indicator and checkout opens the created orde
   await page.getByRole('button', { name: 'Xác nhận đặt hàng' }).click();
   await expect(page).toHaveURL(/\/orders\/12$/);
   await expect(
+    page.getByRole('heading', { name: 'Đặt hàng thành công!' }),
+  ).toBeVisible();
+  await expect(
     page.getByText('Địa chỉ kiểm thử giao diện', { exact: true }),
   ).toBeVisible();
 });
