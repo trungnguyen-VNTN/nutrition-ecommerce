@@ -23,7 +23,7 @@
   --macro-fiber: #2f8a4c;
   --macro-fiber-tint: #dcefdf;
 
-  --success: #2e7d32;
+  --success: #276e2b;
   --success-tint: #e3f1e1;
   --warning: #8a4f00;
   --warning-tint: #fff1dc;
@@ -125,7 +125,7 @@
   --bottom-nav-height: var(--dock-height);
   --product-thumb: 104px;
   --hero-image-height: 440px;
-  --card-content-height: 320px;
-  --card-content-height-compact: 296px;
+  --card-content-height: 240px;
+  --card-content-height-compact: 216px;
   --filter-width: 280px;
 }
