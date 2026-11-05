@@ -64,7 +64,7 @@
   "overrides": {
     "vite": "$vite",
     "vitest": "$vitest",
-    "playwright-core": "1.56.1",
+    "playwright-core": "$@playwright/test",
     "esbuild": "0.28.1"
   },
   "msw": {
