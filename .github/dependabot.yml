@@ -4,6 +4,8 @@ updates:
     directory: /frontend
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 21
     open-pull-requests-limit: 5
     groups:
       minor-and-patch:
@@ -12,12 +14,18 @@ updates:
     directory: /backend
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 21
     open-pull-requests-limit: 5
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 21
   - package-ecosystem: terraform
     directory: /infra/cognito
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 21
