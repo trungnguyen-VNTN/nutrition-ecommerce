@@ -1,7 +1,11 @@
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
+import { ArrowLeft, Money } from '@phosphor-icons/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Field, Input, Textarea } from '@/components/ui/field';
+import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage, requestJson } from '@/lib/api/client';
@@ -9,6 +13,31 @@ import { formatMoney } from '@/lib/format';
 import { useSession } from '@/features/auth/session';
 import { SignInRequired } from '@/features/auth/auth-page';
 import { getCart, orderSchema } from './api';
+
+function Step({
+  number,
+  title,
+  children,
+}: {
+  number: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <Card as="section" className="space-y-4">
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="grid size-8 place-items-center rounded-pill bg-lime text-sm font-bold"
+        >
+          {number}
+        </span>
+        <h2 className="text-xl font-bold">{title}</h2>
+      </div>
+      {children}
+    </Card>
+  );
+}
 
 export function CheckoutPage() {
   const identity = useSession();
@@ -33,125 +62,146 @@ export function CheckoutPage() {
     onSuccess: async (order) => {
       await cache.invalidateQueries({ queryKey: ['cart'] });
       await cache.invalidateQueries({ queryKey: ['orders'] });
-      navigate(`/orders/${order.id}`);
+      navigate(`/orders/${order.id}`, { state: { justPlaced: true } });
     },
   });
-  const input =
-    'mt-2 block min-h-touch w-full rounded-control border border-neutral-200 bg-neutral-50 px-3';
   return (
     <section className="space-y-6">
-      <header className="space-y-3 border-b border-neutral-200 pb-6">
+      <header className="space-y-3">
         <Link
           to="/cart"
-          className="inline-flex min-h-touch items-center text-sm text-primary-700 underline"
+          className="inline-flex min-h-touch items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4"
         >
-          ← Quay lại giỏ hàng
+          <ArrowLeft /> Quay lại giỏ hàng
         </Link>
-        <h1 className="text-3xl font-semibold">Đặt hàng</h1>
-        <p className="text-neutral-700">
+        <h1 className="text-4xl font-extrabold">Đặt hàng</h1>
+        <p className="text-ink-muted">
           Kiểm tra lựa chọn và cho chúng tôi biết nơi nhận hàng.
         </p>
       </header>
       {!identity ? (
         <SignInRequired />
       ) : cart.isPending ? (
-        <Skeleton className="h-16" />
+        <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_340px]">
+          <Skeleton className="h-96 rounded-card" />
+          <Skeleton className="h-64 rounded-card" />
+        </div>
       ) : cart.isError ? (
         <ErrorState
           description={apiErrorMessage(cart.error)}
+          error={cart.error}
           onRetry={() => void cart.refetch()}
         />
       ) : cart.data.items.length === 0 ? (
-        <p>
-          Giỏ hàng đang trống.{' '}
-          <Link to="/products" className="underline">
-            Chọn sản phẩm
-          </Link>
-        </p>
-      ) : (
-        <div className="grid items-start gap-8 lg:grid-cols-3">
-          <form
-            className="space-y-6 lg:col-span-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              submit.mutate(
-                Object.fromEntries(new FormData(event.currentTarget)),
-              );
-            }}
-          >
-            <h2 className="text-xl font-semibold">Thông tin nhận hàng</h2>
-            <label className="block">
-              Người nhận
-              <input
-                className={input}
-                name="shipping_name"
-                autoComplete="name"
-                required
-                maxLength={120}
-              />
-            </label>
-            <label className="block">
-              Số điện thoại
-              <input
-                className={input}
-                name="phone"
-                type="tel"
-                autoComplete="tel"
-                required
-                maxLength={30}
-              />
-            </label>
-            <label className="block">
-              Địa chỉ
-              <textarea
-                className={input}
-                rows={3}
-                name="address"
-                autoComplete="street-address"
-                required
-                maxLength={500}
-              />
-            </label>
-            <Button type="submit" loading={submit.isPending}>
-              Xác nhận đặt hàng
+        <EmptyState
+          title="Giỏ hàng đang trống"
+          description="Chọn sản phẩm trước khi đặt hàng."
+          action={
+            <Button asChild>
+              <Link to="/products">Chọn sản phẩm</Link>
             </Button>
-          </form>
-          <aside className="space-y-6 rounded-card bg-primary-50 p-6">
-            <h2 className="text-xl font-semibold">Đơn hàng của bạn</h2>
-            <ul className="space-y-4">
+          }
+        />
+      ) : (
+        <form
+          className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_340px]"
+          onSubmit={(event) => {
+            event.preventDefault();
+            submit.mutate(
+              Object.fromEntries(new FormData(event.currentTarget)),
+            );
+          }}
+        >
+          <div className="space-y-4">
+            <Step number="1" title="Thông tin nhận hàng">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Người nhận" required>
+                  {(control) => (
+                    <Input
+                      {...control}
+                      name="shipping_name"
+                      autoComplete="name"
+                      maxLength={120}
+                    />
+                  )}
+                </Field>
+                <Field label="Số điện thoại" required>
+                  {(control) => (
+                    <Input
+                      {...control}
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      maxLength={30}
+                    />
+                  )}
+                </Field>
+                <Field label="Địa chỉ" required className="sm:col-span-2">
+                  {(control) => (
+                    <Textarea
+                      {...control}
+                      rows={3}
+                      name="address"
+                      autoComplete="street-address"
+                      maxLength={500}
+                    />
+                  )}
+                </Field>
+              </div>
+            </Step>
+            <Step number="2" title="Thanh toán">
+              <p className="flex items-start gap-3 rounded-control border border-line bg-sunken p-3 text-sm">
+                <Money className="icon mt-0.5 text-xl" />
+                <span>
+                  <strong className="block">Thanh toán khi nhận hàng</strong>
+                  Cửa hàng chưa có thanh toán trực tuyến.
+                </span>
+              </p>
+            </Step>
+          </div>
+          <Card as="aside" className="space-y-4 md:sticky md:top-32">
+            <h2 className="text-xl font-bold">Đơn hàng của bạn</h2>
+            <ul className="space-y-3">
               {cart.data.items.map((item) => (
                 <li
                   className="flex justify-between gap-4 text-sm"
                   key={item.product_id}
                 >
-                  <span>
+                  <span className="min-w-0">
                     {item.name}
-                    <span className="mt-1 block text-neutral-700">
+                    <span className="mt-1 block text-ink-muted">
                       Số lượng: {item.quantity}
                     </span>
                   </span>
-                  <span className="shrink-0 font-medium tabular-nums">
+                  <span className="shrink-0 font-semibold tabular-nums">
                     {formatMoney(item.price * item.quantity, item.currency)}
                   </span>
                 </li>
               ))}
             </ul>
-            <div className="flex flex-wrap justify-between gap-2 border-t border-neutral-200 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
               <span>Tạm tính</span>
-              <strong className="text-xl tabular-nums">
+              <strong className="font-display text-2xl font-extrabold tabular-nums">
                 {formatMoney(cart.data.total, cart.data.items[0]!.currency)}
               </strong>
             </div>
-            <p className="text-sm text-neutral-700">
-              Không thanh toán trực tuyến. Giá và tồn kho được kiểm tra lại khi
-              xác nhận đặt hàng.
+            <Button
+              className="w-full"
+              type="submit"
+              variant="sticker"
+              loading={submit.isPending}
+            >
+              Xác nhận đặt hàng
+            </Button>
+            <p className="text-sm text-ink-muted">
+              Giá và tồn kho được kiểm tra lại khi xác nhận đặt hàng.
             </p>
-          </aside>
-        </div>
+          </Card>
+        </form>
       )}
       {submit.isError && (
         <p
-          className="rounded-control border border-danger p-4 text-danger"
+          className="rounded-control border border-danger bg-danger-tint p-4 text-danger"
           role="alert"
         >
           {apiErrorMessage(submit.error)} Bạn có thể thử lại mà không tạo đơn
