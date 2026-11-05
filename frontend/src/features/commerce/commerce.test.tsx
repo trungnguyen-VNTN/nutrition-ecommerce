@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { server } from '@/mocks/server';
 import { renderApp } from '@/test/render';
+import { Route, Routes } from 'react-router-dom';
 import { CheckoutPage } from './checkout-page';
+import { OrderDetailPage } from './orders-page';
 import { AddToCart } from './cart-page';
 import { changeCart } from './api';
 
@@ -90,5 +92,44 @@ describe('commerce boundaries', () => {
     expect(keys).toHaveLength(2);
     expect(keys[0]).toMatch(/^[\da-f-]{36}$/);
     expect(keys[1]).toBe(keys[0]);
+  });
+
+  it('asks before cancelling an order and sends nothing when dismissed', async () => {
+    let cancels = 0;
+    server.use(
+      http.get('*/api/orders/12', () =>
+        HttpResponse.json({
+          id: 12,
+          status: 'PLACED',
+          total: 10000,
+          currency: 'VND',
+          created_at: '2026-10-31T08:00:00Z',
+          shipping_name: 'Test',
+          phone: '000',
+          address: 'Test address',
+          items: [],
+        }),
+      ),
+      http.post('*/api/orders/12/cancel', () => {
+        cancels += 1;
+        return HttpResponse.json({});
+      }),
+    );
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    renderApp(
+      <Routes>
+        <Route path="/orders/:id" element={<OrderDetailPage />} />
+      </Routes>,
+      '/orders/12',
+    );
+    const user = userEvent.setup();
+    const cancel = await screen.findByRole('button', { name: 'Hủy đơn hàng' });
+    await user.click(cancel);
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(cancels).toBe(0);
+    confirm.mockReturnValue(true);
+    await user.click(cancel);
+    await waitFor(() => expect(cancels).toBe(1));
+    confirm.mockRestore();
   });
 });
