@@ -1,17 +1,36 @@
-import { useMutation } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { MagnifyingGlass, Sparkle } from '@phosphor-icons/react';
 import { z } from 'zod';
 import { useSession } from '@/features/auth/session';
 import { SignInRequired } from '@/features/auth/auth-page';
 import { productSchema } from '@/features/products/api/products';
+import { ErrorState } from '@/components/error-state';
 import { ProductCard } from '@/components/product-card';
 import { Button } from '@/components/ui/button';
+import { Field, Textarea } from '@/components/ui/field';
+import { Note } from '@/components/ui/note';
 import { apiErrorMessage, requestJson } from '@/lib/api/client';
 
 const replySchema = z.object({
   reply: z.string(),
   products: z.array(productSchema),
 });
+const maxLength = 1000;
+const suggestions = [
+  'Tìm yến mạch',
+  'Thực phẩm dưới 400 kcal mỗi khẩu phần',
+  'Tìm sản phẩm không chứa đậu phộng',
+];
+const assistantMark = (
+  <span
+    aria-hidden="true"
+    className="grid size-9 shrink-0 place-items-center rounded-pill bg-brand text-lime"
+  >
+    <Sparkle weight="fill" />
+  </span>
+);
+
 export function ChatPage() {
   const identity = useSession();
   const [message, setMessage] = useState('');
@@ -28,41 +47,26 @@ export function ChatPage() {
       ),
   });
   return (
-    <section className="space-y-8">
-      <header className="max-w-copy space-y-3">
-        <p className="text-sm font-semibold text-primary-700">
-          Nutrition Assistant
-        </p>
-        <h1 className="text-3xl font-semibold">Tra cứu AI</h1>
-        <p className="text-lg text-neutral-700">
-          Bắt đầu từ điều bạn muốn ăn. Tìm thực phẩm phù hợp từ dữ liệu cửa
-          hàng.
-        </p>
-      </header>
-      <p className="rounded-control border border-allergen-border bg-allergen-bg p-4 text-sm text-allergen-text">
-        Thông tin tham khảo, không phải tư vấn y tế
-      </p>
-      {!identity ? (
-        <SignInRequired />
-      ) : (
-        <div className="grid items-start gap-8 lg:grid-cols-3">
-          <aside className="space-y-6 rounded-card bg-primary-50 p-6">
-            <div className="space-y-2">
-              <h2 className="text-xl font-semibold">Bạn có thể hỏi</h2>
-              <p className="text-sm text-neutral-700">
-                Tra cứu theo tên, năng lượng, protein hoặc loại trừ allergen.
-              </p>
-            </div>
-            <div className="flex flex-col items-start gap-3">
-              {[
-                'Tìm yến mạch',
-                'Thực phẩm dưới 400 kcal mỗi khẩu phần',
-                'Tìm sản phẩm không chứa đậu phộng',
-              ].map((suggestion) => (
+    <section className="grid items-start gap-6 md:grid-cols-[320px_minmax(0,1fr)] md:gap-8">
+      <aside className="space-y-5">
+        <header className="space-y-3">
+          <p className="eyebrow">Nutrition Assistant</p>
+          <h1 className="text-4xl font-extrabold">Tra cứu AI</h1>
+          <p className="text-ink-muted">
+            Bắt đầu từ điều bạn muốn ăn. Tìm thực phẩm phù hợp từ dữ liệu cửa
+            hàng.
+          </p>
+        </header>
+        <Note tone="medical">Thông tin tham khảo, không phải tư vấn y tế</Note>
+        {identity && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold">Bạn có thể hỏi</h2>
+            <div className="grid gap-2">
+              {suggestions.map((suggestion) => (
                 <Button
                   key={suggestion}
-                  variant="secondary"
-                  className="h-auto whitespace-normal text-left"
+                  variant="outline"
+                  className="h-auto justify-start text-left whitespace-normal"
                   disabled={chat.isPending}
                   onClick={() => {
                     setMessage(suggestion);
@@ -73,23 +77,36 @@ export function ChatPage() {
                 </Button>
               ))}
             </div>
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-ink-muted">
               Kết quả lấy từ dữ liệu sản phẩm. Thực phẩm chưa đủ dữ liệu sẽ
               không xuất hiện khi lọc dinh dưỡng hoặc allergen.
             </p>
-          </aside>
-          <div className="min-w-0 space-y-6 lg:col-span-2">
+          </div>
+        )}
+      </aside>
+      {!identity ? (
+        <SignInRequired />
+      ) : (
+        <div className="min-w-0 overflow-hidden rounded-sheet border border-line bg-surface">
+          <div className="flex items-center gap-3 border-b border-line p-4">
+            {assistantMark}
+            <div>
+              <p className="font-bold">Nutrition Assistant</p>
+              <p className="text-xs text-ink-muted">
+                Chỉ tra cứu, mỗi câu hỏi độc lập
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4 p-4 md:p-6">
             {question ? (
-              <div className="ml-8 rounded-card bg-primary-700 p-4 text-neutral-50">
-                <p className="mb-2 text-sm font-semibold">Bạn</p>
-                <p className="break-words">{question}</p>
+              <div className="ml-auto w-fit max-w-[85%] rounded-card rounded-br-none bg-brand p-4 text-cream">
+                <p className="mb-1 text-xs font-semibold">Bạn</p>
+                <p className="wrap-anywhere">{question}</p>
               </div>
             ) : (
-              <div className="rounded-card border border-neutral-200 p-6 space-y-3">
-                <h2 className="text-xl font-semibold">
-                  Một lựa chọn có hiểu biết
-                </h2>
-                <p className="text-neutral-700">
+              <div className="max-w-[85%] space-y-2 rounded-card rounded-tl-none bg-lime-soft p-4">
+                <h2 className="text-lg font-bold">Một lựa chọn có hiểu biết</h2>
+                <p className="text-sm">
                   Nhập câu hỏi hoặc chọn gợi ý để bắt đầu. Bạn có thể mở chi
                   tiết từng sản phẩm trong kết quả để xem nguồn dữ liệu và khẩu
                   phần.
@@ -97,79 +114,90 @@ export function ChatPage() {
               </div>
             )}
             {chat.isPending && (
-              <p className="rounded-card bg-neutral-100 p-6" role="status">
+              <p
+                className="w-fit animate-pulse rounded-card rounded-tl-none bg-sunken p-4 text-sm"
+                role="status"
+              >
                 Đang tra cứu dữ liệu cửa hàng…
               </p>
             )}
             {chat.isError && (
-              <div className="rounded-card border border-danger p-4 space-y-3">
-                <p role="alert">{apiErrorMessage(chat.error)}</p>
-                <Button
-                  variant="secondary"
-                  onClick={() => chat.mutate(question)}
-                >
-                  Thử lại
-                </Button>
-              </div>
+              <ErrorState
+                description={apiErrorMessage(chat.error)}
+                error={chat.error}
+                onRetry={() => chat.mutate(question)}
+              />
             )}
             {chat.isSuccess && (
-              <div className="space-y-6 rounded-card border border-neutral-200 p-4 md:p-6">
-                <p className="text-sm font-semibold text-primary-700">
-                  Nutrition Assistant
-                </p>
-                <p role="status">{chat.data.reply}</p>
+              <div className="space-y-4">
+                <div className="max-w-[85%] rounded-card rounded-tl-none bg-lime-soft p-4">
+                  <p role="status" className="wrap-anywhere">
+                    {chat.data.reply}
+                  </p>
+                </div>
                 {chat.data.products.length === 0 && (
-                  <p className="text-sm text-neutral-700">
+                  <p className="text-sm text-ink-muted">
                     Bạn có thể thử tên thực phẩm khác hoặc điều chỉnh tiêu chí
                     tìm kiếm.
                   </p>
                 )}
-                <ul className="grid gap-4 sm:grid-cols-2">
+                <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                   {chat.data.products.map((product, index) => (
                     <li key={product.id}>
-                      <ProductCard product={product} index={index} />
+                      <ProductCard
+                        product={product}
+                        index={index}
+                        headingLevel={3}
+                      />
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-            <form
-              className="space-y-4 rounded-card border border-neutral-200 bg-neutral-100 p-4 md:p-6"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const value = message.trim();
-                if (!value) return;
-                setQuestion(value);
-                chat.mutate(value);
-              }}
+          </div>
+          <form
+            className="space-y-3 border-t border-line bg-cream p-4 md:p-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const value = message.trim();
+              if (!value) return;
+              setQuestion(value);
+              chat.mutate(value);
+            }}
+          >
+            <Field
+              label="Bạn muốn tìm thực phẩm nào?"
+              hint="Không nhập thông tin sức khỏe riêng tư. Mỗi câu hỏi được tra cứu độc lập."
             >
-              <label className="block">
-                Bạn muốn tìm thực phẩm nào?
-                <textarea
+              {(control) => (
+                <Textarea
+                  {...control}
                   ref={composer}
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
-                  aria-describedby="chat-privacy"
                   name="message"
-                  className="mt-2 block min-h-touch w-full rounded-control border border-neutral-200 bg-neutral-50 p-3"
                   required
-                  maxLength={1000}
+                  maxLength={maxLength}
                   rows={3}
                 />
-              </label>
-              <p id="chat-privacy" className="text-sm text-neutral-700">
-                Tối đa 1.000 ký tự. Không nhập thông tin sức khỏe riêng tư. Mỗi
-                câu hỏi được tra cứu độc lập.
+              )}
+            </Field>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-ink-muted tabular-nums">
+                {message.length.toLocaleString('vi-VN')} /{' '}
+                {maxLength.toLocaleString('vi-VN')} ký tự
               </p>
               <Button
                 type="submit"
+                variant="sticker"
                 loading={chat.isPending}
                 disabled={!message.trim()}
               >
+                <MagnifyingGlass />
                 Tra cứu
               </Button>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       )}
     </section>
