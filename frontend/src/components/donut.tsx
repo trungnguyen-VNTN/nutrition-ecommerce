@@ -14,7 +14,8 @@ const circumference = 2 * Math.PI * radius;
 // Gap between segments so slices stay distinguishable without colour.
 const gap = 3;
 
-// Energy split by macro (Atwater). Drawn only with complete data; legend repeats every value in text.
+// Estimated energy share by macro (Atwater). Only shares are derived; the kcal figure is the DB value.
+// Drawn only with complete data; the legend repeats every share in text.
 export function Donut({
   product,
   className,
@@ -95,7 +96,7 @@ export function Donut({
       <figcaption className="space-y-2 text-sm">
         <p className="font-semibold">{messages.energySplit}</p>
         <ul className="space-y-1">
-          {split.map(({ macro, kcal, share }) => (
+          {split.map(({ macro, share }) => (
             <li key={macro} className="flex items-center gap-2">
               <span
                 aria-hidden="true"
@@ -106,15 +107,13 @@ export function Donut({
                 {messages.macroLabels[macro]}
               </span>
               <strong className="tabular-nums">{percent(share)}</strong>
-              <span className="text-ink-muted tabular-nums">
-                ({formatAmount(Math.round(kcal))} kcal)
-              </span>
             </li>
           ))}
         </ul>
-        <p className="text-xs text-ink-muted">
+        <p className="max-w-60 text-xs text-ink-muted">
           kcal /{' '}
           {messages.serving(ready.servingSize, ready.servingUnit).toLowerCase()}
+          . {messages.energyEstimate}
         </p>
       </figcaption>
     </figure>

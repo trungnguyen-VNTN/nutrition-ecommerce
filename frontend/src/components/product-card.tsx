@@ -20,10 +20,13 @@ const body =
 export function ProductCard({
   product,
   index,
+  headingLevel = 2,
 }: {
   product: Product;
   index: number;
+  headingLevel?: 2 | 3;
 }) {
+  const Heading = `h${headingLevel}` as const;
   const ready = readyNutrition(product);
   return (
     <article className={`${frame} control-transition group hover:border-ink`}>
@@ -42,7 +45,7 @@ export function ProductCard({
             .filter(Boolean)
             .join(' · ') || messages.sampleImage}
         </p>
-        <h2 className="text-base font-bold sm:text-lg">
+        <Heading className="text-base font-bold sm:text-lg">
           <Link
             className="flex min-h-touch items-start justify-between gap-2 text-ink after:absolute after:inset-0 group-hover:underline"
             to={`/products/${product.id}`}
@@ -50,7 +53,7 @@ export function ProductCard({
             <span className="line-clamp-2">{product.name}</span>
             <ArrowUpRight className="icon mt-1 text-brand" />
           </Link>
-        </h2>
+        </Heading>
         <div className="flex flex-wrap gap-1.5">
           {ready ? (
             <>

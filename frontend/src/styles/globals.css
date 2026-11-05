@@ -15,7 +15,6 @@
 @import '@fontsource/bricolage-grotesque/vietnamese-800.css';
 @import 'tailwindcss';
 @import './tokens.css';
-@import './legacy.css';
 
 @theme inline {
   /* One unit for every breakpoint: mixing rem defaults with px breaks variant order. */
@@ -498,6 +497,90 @@
       left: auto;
       right: var(--space-6);
       bottom: var(--space-6);
+    }
+  }
+}
+
+/* Shared page pieces. */
+@layer components {
+  .eyebrow {
+    color: var(--brand);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Arched hero picture from the prototype; caption stays inside the frame. */
+  .hero-arch {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 50% 50% var(--corner-sheet) var(--corner-sheet) / 38% 38%
+      var(--corner-sheet) var(--corner-sheet);
+    background: var(--sunken);
+  }
+  @media (width >= 940px) {
+    .hero-arch {
+      aspect-ratio: 1 / 1;
+    }
+  }
+}
+
+/* Product filters: bottom sheet below 940px, sticky side panel above. */
+@layer components {
+  .filter-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-sheet);
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+  .filter-sheet {
+    display: none;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: var(--z-sheet);
+    max-height: 85dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-4) var(--space-4)
+      calc(var(--space-4) + env(safe-area-inset-bottom));
+    border-radius: var(--corner-sheet) var(--corner-sheet) 0 0;
+    background: var(--surface);
+    box-shadow: var(--elevation-float);
+  }
+  .filter-sheet[data-open='true'] {
+    display: block;
+    animation: sheet-in var(--motion-enter) var(--motion-ease);
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(var(--space-12));
+      opacity: 0;
+    }
+  }
+  @media (width < 940px) {
+    body:has(.filter-sheet[data-open='true']) {
+      overflow: hidden;
+    }
+  }
+  @media (width >= 940px) {
+    .filter-scrim {
+      display: none;
+    }
+    .filter-sheet,
+    .filter-sheet[data-open='true'] {
+      display: block;
+      position: sticky;
+      inset: auto;
+      top: calc(var(--header-height) * 2 + var(--space-4));
+      z-index: auto;
+      max-height: calc(100dvh - var(--header-height) * 2 - var(--space-8));
+      padding: var(--space-4);
+      border: var(--border-width) solid var(--line);
+      border-radius: var(--corner-card);
+      box-shadow: none;
+      animation: none;
     }
   }
 }
