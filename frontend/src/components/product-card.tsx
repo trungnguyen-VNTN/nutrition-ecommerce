@@ -1,101 +1,111 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, CheckCircle } from '@phosphor-icons/react';
 import { messages } from '@/app/messages.vi';
 import type { Product } from '@/lib/api/catalog.types';
 import { formatMoney } from '@/lib/format';
+import { formatAmount, readyNutrition } from '@/lib/nutrition';
+import { Pill } from '@/components/ui/pill';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tag } from '@/components/ui/tag';
 import { DataStatusBadge } from './data-status-badge';
+import { ProductArt } from './product-art';
+
+// Row with thumbnail below 640px, stacked card above. Skeleton shares this frame (no layout jump).
+const frame =
+  'relative grid h-full grid-cols-[var(--product-thumb)_minmax(0,1fr)] overflow-hidden rounded-card border border-line bg-surface sm:flex sm:flex-col';
+const art = 'min-h-[var(--product-thumb)] sm:aspect-[4/3] sm:min-h-0';
+const body =
+  'flex min-h-[var(--card-content-height-compact)] flex-1 flex-col gap-2 p-3 sm:min-h-[var(--card-content-height)] sm:gap-3 sm:p-4';
 
 export function ProductCard({
   product,
   index,
+  headingLevel = 2,
 }: {
   product: Product;
   index: number;
+  headingLevel?: 2 | 3;
 }) {
-  const tone = ['green', 'grain', 'warm'][index % 3];
+  const Heading = `h${headingLevel}` as const;
+  const ready = readyNutrition(product);
   return (
-    <article className="product-card flex h-full flex-col overflow-hidden rounded-card border border-neutral-200 shadow-sm">
-      <div className="product-art" data-tone={tone}>
-        <svg
-          viewBox="0 0 120 140"
-          role="img"
-          aria-label={messages.illustration(product.name)}
-        >
-          <path
-            d="M28 12h64l6 116H22Z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-          <path
-            d="M28 24h64M25 112h70"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-          <circle cx="60" cy="68" r="26" fill="currentColor" opacity="0.1" />
-          <path
-            d="M60 88V52m0 12c-15 0-18-12-18-12 14 0 18 12 18 12Zm0 12c15 0 18-12 18-12-14 0-18 12-18 12Z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span className="product-art-caption">
-          {messages.sampleImage} · Chưa có ảnh thật
-        </span>
-      </div>
-      <div className="product-card-body flex flex-1 flex-col gap-3 p-4">
-        <p
-          className={`stock-label text-xs ${product.stock > 0 ? 'text-success' : 'text-danger'}`}
-        >
-          {product.stock > 0 ? messages.inStock : messages.outOfStock}
+    <article className={`${frame} control-transition group hover:border-ink`}>
+      <ProductArt
+        name={product.name}
+        index={index}
+        caption={false}
+        className={art}
+      />
+      <div className={body}>
+        <p className="text-xs text-ink-muted">
+          {[
+            product.category?.name,
+            ready && messages.serving(ready.servingSize, ready.servingUnit),
+          ]
+            .filter(Boolean)
+            .join(' · ') || messages.sampleImage}
         </p>
-        <h2 className="text-lg font-semibold">
+        <Heading className="text-base font-bold sm:text-lg">
           <Link
-            className="flex min-h-touch items-center justify-between gap-2 text-neutral-900 hover:text-primary-700"
+            className="flex min-h-touch items-start justify-between gap-2 text-ink after:absolute after:inset-0 group-hover:underline"
             to={`/products/${product.id}`}
           >
             <span className="line-clamp-2">{product.name}</span>
-            <span aria-hidden="true" className="text-primary-700">
-              ↗
-            </span>
+            <ArrowUpRight className="icon mt-1 text-brand" />
           </Link>
-        </h2>
-        <p className="text-xl font-semibold tabular-nums text-primary-700">
-          {formatMoney(product.price, product.currency)}
-        </p>
-        <div className="mt-auto grid gap-2 border-t border-neutral-200 pt-3">
-          {product.nutrition_complete && product.nutrition && (
-            <div className="nutrition-preview">
-              <span>{product.nutrition.calories} kcal</span>
-              <span>{product.nutrition.protein_g}g protein</span>
-              <p className="w-full">
-                {messages.serving(product.serving_size!, product.serving_unit!)}
-              </p>
-            </div>
+        </Heading>
+        <div className="flex flex-wrap gap-1.5">
+          {ready ? (
+            <>
+              <Pill macro="energy">
+                {formatAmount(ready.nutrition.calories)} kcal
+              </Pill>
+              <Pill macro="protein">
+                {formatAmount(ready.nutrition.protein_g)}g protein
+              </Pill>
+            </>
+          ) : (
+            <DataStatusBadge kind="nutrition" />
           )}
-          <div className="flex min-h-8 items-center">
-            {product.nutrition_complete ? (
-              <span className="text-xs text-neutral-700">
-                {messages.nutritionVerified}
-              </span>
-            ) : (
-              <DataStatusBadge kind="nutrition" />
-            )}
-          </div>
-          <div className="flex min-h-8 items-center">
-            {product.allergens_verified ? (
-              <span className="text-xs text-neutral-700">
-                <span aria-hidden="true">✓ </span>
-                {messages.allergensVerified}
-              </span>
-            ) : (
-              <DataStatusBadge kind="allergens" />
-            )}
-          </div>
+        </div>
+        <div>
+          {product.allergens_verified ? (
+            <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
+              <CheckCircle className="icon text-success" />
+              {messages.allergensVerified}
+            </span>
+          ) : (
+            <DataStatusBadge kind="allergens" />
+          )}
+        </div>
+        <div className="mt-auto flex items-end justify-between gap-2 border-t border-line pt-3">
+          <p className="font-display text-lg font-extrabold tabular-nums sm:text-xl">
+            {formatMoney(product.price, product.currency)}
+          </p>
+          {product.stock > 0 ? (
+            <Tag tone="success">{messages.inStock}</Tag>
+          ) : (
+            <Tag tone="danger">{messages.outOfStock}</Tag>
+          )}
         </div>
       </div>
     </article>
+  );
+}
+
+export function ProductCardSkeleton() {
+  return (
+    <div className={frame} data-testid="product-skeleton">
+      <Skeleton className={`${art} rounded-none`} />
+      <div className={body}>
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-touch w-full" />
+        <Skeleton className="h-6 w-2/3" />
+        <Skeleton className="h-6 w-1/2" />
+        <div className="mt-auto border-t border-line pt-3">
+          <Skeleton className="h-7 w-1/2" />
+        </div>
+      </div>
+    </div>
   );
 }

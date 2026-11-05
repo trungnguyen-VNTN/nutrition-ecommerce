@@ -8,7 +8,8 @@
 - Định tuyến: React Router. Dữ liệu từ server: TanStack Query. Form: React Hook Form + Zod.
 - Kiểm thử: Vitest + Testing Library; MSW để mock API; Playwright cho e2e và ảnh chụp; @axe-core/playwright cho accessibility.
 - Chất lượng: ESLint, Prettier, `tsc --noEmit`.
-- Font tự host bằng `@fontsource/*` (không gọi CDN ngoài, phù hợp CloudFront + S3).
+- Font tự host bằng `@fontsource/*` (không gọi CDN ngoài, phù hợp CloudFront + S3): Bricolage Grotesque (tiêu đề) + Plus Jakarta Sans (thân bài), chỉ subset latin + vietnamese (D11).
+- Icon: chỉ dùng Phosphor (`@phosphor-icons/react`), weight `regular` (đang chọn thì `fill`). Cấu hình chung ở `IconContext` trong `app/providers.tsx`: cỡ theo chữ, mặc định `aria-hidden`. Không dùng ký tự (`→ ↗ × ✓`) hay emoji làm icon.
 - Không thêm thư viện ngoài danh sách này nếu chưa hỏi.
 
 ## Scripts bắt buộc trong package.json
