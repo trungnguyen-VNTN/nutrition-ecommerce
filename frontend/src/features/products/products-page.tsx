@@ -1,5 +1,11 @@
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { CaretUp, Funnel, X } from '@phosphor-icons/react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Note } from '@/components/ui/note';
+import { getCategories } from './api/products';
+import { FilterSheet } from './filter-sheet';
 import { ProductFiltersForm } from './product-filters';
 import {
   filtersSchema,
@@ -10,16 +16,37 @@ import {
 import { messages } from '@/app/messages.vi';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
-import { ProductCard } from '@/components/product-card';
+import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage } from '@/lib/api/client';
 import { useProducts } from './hooks/use-products';
 
+const filterKeys = [
+  'q',
+  'categoryId',
+  'maxCalories',
+  'minProtein',
+  'excludeAllergen',
+];
+
+const chipPrefix: Record<string, string> = {
+  q: 'Tìm: ',
+  categoryId: 'Danh mục: ',
+  maxCalories: 'Calo ≤ ',
+  minProtein: 'Protein ≥ ',
+  excludeAllergen: 'Không chứa: ',
+};
+const grid = 'grid gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3';
+
 function ProductList({
   filters,
+  filtered,
+  onClearFilters,
   onPage,
 }: {
   filters: ProductFilters;
+  filtered: boolean;
+  onClearFilters: () => void;
   onPage: (page: number) => void;
 }) {
   const query = useProducts(filters);
@@ -30,24 +57,9 @@ function ProductList({
           {messages.loading}
         </p>
         <Skeleton className="mb-6 h-[var(--line-sm)] w-1/3 sm:w-1/6" />
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className={grid}>
           {Array.from({ length: 8 }, (_, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-card border border-neutral-200"
-              data-testid="product-skeleton"
-            >
-              <Skeleton className="aspect-[4/3] rounded-none" />
-              <div className="product-card-body flex flex-col gap-3 p-4">
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-touch w-full" />
-                <Skeleton className="h-[var(--line-xl)] w-1/2" />
-                <div className="mt-auto grid gap-2 border-t border-neutral-200 pt-3">
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                </div>
-              </div>
-            </div>
+            <ProductCardSkeleton key={index} />
           ))}
         </div>
       </section>
@@ -57,17 +69,29 @@ function ProductList({
     return (
       <ErrorState
         description={apiErrorMessage(query.error)}
+        error={query.error}
         onRetry={() => void query.refetch()}
       />
     );
   if (!query.data || query.data.items.length === 0)
-    return <EmptyState onRefresh={() => void query.refetch()} />;
+    return filtered ? (
+      <EmptyState
+        description={messages.filteredEmpty}
+        action={
+          <Button variant="outline" onClick={onClearFilters}>
+            {messages.clearAllFilters}
+          </Button>
+        }
+      />
+    ) : (
+      <EmptyState onRefresh={() => void query.refetch()} />
+    );
   return (
     <>
-      <p className="mb-6 text-sm text-neutral-700" role="status">
+      <p className="mb-6 text-sm text-ink-muted" role="status">
         {messages.sampleCount(query.data.total)}
       </p>
-      <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className={grid}>
         {query.data.items.map((product, index) => (
           <li key={product.id}>
             <ProductCard product={product} index={index} />
@@ -79,20 +103,20 @@ function ProductList({
         className="mt-6 flex flex-wrap items-center gap-4"
       >
         <Button
-          variant="secondary"
+          variant="outline"
           disabled={filters.page === 0}
           onClick={() => onPage(filters.page - 1)}
         >
           {messages.previous}
         </Button>
-        <span className="text-sm">
+        <span className="text-sm tabular-nums">
           {messages.pageNumber(
             filters.page + 1,
             Math.ceil(query.data.total / query.data.size),
           )}
         </span>
         <Button
-          variant="secondary"
+          variant="outline"
           disabled={(filters.page + 1) * query.data.size >= query.data.total}
           onClick={() => onPage(filters.page + 1)}
         >
@@ -109,86 +133,102 @@ export function ProductsPage() {
     ...Object.fromEntries(params),
     excludeAllergen: params.getAll('excludeAllergen'),
   });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const categories = useQuery({
+    queryKey: ['categories'],
+    queryFn: ({ signal }) => getCategories(signal),
+    retry: false,
+  });
+  const active = Array.from(params.entries()).filter(
+    ([key, value]) => filterKeys.includes(key) && value !== '',
+  );
+  const chipValue = (key: string, value: string) =>
+    key === 'excludeAllergen'
+      ? (allergenOptions.find((o) => o.code === value)?.label ?? value)
+      : key === 'categoryId'
+        ? (categories.data?.find((c) => String(c.id) === value)?.name ?? value)
+        : value;
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <header className="max-w-copy space-y-3">
-        <p className="text-xs font-semibold text-primary-700">
-          {messages.eyebrow}
-        </p>
-        <h1 className="text-3xl font-semibold md:text-4xl">
+        <p className="eyebrow">{messages.eyebrow}</p>
+        <h1 className="text-3xl font-extrabold md:text-4xl">
           {messages.products}
         </h1>
-        <p className="text-neutral-700">{messages.productsDescription}</p>
+        <p className="text-ink-muted">{messages.productsDescription}</p>
       </header>
-      <div className="catalog-layout">
-        <aside
-          className="filter-panel rounded-card"
-          aria-label="Bộ lọc sản phẩm"
-        >
-          <ProductFiltersForm
-            filters={parsed.success ? parsed.data : null}
-            onClear={() => setParams({})}
-            onApply={(values) => {
-              const next = new URLSearchParams(values);
-              next.set('page', '0');
-              setParams(next);
-            }}
-          />
+      <div className="grid items-start gap-6 md:grid-cols-[var(--filter-width)_minmax(0,1fr)] md:gap-8">
+        <aside aria-label="Bộ lọc sản phẩm">
+          <Button
+            variant="outline"
+            className="w-full justify-between md:hidden"
+            aria-expanded={filtersOpen}
+            aria-controls="product-filters"
+            onClick={() => setFiltersOpen(!filtersOpen)}
+          >
+            <span className="inline-flex items-center gap-2">
+              <Funnel />
+              {messages.filters}
+              {active.length > 0 && (
+                <span className="text-xs font-medium">
+                  · {messages.activeFilters(active.length)}
+                </span>
+              )}
+            </span>
+            <CaretUp />
+          </Button>
+          <FilterSheet
+            id="product-filters"
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+          >
+            <ProductFiltersForm
+              filters={parsed.success ? parsed.data : null}
+              onClear={() => {
+                setParams({});
+                setFiltersOpen(false);
+              }}
+              onApply={(values) => {
+                const next = new URLSearchParams(values);
+                next.set('page', '0');
+                setParams(next);
+                setFiltersOpen(false);
+              }}
+            />
+          </FilterSheet>
         </aside>
         <div className="min-w-0">
-          {parsed.success && (
+          {parsed.success && active.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
-              {Array.from(params.entries())
-                .filter(
-                  ([key, value]) =>
-                    [
-                      'q',
-                      'categoryId',
-                      'maxCalories',
-                      'minProtein',
-                      'excludeAllergen',
-                    ].includes(key) && value !== '',
-                )
-                .map(([key, value]) => (
-                  <Button
-                    key={`${key}-${value}`}
-                    variant="secondary"
-                    onClick={() => {
-                      const next = new URLSearchParams(params);
-                      next.delete(key, value);
-                      next.set('page', '0');
-                      setParams(next);
-                    }}
-                    aria-label={`Bỏ lọc ${key === 'excludeAllergen' ? (allergenOptions.find((o) => o.code === value)?.label ?? value) : value}`}
-                  >
-                    <span className="text-xs">
-                      {key === 'q'
-                        ? 'Tìm: '
-                        : key === 'categoryId'
-                          ? 'Danh mục: '
-                          : key === 'maxCalories'
-                            ? 'Calo ≤ '
-                            : key === 'minProtein'
-                              ? 'Protein ≥ '
-                              : 'Không chứa: '}
-                      {key === 'excludeAllergen'
-                        ? (allergenOptions.find((o) => o.code === value)
-                            ?.label ?? value)
-                        : value}
-                    </span>
-                    <span aria-hidden="true">×</span>
-                  </Button>
-                ))}
+              {active.map(([key, value]) => (
+                <Button
+                  key={`${key}-${value}`}
+                  variant="secondary"
+                  onClick={() => {
+                    const next = new URLSearchParams(params);
+                    next.delete(key, value);
+                    next.set('page', '0');
+                    setParams(next);
+                  }}
+                  aria-label={`Bỏ lọc ${chipValue(key, value)}`}
+                >
+                  <span className="text-xs">
+                    {chipPrefix[key]}
+                    {chipValue(key, value)}
+                  </span>
+                  <X />
+                </Button>
+              ))}
             </div>
           )}
           {import.meta.env.DEV && (
-            <p className="mb-6 rounded-control bg-primary-50 p-4 text-sm text-primary-700">
-              {messages.sampleNotice}
-            </p>
+            <Note className="mb-6">{messages.sampleNotice}</Note>
           )}
           {parsed.success ? (
             <ProductList
               filters={parsed.data}
+              filtered={active.length > 0}
+              onClearFilters={() => setParams({})}
               onPage={(page) =>
                 setParams(productQuery({ ...parsed.data, page }))
               }
