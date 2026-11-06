@@ -13,6 +13,16 @@ function Test-DockerReady {
     return ($LASTEXITCODE -eq 0)
 }
 
+function Initialize-AppDatabase {
+    # The app runs on USDA data; nutrition_dev stays reserved for the integration tests.
+    $ErrorActionPreference = 'Continue'
+    $exists = & docker compose exec -T postgres psql -U nutrition_dev -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='nutrition_usda'"
+    if ("$exists".Trim() -ne '1') {
+        & docker compose exec -T postgres createdb -U nutrition_dev nutrition_usda
+        if ($LASTEXITCODE -ne 0) { throw 'Could not create database nutrition_usda.' }
+    }
+}
+
 function Test-DatabaseReady {
     $ErrorActionPreference = 'Continue'
     & docker compose exec -T postgres pg_isready -U nutrition_dev -d nutrition_dev *> $null
@@ -119,10 +129,11 @@ try {
             Start-Sleep -Seconds 2
         } while ((Get-Date) -lt $deadline)
         if (!$databaseReady) { throw 'PostgreSQL is not ready after 60 seconds.' }
+        Initialize-AppDatabase
         $env:MAVEN_OPTS = '-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC'
         $env:NODE_OPTIONS = '--max-old-space-size=384'
-        Write-Host 'Starting backend (local profile, cached Maven dependencies)...'
-        $backend = Start-Owned 'backend' (Join-Path $root 'backend') 'mvnw.cmd -o -B -ntp spring-boot:run -Dspring-boot.run.profiles=local "-Dspring-boot.run.jvmArguments=-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"'
+        Write-Host 'Starting backend (usda profile, cached Maven dependencies)...'
+        $backend = Start-Owned 'backend' (Join-Path $root 'backend') 'mvnw.cmd -o -B -ntp spring-boot:run -Dspring-boot.run.profiles=usda "-Dspring-boot.run.jvmArguments=-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"'
         Wait-Http 'backend' 'http://localhost:8080/actuator/health' $backend 180
         Write-Host 'Starting frontend...'
         $frontend = Start-Owned 'frontend' (Join-Path $root 'frontend') 'npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort'

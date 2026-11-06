@@ -1,0 +1,20 @@
+[
+  { "fdcId": 169705, "expect": "Oats", "name": "Yến mạch", "category": "ngu-coc", "price": 69000, "stock": 40 },
+  { "fdcId": 169703, "expect": "Rice, brown", "name": "Gạo lứt hạt dài", "category": "ngu-coc", "price": 58000, "stock": 60 },
+  { "fdcId": 168874, "expect": "Quinoa", "name": "Hạt diêm mạch", "category": "ngu-coc", "price": 138000, "stock": 25 },
+  { "fdcId": 169761, "expect": "Wheat flour", "name": "Bột mì trắng đa dụng", "category": "ngu-coc", "price": 32000, "stock": 50 },
+  { "fdcId": 170567, "expect": "almonds", "name": "Hạnh nhân", "category": "cac-loai-hat", "price": 125000, "stock": 30 },
+  { "fdcId": 170162, "expect": "cashew", "name": "Hạt điều sống", "category": "cac-loai-hat", "price": 145000, "stock": 22 },
+  { "fdcId": 170178, "expect": "macadamia", "name": "Hạt mắc ca sống", "category": "cac-loai-hat", "price": 215000, "stock": 0 },
+  { "fdcId": 170187, "expect": "walnuts", "name": "Óc chó", "category": "cac-loai-hat", "price": 189000, "stock": 18 },
+  { "fdcId": 170554, "expect": "chia", "name": "Hạt chia", "category": "hat-dinh-duong", "price": 89000, "stock": 35 },
+  { "fdcId": 169414, "expect": "flaxseed", "name": "Hạt lanh", "category": "hat-dinh-duong", "price": 72000, "stock": 28 },
+  { "fdcId": 170188, "expect": "pumpkin", "name": "Hạt bí rang không muối", "category": "hat-dinh-duong", "price": 96000, "stock": 24 },
+  { "fdcId": 170562, "expect": "sunflower", "name": "Nhân hạt hướng dương", "category": "hat-dinh-duong", "price": 64000, "stock": 32 },
+  { "fdcId": 173734, "expect": "Beans, black", "name": "Đậu đen", "category": "cac-loai-dau", "price": 42000, "stock": 45 },
+  { "fdcId": 173756, "expect": "Chickpeas", "name": "Đậu gà", "category": "cac-loai-dau", "price": 75000, "stock": 26 },
+  { "fdcId": 172420, "expect": "Lentils", "name": "Đậu lăng", "category": "cac-loai-dau", "price": 74000, "stock": 30 },
+  { "fdcId": 172430, "expect": "Peanuts", "name": "Đậu phộng sống", "category": "cac-loai-dau", "price": 38000, "stock": 55 },
+  { "fdcId": 174270, "expect": "Soybeans", "name": "Đậu nành", "category": "cac-loai-dau", "price": 36000, "stock": 48 },
+  { "fdcId": 169593, "expect": "Cocoa", "name": "Bột ca cao không đường", "category": "thuc-pham-khac", "price": 115000, "stock": 20 }
+]
