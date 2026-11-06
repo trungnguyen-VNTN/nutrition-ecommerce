@@ -12,6 +12,7 @@
 | D7 | Domain | Để sau | Chốt 2026-11-01: ALB công khai sau CloudFront (SG chỉ nhận prefix list CloudFront + header bí mật), không dùng VPC origin; truy cập qua `*.cloudfront.net` |
 | D11 | Hướng thiết kế frontend (2026-11-03) | "Nutrition Label": bố cục theo bản mẫu HTML Nouri, ngôn ngữ hình ảnh nền kem / mực xanh đen / nhấn xanh chanh, màu macro cố định, Bricolage Grotesque + Plus Jakarta Sans, CTA sticker, nhãn dinh dưỡng, donut, dock nổi; breakpoint chính 940px | Chi tiết ở `docs/ui-guidelines.md` và `docs/frontend-redesign-plan.md`. Thay font Be Vietnam Pro. Giữ thương hiệu "nutrition." và ô tìm kiếm (API có `q`) |
 | D12 | Phần của bản mẫu không làm | Sắp xếp, bản tin, đánh giá sao, phí ship và ghi chú đơn, thống kê doanh thu admin, trang quên mật khẩu, route "đặt hàng thành công" riêng | Không có API hoặc dữ liệu thật; quên mật khẩu cần đổi `session.ts` (ngoài phạm vi). Sau checkout vẫn chuyển sang `/orders/:id`, hiện khối chúc mừng ở đó |
+| D14 | Dữ liệu sản phẩm khi chạy local (2026-11-06) | 18 sản phẩm với dinh dưỡng từ USDA FoodData Central, nạp vào DB riêng `nutrition_usda` qua profile `usda` | Theo yêu cầu người dùng. Đây là nhập một lần bằng `scripts/usda-import.mjs`, không phải pipeline USDA (D6 vẫn giữ). `nutrition_dev` và dữ liệu giả giữ nguyên cho test. Giá và tồn kho là mẫu. USDA không có dữ liệu allergen nên mọi sản phẩm `allergens_verified = false`; không tự suy đoán. Chưa áp dụng cho production |
 
 ## Quyết định còn mở
 

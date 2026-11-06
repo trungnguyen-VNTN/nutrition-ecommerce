@@ -24,8 +24,7 @@ export const messages = {
   eyebrow: 'LỰA CHỌN HẰNG NGÀY',
   productsDescription:
     'Thông tin rõ ràng, từ thành phần đến tình trạng dữ liệu.',
-  sampleNotice:
-    'Dữ liệu mẫu để kiểm thử giao diện; không phải thông tin sản phẩm thực tế.',
+  sampleNotice: 'Môi trường phát triển: giá và tồn kho là dữ liệu mẫu.',
   sampleCount: (count: number) => `${count} sản phẩm`,
   category: 'Danh mục',
   allCategories: 'Tất cả danh mục',
