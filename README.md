@@ -103,14 +103,19 @@ Chạy thủ công trong các terminal riêng:
    Chờ thông báo nhận kết nối. Database `nutrition_dev` ở `localhost:5433`;
    compose chỉ bind loopback và dùng trust cho local, không dùng cấu hình này cho production.
 
-2. Chạy API với profile local (có dữ liệu seed):
+2. Tạo DB ứng dụng rồi chạy API với profile `usda` (dinh dưỡng từ USDA FoodData Central):
 
    ```sh
+   docker compose exec postgres createdb -U nutrition_dev nutrition_usda
    cd backend
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=usda
    ```
 
-   Windows PowerShell dùng `./mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"`.
+   Windows PowerShell dùng `./mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=usda"`.
+   Giá và tồn kho là dữ liệu mẫu; USDA không có dữ liệu allergen nên sản phẩm hiện
+   "Chưa xác minh allergen" và bị loại khi lọc allergen cho tới khi admin xác minh.
+   Profile `local` với DB `nutrition_dev` chỉ dùng dữ liệu giả cho kiểm thử tích hợp.
+   Tạo lại dữ liệu bằng `node scripts/usda-import.mjs` (đọc `USDA_API_KEY`, mặc định `DEMO_KEY`).
    API tại `http://localhost:8080`; health tại `http://localhost:8080/actuator/health`.
    Trên máy ít RAM, đặt `MAVEN_OPTS=-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC`
    trong môi trường terminal trước khi chạy Maven.
