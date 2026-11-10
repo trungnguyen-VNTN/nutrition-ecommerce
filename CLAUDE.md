@@ -45,7 +45,8 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 ## Lệnh thường dùng
 - Chạy toàn bộ local trên Windows: `START.bat` / `STOP.bat`.
 - PostgreSQL local: `docker compose up -d postgres` (cổng 5433).
-- Backend chạy local: `cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+- Backend chạy local với dữ liệu USDA: `cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=usda` (cần DB `nutrition_usda`, `START.bat` tự tạo). Profile `local` dùng dữ liệu giả cho test.
+- Tạo lại dữ liệu USDA: `node scripts/usda-import.mjs` (đọc `USDA_API_KEY`, mặc định `DEMO_KEY`).
 - Backend kiểm tra đầy đủ: `cd backend && ./mvnw verify` (cần PostgreSQL local).
 - Frontend chạy local: `cd frontend && npm run dev` (http://localhost:5173).
 - Frontend kiểm tra: `cd frontend && npm run format:check && npm run lint && npm run typecheck && npm test -- --maxWorkers=1 && npm run build`
