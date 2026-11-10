@@ -1,8 +1,10 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-06_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-10_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- Chốt quyết định mở 2026-11-10 (nhánh docs/lock-open-decisions, chưa commit): O3 → D15 (ECS ở public subnet có IP công khai, không NAT), O4 → D16 (permission set `apply` tùy chỉnh theo tiền tố + permissions boundary), O7 → D17 (chỉ `dev`), O1 → D18 (tạm: Claude Haiku 5.5 qua profile APAC, chờ spike S1/S5), D19 (Terraform: `infra/modules/` + root `infra/envs/dev/`). Đã đồng bộ decisions.md, architecture.md, playbook.md (G.4, cây thư mục), CLAUDE.md, AGENTS.md, README. Chưa sửa code hay Terraform. Cùng ngày: khôi phục repo local bị hỏng `.git` từ GitHub, cài Git, JDK 21, Node, WSL, Docker Desktop; backend verify 18/18, frontend unit 84/84 + build trên máy này. **Bước tiếp theo:** chuyển `infra/cognito/` vào `infra/modules/cognito/` theo D19, rồi viết module network (theo D15) và gọi từ `infra/envs/dev/`; người dùng làm Giai đoạn 0 (tài khoản AWS, SSO, spike S1/S2/S5). Chưa cài Terraform, gh, psql trên máy.
 
 - Dữ liệu USDA 2026-11-07 (nhánh feat/usda-catalog, D14, chưa commit): DB riêng `nutrition_usda` + profile `usda`, 18 sản phẩm từ USDA FoodData Central qua `scripts/usda-import.mjs`; START.bat chạy web trên DB này; `nutrition_dev` giữ dữ liệu giả cho test. Kiểm chứng trên API và PostgreSQL thật: catalog, tìm kiếm, lọc dinh dưỡng, chi tiết, trang chủ không lỗi console; backend verify 18/18. Giá và tồn kho là mẫu. Vướng: (1) mọi sản phẩm allergens_verified=false nên lọc allergen trả 0 (đúng fail-closed), admin cần xác minh; (2) đăng nhập, giỏ, đặt hàng, admin, chat cần Cognito thật, chưa xác nhận đã tạo vì máy chưa có AWS CLI; backend cố ý không có đường vòng; (3) launcher dùng Maven offline nên lỗi khi plugin mới chưa được tải (đã gặp sau Dependabot #10); chạy `./mvnw compile` một lần là hết. Playwright trên máy thiếu trình duyệt cho bản hiện tại.
 
@@ -56,7 +58,7 @@ _Cập nhật lần cuối: 2026-11-06_ (Codex cập nhật cuối mỗi phiên)
 - [ ] IAM Identity Center: permission set `plan` và `apply`; hai profile SSO đăng nhập được
 - [ ] Công cụ: Git, `gh`, JDK, Maven/Gradle, Node, Docker, Terraform ≥ 1.10, `psql`, Codex (CLI hoặc extension)
 - [ ] Spike S1 (Bedrock + inference profile + Guardrail), S2 (state S3), S5 (quota) → ghi vào `decisions.md`
-- [ ] Chốt các quyết định mở O1–O5 trong `decisions.md`
+- [x] Chốt các quyết định mở O1–O7 trong `decisions.md` (2026-11-10; O1 chốt tạm, chờ spike S1)
 - [ ] Điền các chỗ `<...>` trong `AGENTS.md` và `backend/AGENTS.md` (JDK, build tool, kiến trúc CPU, lệnh thường dùng)
 - [ ] Codex: trust thư mục repo, chạy `codex execpolicy check` theo `.codex/README.md`, xác nhận rule `terraform apply` bị `forbidden`
 - [ ] Kiểm tra IAM của `nutrition-plan` không có quyền tạo / xóa tài nguyên (chốt chặn thật, vì Codex không có deny-read / wildcard)

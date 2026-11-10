@@ -36,7 +36,7 @@ CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──�
 | Backend | ECS Fargate (Spring Boot) | Chỉ nhận từ ALB; image trong ECR; `/actuator/health` |
 | Cân bằng tải | ALB công khai | SG chỉ nhận managed prefix list của CloudFront; listener chỉ chuyển tiếp khi có header bí mật do CloudFront thêm |
 | Database | RDS PostgreSQL | 1 AZ cho dev, mã hóa, `deletion_protection`, mật khẩu do RDS quản lý (Secrets Manager) |
-| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình |
+| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình. Chốt tạm: Claude Haiku 5.5 qua profile APAC (D18, chờ spike S1) |
 | Quan sát | CloudWatch Logs, Alarms | Không log token hay dữ liệu cá nhân |
 | IaC | Terraform ≥ 1.10 | State S3, `use_lockfile = true` |
 
@@ -46,7 +46,8 @@ Theo quyết định 2026-10-29 (`decisions.md`): ALB công khai, bỏ CloudFron
 
 - VPC với public subnet (ALB, IGW) và private-db subnet. ALB và DB subnet group cần subnet ở ít nhất hai AZ.
 - Chưa có domain nên không có chứng chỉ ACM cho ALB: CloudFront → ALB đi HTTP qua Internet và mang JWT. Đây là rủi ro đã chấp nhận (O6); giảm thiểu bằng SG chỉ nhận prefix list CloudFront và header bí mật. Khi có domain: bật HTTPS cho ALB.
-- 🔎 Đường ra Internet của task ECS (kéo image ECR, gọi Bedrock, tải JWKS Cognito, ghi CloudWatch Logs): task ở public subnet có IP công khai, hoặc private subnet + NAT (`enable_nat`). Chưa chốt (O3); NAT tốn tiền theo giờ.
+- Đường ra Internet của task ECS (kéo image ECR, gọi Bedrock, tải JWKS Cognito, ghi CloudWatch Logs): task ở public subnet có IP công khai (`assign_public_ip = true`), không dùng NAT (D15, chốt O3 ngày 2026-11-10). Biến `enable_nat` giữ mặc định `false`, chỉ bật khi được duyệt.
+- Chỉ một môi trường `dev` (D17). Terraform: module trong `infra/modules/`, root ở `infra/envs/dev/` (D19).
 - Security group: ALB chỉ nhận 80 từ prefix list CloudFront; ECS chỉ nhận từ ALB; RDS chỉ nhận 5432 từ ECS.
 
 ## 5. Luồng chính
