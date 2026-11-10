@@ -323,7 +323,8 @@ repo/
 ├── frontend/                  # React (có frontend/AGENTS.md)
 ├── infra/
 │   ├── bootstrap/             # bucket state (state local)
-│   └── envs/dev/              # stack chính (backend S3)
+│   ├── modules/               # module: network, rds, ecs, cdn, cognito… (D19)
+│   └── envs/dev/              # root duy nhất, gọi các module (backend S3)
 └── .github/workflows/
 ```
 
@@ -765,11 +766,11 @@ Mục "Chất lượng giao diện" trong `docs/test-plan.md` áp dụng cho m�
 
 ## G.4. Câu hỏi còn mở bạn cần quyết
 
-- [ ] Model và inference profile cụ thể (sau spike S1); ưu tiên in-region hay chấp nhận global
-- [ ] Kiến trúc CPU của image
-- [ ] Một hay hai AZ cho endpoint ở dev; có bật NAT hay không (sau spike S3 và so sánh chi phí)
-- [ ] Permission set `apply` dùng quyền tùy chỉnh hay tạm dùng AdministratorAccess trên tài khoản sandbox
-- [ ] Mức rủi ro bạn chấp nhận ở chỗ HTTP nội bộ giữa CloudFront và ALB nếu spike S4 thất bại
-- [ ] Có thêm môi trường `prod` hay chỉ `dev`
+- [x] Model và inference profile: chốt tạm Claude Haiku 5.5 qua profile APAC cross-region (D18), xác nhận bằng spike S1
+- [x] Kiến trúc CPU của image: linux/arm64 (O2)
+- [x] NAT: không dùng; task ECS ở public subnet có IP công khai (D15). Không còn interface endpoint (D2)
+- [x] Permission set `apply`: tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary (D16)
+- [x] HTTP CloudFront → ALB: chấp nhận kèm prefix list + header bí mật (O6)
+- [x] Môi trường: chỉ `dev` (D17)
 - [ ] Có giữ mặc định mạng tắt trong sandbox Codex, hay bật `network_access` cho tiện (đánh đổi an toàn)
 - [ ] Chốt UI stack, palette, font; cung cấp ảnh tham chiếu

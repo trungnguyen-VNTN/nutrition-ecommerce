@@ -8,10 +8,11 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 ## Bối cảnh cố định
 - Region: ap-southeast-1. Tiền tố tài nguyên: nutrition-dev. Tag: Project, Env, Owner.
 - Terraform >= 1.10, backend S3 với use_lockfile = true. Ghim phiên bản provider, commit .terraform.lock.hcl.
+- Chỉ một môi trường `dev` (D17). Terraform: module trong `infra/modules/`, root duy nhất `infra/envs/dev/` (D19). Permission set `apply` tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary (D16).
 - Backend: Java 21 (LTS) + Spring Boot, build bằng Maven (luôn dùng wrapper `./mvnw`). Frontend: React + TypeScript (xem frontend/AGENTS.md). DB: PostgreSQL (Flyway).
 - Image: linux/arm64. ECS Fargate runtime_platform phải khớp (cpu_architecture = "ARM64", operating_system_family = "LINUX"). Build bằng `docker buildx` với `--platform linux/arm64`; CI cần QEMU hoặc runner arm64.
-- AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình.
-- Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. NAT chỉ bật qua biến enable_nat (xem O3 trong docs/decisions.md).
+- AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình. Chốt tạm: Claude Haiku 5.5 qua inference profile APAC (D18, chờ spike S1).
+- Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. Task ECS ở public subnet có IP công khai, SG chỉ nhận từ ALB; RDS ở private subnet. Không dùng NAT (`enable_nat` mặc định false, chỉ bật khi được duyệt; D15).
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito (frontend tự làm màn hình đăng nhập/đăng ký).
 - Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
 
