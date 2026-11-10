@@ -18,18 +18,25 @@
 | D12 | Phần của bản mẫu không làm | Sắp xếp, bản tin, đánh giá sao, phí ship và ghi chú đơn, thống kê doanh thu admin, trang quên mật khẩu, route "đặt hàng thành công" riêng | Không có API hoặc dữ liệu thật; quên mật khẩu cần đổi `session.ts` (ngoài phạm vi). Sau checkout vẫn chuyển sang `/orders/:id`, hiện khối chúc mừng ở đó |
 | D13 | Khác biệt với skill ui-ux-pro-max | Giữ thiết kế D11 khi skill khuyên khác: (1) skill gợi ý phong cách "Vibrant & Block-based" cho e-commerce, giữ hướng nhãn dinh dưỡng vì sản phẩm là dữ liệu dinh dưỡng; (2) bóng đặc lệch của CTA sticker là chủ ý thương hiệu, chỉ dùng cho một CTA mỗi màn hình; (3) không làm dark mode vì `ui-guidelines.md` không yêu cầu | Các quy tắc a11y của skill (tương phản, vùng chạm 44px, focus, reduced-motion) vẫn bắt buộc |
 | D14 | Dữ liệu sản phẩm khi chạy local (2026-11-06) | 18 sản phẩm với dinh dưỡng từ USDA FoodData Central, nạp vào DB riêng `nutrition_usda` qua profile `usda` | Theo yêu cầu người dùng. Đây là nhập một lần bằng `scripts/usda-import.mjs`, không phải pipeline USDA (D6 vẫn giữ). `nutrition_dev` và dữ liệu giả giữ nguyên cho test. Giá và tồn kho là mẫu. USDA không có dữ liệu allergen nên mọi sản phẩm `allergens_verified = false`; không tự suy đoán. Chưa áp dụng cho production |
+| D15 | Đường ra Internet của ECS (chốt O3, 2026-11-10) | Task Fargate ở public subnet, `assign_public_ip = true`; không dùng NAT (`enable_nat` mặc định `false`, chỉ bật khi được duyệt). RDS ở private-db subnet, không có IP công khai | Rẻ nhất: chỉ tính phí IPv4 công khai mỗi task, thay vì NAT tính theo giờ. SG của ECS chỉ nhận từ SG của ALB, nên không truy cập thẳng vào task được. Đi ra Internet để kéo image ECR, gọi Bedrock, tải JWKS Cognito, ghi CloudWatch Logs |
+| D16 | Permission set `apply` (chốt O4, 2026-11-10) | Tùy chỉnh: quyền cho các dịch vụ dự án; IAM chỉ trên role / policy tiền tố `nutrition-*`; `iam:PassRole` giới hạn theo tiền tố; mọi role Terraform tạo ra gắn permissions boundary; cấm tạo IAM user và access key | Theo playbook A.2 mục 4. Biến quy tắc "chỉ người dùng apply" thành ràng buộc kỹ thuật; profile `nutrition-plan` vẫn chỉ đọc |
+| D17 | Môi trường (chốt O7, 2026-11-10) | Chỉ `dev` | Đủ cho đồ án và demo. Cấu trúc `infra/envs/` vẫn cho phép thêm `prod` sau mà không đổi module |
+| D18 | Model AI (chốt tạm O1, 2026-11-10) | Claude Haiku 5.5, gọi qua inference profile APAC cross-region | Rẻ, độ trễ thấp, đủ cho tra cứu bằng tool chỉ đọc. Profile APAC giữ việc xử lý trong châu Á – Thái Bình Dương. Model ID và profile ID vẫn chỉ nằm trong cấu hình. **Chưa kiểm chứng**: có profile APAC cho model này ở ap-southeast-1 không và quota bao nhiêu; xác nhận bằng spike S1/S5, nếu không có thì chốt lại |
+| D19 | Tổ chức Terraform (2026-11-10) | Duyệt đề xuất 2026-11-01: hạ tầng viết thành module trong `infra/modules/<tên>/`, root duy nhất ở `infra/envs/dev/` (backend S3, provider, `.terraform.lock.hcl`); `infra/bootstrap/` giữ state local cho bucket state. `infra/cognito/` chuyển thành `infra/modules/cognito/` | Chưa có state và tài nguyên thật nên chuyển không cần migration. Khi chuyển phải cập nhật đường dẫn trong CI, README, CLAUDE.md, AGENTS.md |
 
 ## Quyết định còn mở
 
 | # | Chủ đề | Lựa chọn | Quyết khi nào | Trạng thái |
 | --- | --- | --- | --- | --- |
-| O1 | Model và inference profile | in-region hay global; model cụ thể | Sau spike S1 | Chưa quyết |
+| O1 | Model và inference profile | in-region hay global; model cụ thể | Sau spike S1 | Chốt tạm 2026-11-10: Claude Haiku 5.5 qua inference profile APAC cross-region; xác nhận lại bằng spike S1 |
 | O2 | Kiến trúc CPU của image | linux/arm64 | Trước giai đoạn 3 | Đã chốt |
-| O3 | Đường ra Internet của ECS | Task ở public subnet có IP công khai, hay private subnet + NAT một AZ | Trước giai đoạn 3, so sánh chi phí | Chưa quyết |
-| O4 | Permission set `apply` | Tùy chỉnh (khuyến nghị) hay AdministratorAccess trên sandbox | Giai đoạn 0 | Chưa quyết |
+| O3 | Đường ra Internet của ECS | Task ở public subnet có IP công khai, hay private subnet + NAT một AZ | Trước giai đoạn 3, so sánh chi phí | Đã chốt 2026-11-10: public subnet có IP công khai, không NAT |
+| O4 | Permission set `apply` | Tùy chỉnh (khuyến nghị) hay AdministratorAccess trên sandbox | Giai đoạn 0 | Đã chốt 2026-11-10: tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary |
 | O5 | JDK và build tool | Java 21 LTS; Maven, dùng ./mvnw | Giai đoạn 0 | Đã chốt |
 | O6 | Rủi ro HTTP CloudFront → ALB công khai khi chưa có domain | Chấp nhận kèm prefix list + header bí mật; bật HTTPS khi có domain | 2026-11-01 | Đã chốt: chấp nhận |
-| O7 | Môi trường | Chỉ `dev` hay thêm `prod` | Giai đoạn 7 | Chưa quyết |
+| O7 | Môi trường | Chỉ `dev` hay thêm `prod` | Giai đoạn 7 | Đã chốt 2026-11-10: chỉ `dev` |
+
+Chi tiết các quyết định đã chốt ngày 2026-11-10 nằm ở D15–D19 trong bảng trên.
 
 ## Spike
 
@@ -41,7 +48,7 @@
 | S4 | CloudFront VPC origin → internal ALB hoạt động ở Singapore; provider hỗ trợ? | GĐ 3 | _không còn cần_ | 2026-11-01 | Đã chọn thẳng ALB công khai + prefix list CloudFront + header bí mật |
 | S5 | Quota Bedrock đủ cho demo? | GĐ 0 | _chưa làm_ | | Nếu thiếu: xin tăng sớm |
 
-## Đề xuất, chờ duyệt — tổ chức Terraform (2026-11-01)
+## Đề xuất tổ chức Terraform (2026-11-01) — đã duyệt 2026-11-10 (D19)
 
 Chuyển `infra/cognito/` thành module `infra/modules/cognito/`, được gọi từ
 `infra/envs/dev/`. Giữ nguyên tài nguyên, biến và outputs; chưa di chuyển hoặc

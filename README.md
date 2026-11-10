@@ -74,7 +74,7 @@ lọc allergen / dinh dưỡng là fail-closed khi thiếu dữ liệu.
 backend/                Spring Boot, Flyway migrations, tests, Maven Wrapper
 frontend/               React, Vitest, Playwright/axe, screenshots local
 infra/cognito/          Terraform Cognito hiện tại
-infra/envs/, bootstrap/ Chỗ dành cho môi trường và state backend (chưa dùng)
+infra/envs/, bootstrap/ Root `envs/dev` và state backend (chưa dùng); module sẽ ở infra/modules/ (D19)
 scripts/                Launcher local cho Windows
 .github/                CI, Dependabot, mẫu PR và issue
 docs/                   Kiến trúc, quyết định, API, DB, tiến độ
