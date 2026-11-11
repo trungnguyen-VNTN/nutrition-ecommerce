@@ -10,10 +10,39 @@ infra/
     ├── network/      VPC, 2 public subnet, 2 private-db subnet, IGW, SG (ALB, ECS, RDS). NAT tắt (D15).
     ├── ecr/          Repository image backend, quét khi đẩy, lifecycle giữ 10 image.
     ├── rds/          PostgreSQL 17, db.t4g.micro, 1 AZ, mã hóa, mật khẩu do RDS quản lý.
-    └── cognito/      User pool, SPA client, group ADMIN và USER.
+    ├── cognito/      User pool, SPA client, group ADMIN và USER.
+    ├── service/      ALB công khai (chỉ nhận request có header bí mật từ CloudFront), ECS Fargate ARM64,
+    │                 role execution / task có boundary, log group.
+    ├── frontend/     Bucket S3 riêng tư + CloudFront (OAC); /api/* chuyển về ALB qua HTTP (O6).
+    └── github-oidc/  OIDC provider + role deploy cho GitHub Actions, chỉ nhánh master.
 ```
 
-Giai đoạn 3 (ALB, ECS, S3 frontend, CloudFront, role OIDC cho GitHub Actions) sẽ thêm module sau.
+## Bật / tắt theo buổi demo (D20)
+
+Biến `app_running` (mặc định `false`) quyết định phần tốn tiền theo giờ:
+
+| | `app_running = false` (tắt) | `app_running = true` (bật) |
+| --- | --- | --- |
+| RDS | **dừng** (giữ dữ liệu) | chạy |
+| ALB, ECS service | **không tồn tại** | được tạo, chạy `api_desired_count` task (mặc định 1) |
+| CloudFront | chỉ phục vụ frontend; `/api/*` không có origin | `/api/*` chuyển về ALB |
+| VPC, ECR, Cognito, S3, IAM | giữ nguyên | giữ nguyên |
+
+Người dùng tự chạy (Terraform hiện plan và hỏi `yes`):
+
+```powershell
+.\scripts\demo-infra.ps1 up     # trước buổi demo, khoảng 10–15 phút
+.\scripts\demo-infra.ps1 down   # sau buổi demo, khoảng 5–10 phút
+```
+
+Lần apply đầu tiên dùng `down`: tạo toàn bộ hạ tầng ở trạng thái tắt.
+Dữ liệu RDS, user Cognito, image ECR và frontend giữ nguyên giữa các lần bật.
+**AWS tự bật lại RDS đã dừng sau 7 ngày**; nếu nghỉ lâu hơn, chạy `down` lần nữa mỗi tuần
+(Budget sẽ báo nếu quên). ECS chạy image `:latest` trong ECR, nên trước lần `up` đầu tiên
+workflow deploy phải đẩy ít nhất một image.
+
+Quyền Bedrock của task chỉ được tạo khi đặt `bedrock_model_id` và `bedrock_inference_profile_id`
+(sau spike S1), ví dụ trong `infra/envs/dev/dev.auto.tfvars` (git bỏ qua `*.tfvars`).
 
 ## Ai chạy gì
 
@@ -56,13 +85,15 @@ $env:AWS_PROFILE = "nutrition-apply"
 terraform -chdir=infra/envs/dev apply tfplan
 ```
 
-## Chi phí ước tính khi đã apply (ap-southeast-1, chưa có ECS/ALB/CloudFront)
+## Chi phí ước tính khi đã apply (ap-southeast-1)
 
-| Tài nguyên | Ước tính / tháng |
-| --- | --- |
-| RDS db.t4g.micro chạy 24/7 + 20 GiB gp3 | khoảng $20–23 |
-| ECR, bucket state, VPC, SG, IGW | dưới $1 |
-| Cognito (dưới hạn mức miễn phí) | $0 |
+| Trạng thái | Gồm | Ước tính |
+| --- | --- | --- |
+| **Tắt** (`down`) | Lưu trữ RDS 20 GiB + backup, secret của RDS, ECR, S3, CloudFront, CloudWatch Logs; Cognito trong hạn mức miễn phí | **khoảng $4–5 / tháng** |
+| **Bật** (`up`), cộng thêm | RDS db.t4g.micro (~$0,026/giờ), ALB (~$0,03/giờ), 1 task Fargate ARM64 0,5 vCPU / 1 GiB kèm IPv4 (~$0,03/giờ) | **khoảng $0,09 / giờ**: buổi demo 4 giờ ~$0,35; quên tắt cả ngày ~$2,1 |
+| Để bật 24/7 (so sánh) | | khoảng $60–67 / tháng |
+
+Chưa tính Bedrock (tính theo token).
 
 Số liệu ước tính theo giá công bố mà tôi biết, chưa đối chiếu AWS Pricing Calculator.
 Muốn giảm tiền khi không dùng: dừng RDS tạm thời (tự bật lại sau 7 ngày) hoặc destroy dev.
@@ -73,4 +104,9 @@ Muốn giảm tiền khi không dùng: dừng RDS tạm thời (tự bật lại
   egress HTTPS (443) của task ECS để gọi ECR, Bedrock, Cognito, CloudWatch (D2, D15).
   Không có ingress nào mở cho Internet; ALB chỉ nhận prefix list của CloudFront.
 - RDS: `deletion_protection = true`, `publicly_accessible = false`, `multi_az = false`.
+- Tài nguyên public có chủ ý: ALB (internet-facing nhưng SG chỉ nhận prefix list CloudFront, listener trả 403
+  nếu thiếu header bí mật) và CloudFront. Task ECS có IP công khai nhưng SG chỉ nhận từ ALB.
+- IAM: mọi role có boundary `nutrition-boundary`. `Resource = "*"` chỉ ở `ecr:GetAuthorizationToken` và các
+  hành động ECS không hỗ trợ ARN (RegisterTaskDefinition, DescribeTaskDefinition…) trong role deploy.
+- Header bí mật sinh bằng `random_password`, chỉ nằm trong state (bucket mã hóa), không có trong code.
 - Cognito: `deletion_protection = "ACTIVE"`.
