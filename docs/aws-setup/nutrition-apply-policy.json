@@ -1,0 +1,177 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ProjectServicesInSingapore",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*",
+        "elasticloadbalancing:*",
+        "ecs:*",
+        "ecr:*",
+        "rds:*",
+        "cognito-idp:*",
+        "bedrock:*",
+        "logs:*",
+        "cloudwatch:*",
+        "sns:*",
+        "kms:*",
+        "secretsmanager:*",
+        "ssm:*",
+        "application-autoscaling:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": { "aws:RequestedRegion": "ap-southeast-1" }
+      }
+    },
+    {
+      "Sid": "CloudFrontGlobal",
+      "Effect": "Allow",
+      "Action": "cloudfront:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ProjectBucketsOnly",
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": ["arn:aws:s3:::nutrition-*", "arn:aws:s3:::nutrition-*/*"]
+    },
+    {
+      "Sid": "CreateRoleOnlyWithBoundary",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:PutRolePermissionsBoundary",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy"
+      ],
+      "Resource": "arn:aws:iam::*:role/nutrition-*",
+      "Condition": {
+        "ArnLike": {
+          "iam:PermissionsBoundary": "arn:aws:iam::*:policy/nutrition-boundary"
+        }
+      }
+    },
+    {
+      "Sid": "ManageProjectRoles",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeleteRole",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole"
+      ],
+      "Resource": "arn:aws:iam::*:role/nutrition-*"
+    },
+    {
+      "Sid": "ManageProjectPolicies",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreatePolicy",
+        "iam:CreatePolicyVersion",
+        "iam:DeletePolicy",
+        "iam:DeletePolicyVersion",
+        "iam:SetDefaultPolicyVersion",
+        "iam:TagPolicy",
+        "iam:UntagPolicy"
+      ],
+      "Resource": "arn:aws:iam::*:policy/nutrition-*"
+    },
+    {
+      "Sid": "PassProjectRolesToEcsOnly",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::*:role/nutrition-*",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ecs-tasks.amazonaws.com",
+            "monitoring.rds.amazonaws.com"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ServiceLinkedRoles",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "ecs.amazonaws.com",
+            "elasticloadbalancing.amazonaws.com",
+            "rds.amazonaws.com",
+            "ecs.application-autoscaling.amazonaws.com"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "GitHubOidcProvider",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateOpenIDConnectProvider",
+        "iam:DeleteOpenIDConnectProvider",
+        "iam:UpdateOpenIDConnectProviderThumbprint",
+        "iam:AddClientIDToOpenIDConnectProvider",
+        "iam:TagOpenIDConnectProvider",
+        "iam:UntagOpenIDConnectProvider"
+      ],
+      "Resource": "arn:aws:iam::*:oidc-provider/token.actions.githubusercontent.com"
+    },
+    {
+      "Sid": "DenyBoundaryTampering",
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeleteRolePermissionsBoundary",
+        "iam:CreatePolicyVersion",
+        "iam:DeletePolicy",
+        "iam:DeletePolicyVersion",
+        "iam:SetDefaultPolicyVersion"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:role/*",
+        "arn:aws:iam::*:policy/nutrition-boundary"
+      ]
+    },
+    {
+      "Sid": "DenyLongLivedCredentials",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateUser",
+        "iam:CreateAccessKey",
+        "iam:CreateLoginProfile",
+        "iam:AttachUserPolicy",
+        "iam:PutUserPolicy",
+        "iam:AddUserToGroup"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyOtherRegions",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:*",
+        "sts:*",
+        "cloudfront:*",
+        "s3:*",
+        "budgets:*",
+        "ce:*",
+        "health:*",
+        "support:*",
+        "organizations:Describe*",
+        "organizations:List*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": { "aws:RequestedRegion": "ap-southeast-1" }
+      }
+    }
+  ]
+}
