@@ -43,7 +43,7 @@ Chi tiết các quyết định đã chốt ngày 2026-11-10 nằm ở D15–D19
 | Spike | Câu hỏi | Khi nào | Kết quả | Ngày | Hành động tiếp theo |
 | --- | --- | --- | --- | --- | --- |
 | S1 | Converse + inference profile + Guardrail + contextual grounding chạy được ở Singapore? | GĐ 0 | _chưa làm_ | | |
-| S2 | State S3 + `use_lockfile` chạy được? | GĐ 0 | _chưa làm_ | | |
+| S2 | State S3 + `use_lockfile` chạy được? | GĐ 0 | _đang làm_: đã viết `infra/bootstrap`, plan đạt (7 tạo) | 2026-11-11 | Người dùng apply bằng `nutrition-apply`, rồi init `envs/dev` với backend S3 |
 | S3 | Backend trong private subnet tải được JWKS của Cognito (qua endpoint `cognito-idp`)? | GĐ 3 | _không còn cần_ | 2026-11-01 | Bỏ do D2/D7 rút gọn; JWKS đi qua đường ra Internet (O3) |
 | S4 | CloudFront VPC origin → internal ALB hoạt động ở Singapore; provider hỗ trợ? | GĐ 3 | _không còn cần_ | 2026-11-01 | Đã chọn thẳng ALB công khai + prefix list CloudFront + header bí mật |
 | S5 | Quota Bedrock đủ cho demo? | GĐ 0 | _chưa làm_ | | Nếu thiếu: xin tăng sớm |

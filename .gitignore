@@ -29,3 +29,6 @@ Thumbs.db
 *.iml
 backend/.mvn/wrapper/maven-wrapper.jar
 !.env.example
+
+# Terraform backend config contains the account ID
+infra/**/backend.hcl

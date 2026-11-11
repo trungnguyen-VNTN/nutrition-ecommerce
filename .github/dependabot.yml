@@ -18,6 +18,8 @@ updates:
     schedule:
       interval: weekly
   - package-ecosystem: terraform
-    directory: /infra/cognito
+    directories:
+      - /infra/bootstrap
+      - /infra/envs/dev
     schedule:
       interval: monthly
