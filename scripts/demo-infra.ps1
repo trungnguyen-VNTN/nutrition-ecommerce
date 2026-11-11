@@ -24,6 +24,10 @@ if (-not $terraform) {
 }
 if (-not $terraform) { throw 'Terraform not found. Install it with: winget install Hashicorp.Terraform' }
 
+$aws = (Get-Command aws -ErrorAction SilentlyContinue).Source
+if (-not $aws) { $aws = 'C:\Program Files\Amazon\AWSCLIV2\aws.exe' }
+if (-not (Test-Path $aws)) { throw 'AWS CLI not found. Install it with: winget install Amazon.AWSCLI' }
+
 if (-not (Test-Path (Join-Path $dev 'backend.hcl'))) {
   throw 'infra/envs/dev/backend.hcl is missing. See infra/README.md.'
 }
@@ -31,10 +35,10 @@ if (-not (Test-Path (Join-Path $dev 'backend.hcl'))) {
 $env:AWS_PROFILE = 'nutrition-apply'
 $env:TF_VAR_owner = $Owner
 
-& aws sts get-caller-identity --query Arn --output text *> $null
+& $aws sts get-caller-identity --query Arn --output text *> $null
 if ($LASTEXITCODE -ne 0) {
   Write-Host 'SSO session expired or missing, logging in...'
-  & aws sso login --sso-session nutrition
+  & $aws sso login --sso-session nutrition
   if ($LASTEXITCODE -ne 0) { throw 'aws sso login failed.' }
 }
 
