@@ -52,7 +52,7 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 - Frontend chạy local: `cd frontend && npm run dev` (http://localhost:5173).
 - Frontend kiểm tra: `cd frontend && npm run format:check && npm run lint && npm run typecheck && npm test -- --maxWorkers=1 && npm run build`
 - E2E / axe: `cd frontend && npm run test:e2e`. Ảnh chụp: `npm run screenshots`.
-- Terraform: `terraform fmt -check -recursive infra`, `terraform -chdir=infra/cognito validate`, `plan -out=tfplan` rồi dừng.
+- Terraform: `terraform fmt -check -recursive infra`, `terraform -chdir=infra/envs/dev validate` (cần `init -backend=false` lần đầu; thứ tự apply ở `infra/README.md`), `plan -out=tfplan` rồi dừng.
 
 ## Định nghĩa "xong" của một giai đoạn
 Test xanh trong CI; deploy được lên dev; đã kiểm chứng đúng tiêu chí nghiệm thu trong playbook; không vi phạm nguyên tắc bất biến; docs/PROGRESS.md đã cập nhật.

@@ -1,22 +1,5 @@
-locals {
-  region = "ap-southeast-1"
-  prefix = "nutrition-dev"
-}
-
-provider "aws" {
-  region = local.region
-
-  default_tags {
-    tags = {
-      Project = "nutrition"
-      Env     = "dev"
-      Owner   = var.owner
-    }
-  }
-}
-
 resource "aws_cognito_user_pool" "users" {
-  name                     = "${local.prefix}-users"
+  name                     = "${var.name_prefix}-users"
   username_attributes      = ["email"]
   auto_verified_attributes = ["email"]
   deletion_protection      = "ACTIVE"
@@ -31,7 +14,7 @@ resource "aws_cognito_user_pool" "users" {
 }
 
 resource "aws_cognito_user_pool_client" "spa" {
-  name                                 = "${local.prefix}-spa"
+  name                                 = "${var.name_prefix}-spa"
   user_pool_id                         = aws_cognito_user_pool.users.id
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = false
