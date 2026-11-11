@@ -21,10 +21,14 @@ jobs:
           terraform_version: '1.10.5'
       - name: Format check
         run: terraform fmt -check -recursive infra
-      - name: Init (no backend)
-        run: terraform -chdir=infra/cognito init -backend=false -input=false
-      - name: Validate
-        run: terraform -chdir=infra/cognito validate
+      - name: Validate bootstrap
+        run: |
+          terraform -chdir=infra/bootstrap init -backend=false -input=false
+          terraform -chdir=infra/bootstrap validate
+      - name: Validate envs/dev
+        run: |
+          terraform -chdir=infra/envs/dev init -backend=false -input=false
+          terraform -chdir=infra/envs/dev validate
   backend:
     name: Backend
     runs-on: ubuntu-latest

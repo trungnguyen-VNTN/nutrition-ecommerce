@@ -1,8 +1,10 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-10_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-11_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- Nền tảng Terraform 2026-11-11 (nhánh feat/terraform-foundation): Giai đoạn 0 phía người dùng đã xong phần tài khoản AWS, MFA root, Budgets, IAM Identity Center (single-Region, Singapore), boundary `nutrition-boundary`, permission set `nutrition-plan` / `nutrition-apply`, hai profile SSO (session `nutrition`). Trên máy đã cài AWS CLI 2.40, Terraform 1.17, gh. Code: thực hiện D19 (`infra/cognito` → `infra/modules/cognito`, xóa root cũ), thêm `infra/bootstrap` (bucket state: versioning, SSE, chặn public, chỉ TLS, `prevent_destroy`), module `network` (D15, NAT tùy chọn mặc định tắt, SG ALB chỉ nhận prefix list CloudFront), `ecr`, `rds` (PostgreSQL 17, db.t4g.micro, 1 AZ, mật khẩu do RDS quản lý, deletion protection), root `infra/envs/dev` (backend S3 partial config, `backend.hcl` bị git bỏ qua), lock file 3 nền tảng, `infra/README.md` (thứ tự apply, chi phí ước tính ~$21–24/tháng). CI và Dependabot trỏ sang root mới. Kiểm chứng: `fmt -check` và `validate` cả hai root đạt; `plan` bootstrap bằng `nutrition-plan` trên AWS thật: 7 tạo, 0 sửa, 0 xóa. `envs/dev` chưa plan được vì bucket state chưa có. **Chưa apply gì.** Spike S1/S5 (Bedrock) người dùng chưa làm. **Bước tiếp theo:** người dùng apply bootstrap (spike S2) theo `infra/README.md`, tạo `backend.hcl`, rồi agent plan `envs/dev` và báo cáo; sau đó Giai đoạn 3 (ALB, ECS, S3 + CloudFront, OIDC). Trong phiên này các lệnh `aws` trực tiếp của agent bị chặn quyền; `terraform plan` với `nutrition-plan` chạy được.
 
 - Policy IAM cho D16 2026-11-10 (nhánh docs/aws-apply-policy): `docs/aws-setup/` gồm `nutrition-apply-policy.json` (inline policy của permission set `apply`, kèm ReadOnlyAccess), `nutrition-boundary-policy.json` (permissions boundary `nutrition-boundary` cho mọi role Terraform tạo) và README hướng dẫn dán vào console. JSON hợp lệ (3.025 và 1.339 ký tự). **Chưa thử trên tài khoản AWS thật**; khi apply gặp AccessDenied thì bổ sung đúng quyền thiếu. PR #23 (USDA) và #26 (chốt quyết định) đã merge vào master.
 
