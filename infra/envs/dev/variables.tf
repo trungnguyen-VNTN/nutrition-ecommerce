@@ -13,3 +13,33 @@ variable "enable_nat" {
   type        = bool
   default     = false
 }
+
+variable "github_repository" {
+  description = "owner/name of the repository whose master branch may deploy."
+  type        = string
+  default     = "trungnguyen-VNTN/nutrition-ecommerce"
+}
+
+variable "app_running" {
+  description = "Demo on/off (D20). true starts RDS and creates the ALB and ECS service; false stops RDS and removes them."
+  type        = bool
+  default     = false
+}
+
+variable "api_desired_count" {
+  description = "API tasks while the app is on (billed per hour)."
+  type        = number
+  default     = 1
+}
+
+variable "bedrock_model_id" {
+  description = "Foundation model ID (after spike S1). Empty disables AI permissions."
+  type        = string
+  default     = ""
+}
+
+variable "bedrock_inference_profile_id" {
+  description = "APAC inference profile ID (after spike S1, D18). Empty disables AI permissions."
+  type        = string
+  default     = ""
+}

@@ -54,3 +54,9 @@ variable "backup_retention_days" {
   type        = number
   default     = 7
 }
+
+variable "running" {
+  description = "true = available, false = stopped (D20)."
+  type        = bool
+  default     = false
+}

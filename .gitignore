@@ -32,3 +32,5 @@ backend/.mvn/wrapper/maven-wrapper.jar
 
 # Terraform backend config contains the account ID
 infra/**/backend.hcl
+*.tfplan.zip
+tfplan.zip

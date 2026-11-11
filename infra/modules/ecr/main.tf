@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "backend" {
   name                 = "${var.name_prefix}-backend"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE" # Deploys move :latest (D20); each push is also tagged with the commit SHA.
   force_delete         = false
 
   image_scanning_configuration {
