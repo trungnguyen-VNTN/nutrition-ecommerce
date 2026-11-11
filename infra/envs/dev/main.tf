@@ -28,3 +28,60 @@ module "cognito" {
 
   name_prefix = local.name_prefix
 }
+
+# Secret header CloudFront sends and the ALB requires. Lives only in the (encrypted) state.
+resource "random_password" "origin_header" {
+  length  = 40
+  special = false
+}
+
+locals {
+  origin_header_name = "X-Origin-Verify"
+}
+
+module "service" {
+  source = "../../modules/service"
+
+  name_prefix           = local.name_prefix
+  vpc_id                = module.network.vpc_id
+  public_subnet_ids     = module.network.public_subnet_ids
+  alb_security_group_id = module.network.alb_security_group_id
+  ecs_security_group_id = module.network.ecs_security_group_id
+
+  origin_header_name  = local.origin_header_name
+  origin_header_value = random_password.origin_header.result
+
+  container_image = "${module.ecr.repository_url}:initial"
+  desired_count   = var.api_desired_count
+
+  db_host       = module.rds.endpoint
+  db_port       = module.rds.port
+  db_name       = module.rds.db_name
+  db_secret_arn = module.rds.master_user_secret_arn
+
+  cognito_issuer_uri = module.cognito.issuer_uri
+  cognito_client_id  = module.cognito.app_client_id
+
+  bedrock_model_id             = var.bedrock_model_id
+  bedrock_inference_profile_id = var.bedrock_inference_profile_id
+}
+
+module "frontend" {
+  source = "../../modules/frontend"
+
+  name_prefix         = local.name_prefix
+  alb_dns_name        = module.service.alb_dns_name
+  origin_header_name  = local.origin_header_name
+  origin_header_value = random_password.origin_header.result
+}
+
+module "github_oidc" {
+  source = "../../modules/github-oidc"
+
+  name_prefix         = local.name_prefix
+  github_repository   = var.github_repository
+  ecr_repository_arn  = module.ecr.repository_arn
+  ecs_role_arns       = [module.service.execution_role_arn, module.service.task_role_arn]
+  frontend_bucket_arn = module.frontend.bucket_arn
+  distribution_arn    = module.frontend.distribution_arn
+}

@@ -1,0 +1,118 @@
+variable "name_prefix" {
+  description = "Resource name prefix, e.g. nutrition-dev."
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "VPC ID."
+  type        = string
+}
+
+variable "public_subnet_ids" {
+  description = "Public subnets for the ALB and tasks."
+  type        = list(string)
+}
+
+variable "alb_security_group_id" {
+  description = "ALB security group (CloudFront prefix list only)."
+  type        = string
+}
+
+variable "ecs_security_group_id" {
+  description = "Task security group (ALB only)."
+  type        = string
+}
+
+variable "app_port" {
+  description = "Container port."
+  type        = number
+  default     = 8080
+}
+
+variable "origin_header_name" {
+  description = "Header that CloudFront adds and the ALB requires."
+  type        = string
+}
+
+variable "origin_header_value" {
+  description = "Secret value of the origin header."
+  type        = string
+  sensitive   = true
+}
+
+variable "permissions_boundary_name" {
+  description = "Name of the IAM permissions boundary every role must carry (D16)."
+  type        = string
+  default     = "nutrition-boundary"
+}
+
+variable "container_image" {
+  description = "Initial image (repository_url:tag). The deploy workflow replaces it later."
+  type        = string
+}
+
+variable "desired_count" {
+  description = "Running tasks. Keep 0 until an image exists in ECR; each task is billed per hour."
+  type        = number
+  default     = 0
+}
+
+variable "task_cpu" {
+  description = "Fargate CPU units."
+  type        = number
+  default     = 512
+}
+
+variable "task_memory" {
+  description = "Fargate memory in MiB."
+  type        = number
+  default     = 1024
+}
+
+variable "log_retention_days" {
+  description = "CloudWatch Logs retention."
+  type        = number
+  default     = 14
+}
+
+variable "db_host" {
+  description = "PostgreSQL host."
+  type        = string
+}
+
+variable "db_port" {
+  description = "PostgreSQL port."
+  type        = number
+}
+
+variable "db_name" {
+  description = "Database name."
+  type        = string
+}
+
+variable "db_secret_arn" {
+  description = "Secrets Manager ARN of the RDS-managed master credentials."
+  type        = string
+}
+
+variable "cognito_issuer_uri" {
+  description = "Cognito JWT issuer."
+  type        = string
+}
+
+variable "cognito_client_id" {
+  description = "Cognito SPA client ID (audience check)."
+  type        = string
+}
+
+variable "bedrock_model_id" {
+  description = "Foundation model ID behind the inference profile. Empty = AI disabled."
+  type        = string
+  default     = ""
+}
+
+variable "bedrock_inference_profile_id" {
+  description = "Inference profile ID used for Converse. Empty = AI disabled."
+  type        = string
+  default     = ""
+}
