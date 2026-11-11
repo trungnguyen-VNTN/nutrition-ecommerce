@@ -20,10 +20,16 @@ variable "github_repository" {
   default     = "trungnguyen-VNTN/nutrition-ecommerce"
 }
 
+variable "app_running" {
+  description = "Demo on/off (D20). true starts RDS and creates the ALB and ECS service; false stops RDS and removes them."
+  type        = bool
+  default     = false
+}
+
 variable "api_desired_count" {
-  description = "Running API tasks. Keep 0 until the first image is in ECR (billed per hour)."
+  description = "API tasks while the app is on (billed per hour)."
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "bedrock_model_id" {

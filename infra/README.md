@@ -17,8 +17,30 @@ infra/
     └── github-oidc/  OIDC provider + role deploy cho GitHub Actions, chỉ nhánh master.
 ```
 
-Service khởi tạo với `api_desired_count = 0` vì ECR chưa có image (playbook: ECR trước ECS).
-Sau khi workflow deploy đẩy image đầu tiên, đặt `api_desired_count = 1` rồi plan / apply lại.
+## Bật / tắt theo buổi demo (D20)
+
+Biến `app_running` (mặc định `false`) quyết định phần tốn tiền theo giờ:
+
+| | `app_running = false` (tắt) | `app_running = true` (bật) |
+| --- | --- | --- |
+| RDS | **dừng** (giữ dữ liệu) | chạy |
+| ALB, ECS service | **không tồn tại** | được tạo, chạy `api_desired_count` task (mặc định 1) |
+| CloudFront | chỉ phục vụ frontend; `/api/*` không có origin | `/api/*` chuyển về ALB |
+| VPC, ECR, Cognito, S3, IAM | giữ nguyên | giữ nguyên |
+
+Người dùng tự chạy (Terraform hiện plan và hỏi `yes`):
+
+```powershell
+.\scripts\demo-infra.ps1 up     # trước buổi demo, khoảng 10–15 phút
+.\scripts\demo-infra.ps1 down   # sau buổi demo, khoảng 5–10 phút
+```
+
+Lần apply đầu tiên dùng `down`: tạo toàn bộ hạ tầng ở trạng thái tắt.
+Dữ liệu RDS, user Cognito, image ECR và frontend giữ nguyên giữa các lần bật.
+**AWS tự bật lại RDS đã dừng sau 7 ngày**; nếu nghỉ lâu hơn, chạy `down` lần nữa mỗi tuần
+(Budget sẽ báo nếu quên). ECS chạy image `:latest` trong ECR, nên trước lần `up` đầu tiên
+workflow deploy phải đẩy ít nhất một image.
+
 Quyền Bedrock của task chỉ được tạo khi đặt `bedrock_model_id` và `bedrock_inference_profile_id`
 (sau spike S1), ví dụ trong `infra/envs/dev/dev.auto.tfvars` (git bỏ qua `*.tfvars`).
 
@@ -65,15 +87,11 @@ terraform -chdir=infra/envs/dev apply tfplan
 
 ## Chi phí ước tính khi đã apply (ap-southeast-1)
 
-| Tài nguyên | Ước tính / tháng |
-| --- | --- |
-| RDS db.t4g.micro chạy 24/7 + 20 GiB gp3 | khoảng $20–23 |
-| ALB chạy 24/7 (ít lưu lượng) | khoảng $19–21 |
-| ECS Fargate 0,5 vCPU / 1 GiB ARM64, mỗi task chạy 24/7, kèm IPv4 công khai | khoảng $18–21 (bằng 0 khi `api_desired_count = 0`) |
-| CloudFront, S3 frontend (lưu lượng demo) | dưới $1 |
-| ECR, bucket state, VPC, SG, IGW, CloudWatch Logs | khoảng $1 |
-| Cognito (dưới hạn mức miễn phí) | $0 |
-| **Tổng** | **khoảng $41–46 khi chưa chạy task, $60–67 khi chạy 1 task** |
+| Trạng thái | Gồm | Ước tính |
+| --- | --- | --- |
+| **Tắt** (`down`) | Lưu trữ RDS 20 GiB + backup, secret của RDS, ECR, S3, CloudFront, CloudWatch Logs; Cognito trong hạn mức miễn phí | **khoảng $4–5 / tháng** |
+| **Bật** (`up`), cộng thêm | RDS db.t4g.micro (~$0,026/giờ), ALB (~$0,03/giờ), 1 task Fargate ARM64 0,5 vCPU / 1 GiB kèm IPv4 (~$0,03/giờ) | **khoảng $0,09 / giờ**: buổi demo 4 giờ ~$0,35; quên tắt cả ngày ~$2,1 |
+| Để bật 24/7 (so sánh) | | khoảng $60–67 / tháng |
 
 Chưa tính Bedrock (tính theo token).
 

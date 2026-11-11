@@ -25,9 +25,9 @@ variable "ecr_repository_arn" {
   type        = string
 }
 
-variable "ecs_role_arns" {
-  description = "Execution and task role ARNs the workflow may pass to ECS."
-  type        = list(string)
+variable "ecs_service_arn" {
+  description = "ECS service the workflow may restart with a new deployment."
+  type        = string
 }
 
 variable "frontend_bucket_arn" {

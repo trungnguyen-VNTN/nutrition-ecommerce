@@ -46,15 +46,21 @@ variable "permissions_boundary_name" {
   default     = "nutrition-boundary"
 }
 
+variable "app_running" {
+  description = "Demo on/off (D20). false removes the ALB and the ECS service (no hourly cost)."
+  type        = bool
+  default     = false
+}
+
 variable "container_image" {
-  description = "Initial image (repository_url:tag). The deploy workflow replaces it later."
+  description = "Image the service runs (repository_url:latest). Deploys push a new latest and force a new deployment."
   type        = string
 }
 
 variable "desired_count" {
-  description = "Running tasks. Keep 0 until an image exists in ECR; each task is billed per hour."
+  description = "Tasks to run while app_running is true. Each task is billed per hour."
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "task_cpu" {
@@ -115,4 +121,9 @@ variable "bedrock_inference_profile_id" {
   description = "Inference profile ID used for Converse. Empty = AI disabled."
   type        = string
   default     = ""
+}
+
+variable "db_state" {
+  description = "RDS state from the rds module. Only used to order the ECS service after the DB starts."
+  type        = string
 }

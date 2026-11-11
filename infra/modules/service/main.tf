@@ -1,3 +1,4 @@
+# Demo on/off (D20): ALB and the ECS service exist only while var.app_running is true.
 # Public ALB (only CloudFront can reach it: SG prefix list + secret header) in front of an
 # ECS Fargate service running the Spring Boot API on ARM64 (D15, O2).
 
@@ -18,6 +19,8 @@ locals {
 # ---------------------------------------------------------------- ALB
 
 resource "aws_lb" "api" {
+  count = var.app_running ? 1 : 0
+
   name               = "${var.name_prefix}-api"
   load_balancer_type = "application"
   internal           = false
@@ -47,7 +50,9 @@ resource "aws_lb_target_group" "api" {
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.api.arn
+  count = var.app_running ? 1 : 0
+
+  load_balancer_arn = aws_lb.api[0].arn
   port              = 80
   protocol          = "HTTP"
 
@@ -64,7 +69,9 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener_rule" "from_cloudfront" {
-  listener_arn = aws_lb_listener.http.arn
+  count = var.app_running ? 1 : 0
+
+  listener_arn = aws_lb_listener.http[0].arn
   priority     = 10
 
   condition {
@@ -219,6 +226,8 @@ resource "aws_ecs_task_definition" "api" {
 }
 
 resource "aws_ecs_service" "api" {
+  count = var.app_running ? 1 : 0
+
   name            = local.service_name
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.api.arn
@@ -244,10 +253,8 @@ resource "aws_ecs_service" "api" {
     rollback = true
   }
 
-  depends_on = [aws_lb_listener_rule.from_cloudfront]
+  # Recorded as a tag so Terraform creates the service only after RDS reports this state.
+  tags = { DbState = var.db_state }
 
-  lifecycle {
-    # The deploy workflow registers new task definitions; Terraform must not roll them back.
-    ignore_changes = [task_definition]
-  }
+  depends_on = [aws_lb_listener_rule.from_cloudfront]
 }
