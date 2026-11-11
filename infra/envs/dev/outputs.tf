@@ -32,3 +32,38 @@ output "cognito_issuer_uri" {
   description = "JWT issuer for the backend."
   value       = module.cognito.issuer_uri
 }
+
+output "app_url" {
+  description = "Public URL of the app."
+  value       = "https://${module.frontend.domain_name}"
+}
+
+output "frontend_bucket" {
+  description = "Upload the React build here."
+  value       = module.frontend.bucket_name
+}
+
+output "cloudfront_distribution_id" {
+  description = "Distribution to invalidate after a frontend deploy."
+  value       = module.frontend.distribution_id
+}
+
+output "ecs_cluster" {
+  description = "ECS cluster name."
+  value       = module.service.cluster_name
+}
+
+output "ecs_service" {
+  description = "ECS service name."
+  value       = module.service.service_name
+}
+
+output "ecs_task_family" {
+  description = "Task definition family used by the deploy workflow."
+  value       = module.service.task_family
+}
+
+output "github_deploy_role_arn" {
+  description = "GitHub repository variable AWS_DEPLOY_ROLE_ARN."
+  value       = module.github_oidc.deploy_role_arn
+}
