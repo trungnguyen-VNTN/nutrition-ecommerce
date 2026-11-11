@@ -91,21 +91,26 @@ resource "aws_cloudfront_distribution" "main" {
     origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
   }
 
-  origin {
-    origin_id   = local.alb_origin_id
-    domain_name = var.alb_dns_name
+  # The API origin and /api/* behavior only exist while the app is on (D20).
+  dynamic "origin" {
+    for_each = var.alb_dns_name == null ? [] : [var.alb_dns_name]
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only" # No certificate on the ALB until a domain exists (O6).
-      origin_ssl_protocols   = ["TLSv1.2"]
-      origin_read_timeout    = var.api_read_timeout_seconds
-    }
+    content {
+      origin_id   = local.alb_origin_id
+      domain_name = origin.value
 
-    custom_header {
-      name  = var.origin_header_name
-      value = var.origin_header_value
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "http-only" # No certificate on the ALB until a domain exists (O6).
+        origin_ssl_protocols   = ["TLSv1.2"]
+        origin_read_timeout    = var.api_read_timeout_seconds
+      }
+
+      custom_header {
+        name  = var.origin_header_name
+        value = var.origin_header_value
+      }
     }
   }
 
@@ -123,15 +128,19 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
-  ordered_cache_behavior {
-    path_pattern             = "/api/*"
-    target_origin_id         = local.alb_origin_id
-    viewer_protocol_policy   = "https-only"
-    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods           = ["GET", "HEAD"]
-    compress                 = true
-    cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+  dynamic "ordered_cache_behavior" {
+    for_each = var.alb_dns_name == null ? [] : [1]
+
+    content {
+      path_pattern             = "/api/*"
+      target_origin_id         = local.alb_origin_id
+      viewer_protocol_policy   = "https-only"
+      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods           = ["GET", "HEAD"]
+      compress                 = true
+      cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
+      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+    }
   }
 
   restrictions {

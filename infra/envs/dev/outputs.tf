@@ -38,6 +38,11 @@ output "app_url" {
   value       = "https://${module.frontend.domain_name}"
 }
 
+output "app_running" {
+  description = "Whether the API and database are on (D20)."
+  value       = var.app_running
+}
+
 output "frontend_bucket" {
   description = "Upload the React build here."
   value       = module.frontend.bucket_name

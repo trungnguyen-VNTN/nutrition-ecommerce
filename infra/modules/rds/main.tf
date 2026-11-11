@@ -35,3 +35,10 @@ resource "aws_db_instance" "main" {
   performance_insights_enabled = false
   apply_immediately            = false
 }
+
+# Demo on/off (D20): stopped instances only pay for storage. AWS starts a stopped
+# instance again by itself after 7 days, so run demo-down again if it stays off longer.
+resource "aws_rds_instance_state" "main" {
+  identifier = aws_db_instance.main.identifier
+  state      = var.running ? "available" : "stopped"
+}
