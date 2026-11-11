@@ -1,0 +1,2 @@
+# Copy to backend.hcl (git-ignored) and fill in the bucket from `terraform -chdir=infra/bootstrap output state_bucket`.
+bucket = "nutrition-dev-tfstate-<account-id>"

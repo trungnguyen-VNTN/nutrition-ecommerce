@@ -73,8 +73,9 @@ lọc allergen / dinh dưỡng là fail-closed khi thiếu dữ liệu.
 ```text
 backend/                Spring Boot, Flyway migrations, tests, Maven Wrapper
 frontend/               React, Vitest, Playwright/axe, screenshots local
-infra/cognito/          Terraform Cognito hiện tại
-infra/envs/, bootstrap/ Root `envs/dev` và state backend (chưa dùng); module sẽ ở infra/modules/ (D19)
+infra/bootstrap/        Bucket lưu Terraform state (state local)
+infra/envs/dev/         Root Terraform duy nhất, backend S3 (D19)
+infra/modules/          Module: network, ecr, rds, cognito
 scripts/                Launcher local cho Windows
 .github/                CI, Dependabot, mẫu PR và issue
 docs/                   Kiến trúc, quyết định, API, DB, tiến độ
@@ -178,12 +179,12 @@ Dừng dev/preview server đang chiếm cổng 5173/4173 trước khi chạy Pla
 config kiểm thử tự quản lý server. Ảnh nằm trong `frontend/.screenshots/`, không commit.
 Build có kiểm tra production bundle không chứa mock API.
 
-Terraform hiện tại (không triển khai tài nguyên):
+Terraform (chưa triển khai tài nguyên; thứ tự apply xem `infra/README.md`):
 
 ```sh
 terraform fmt -check -recursive infra
-terraform -chdir=infra/cognito init -backend=false
-terraform -chdir=infra/cognito validate
+terraform -chdir=infra/envs/dev init -backend=false
+terraform -chdir=infra/envs/dev validate
 ```
 
 ## Trạng thái dự án
