@@ -21,6 +21,7 @@ module "rds" {
   name_prefix       = local.name_prefix
   subnet_ids        = module.network.db_subnet_ids
   security_group_id = module.network.rds_security_group_id
+  running           = var.app_running
 }
 
 module "cognito" {
@@ -51,7 +52,8 @@ module "service" {
   origin_header_name  = local.origin_header_name
   origin_header_value = random_password.origin_header.result
 
-  container_image = "${module.ecr.repository_url}:initial"
+  app_running     = var.app_running
+  container_image = "${module.ecr.repository_url}:latest"
   desired_count   = var.api_desired_count
 
   db_host       = module.rds.endpoint
@@ -64,6 +66,9 @@ module "service" {
 
   bedrock_model_id             = var.bedrock_model_id
   bedrock_inference_profile_id = var.bedrock_inference_profile_id
+
+  # Ties the ECS service to the RDS state so tasks start after the DB is available.
+  db_state = module.rds.state
 }
 
 module "frontend" {
@@ -81,7 +86,7 @@ module "github_oidc" {
   name_prefix         = local.name_prefix
   github_repository   = var.github_repository
   ecr_repository_arn  = module.ecr.repository_arn
-  ecs_role_arns       = [module.service.execution_role_arn, module.service.task_role_arn]
+  ecs_service_arn     = module.service.service_arn
   frontend_bucket_arn = module.frontend.bucket_arn
   distribution_arn    = module.frontend.distribution_arn
 }

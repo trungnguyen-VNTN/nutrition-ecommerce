@@ -63,26 +63,9 @@ data "aws_iam_policy_document" "deploy" {
   }
 
   statement {
-    sid = "EcsDeploy"
-    actions = [
-      "ecs:DescribeServices",
-      "ecs:DescribeTaskDefinition",
-      "ecs:RegisterTaskDefinition",
-      "ecs:UpdateService",
-    ]
-    resources = ["*"] # RegisterTaskDefinition and DescribeTaskDefinition do not support resource ARNs.
-  }
-
-  statement {
-    sid       = "PassTaskRoles"
-    actions   = ["iam:PassRole"]
-    resources = var.ecs_role_arns
-
-    condition {
-      test     = "StringEquals"
-      variable = "iam:PassedToService"
-      values   = ["ecs-tasks.amazonaws.com"]
-    }
+    sid       = "RestartService"
+    actions   = ["ecs:DescribeServices", "ecs:UpdateService"]
+    resources = [var.ecs_service_arn]
   }
 
   statement {

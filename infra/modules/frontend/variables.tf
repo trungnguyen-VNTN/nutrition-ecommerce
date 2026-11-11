@@ -4,8 +4,9 @@ variable "name_prefix" {
 }
 
 variable "alb_dns_name" {
-  description = "DNS name of the public ALB that serves /api/*."
+  description = "DNS name of the ALB that serves /api/*; null while the app is off."
   type        = string
+  default     = null
 }
 
 variable "origin_header_name" {
