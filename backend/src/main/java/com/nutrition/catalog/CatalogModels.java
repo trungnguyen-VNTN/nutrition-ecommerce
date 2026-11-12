@@ -10,6 +10,9 @@ public final class CatalogModels {
 
   public record Allergen(String code, String name, String kind) {}
 
+  /** Public image of a product; the first one is the primary image. */
+  public record Image(long id, String url) {}
+
   public record Nutrition(
       BigDecimal calories,
       BigDecimal proteinG,
@@ -33,7 +36,8 @@ public final class CatalogModels {
       boolean nutritionComplete,
       boolean allergensVerified,
       Nutrition nutrition,
-      List<Allergen> allergens) {}
+      List<Allergen> allergens,
+      List<Image> images) {}
 
   public record ProductPage(List<Product> items, int page, int size, long total) {}
 }

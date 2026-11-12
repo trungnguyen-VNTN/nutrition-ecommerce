@@ -23,6 +23,25 @@ function Initialize-AppDatabase {
     }
 }
 
+function Import-LocalSettings {
+    # Optional, git-ignored scripts/local-settings.json (see local-settings.example.json).
+    # Cognito IDs are public configuration; without them sign-in stays unavailable (no bypass).
+    $path = Join-Path $PSScriptRoot 'local-settings.json'
+    if (!(Test-Path -LiteralPath $path)) {
+        Write-Host 'No scripts/local-settings.json: sign-in disabled locally.' -ForegroundColor Yellow
+        return
+    }
+    $settings = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+    $poolId = "$($settings.cognitoUserPoolId)".Trim()
+    $clientId = "$($settings.cognitoClientId)".Trim()
+    if (!$poolId -or !$clientId) { throw 'local-settings.json needs cognitoUserPoolId and cognitoClientId.' }
+    $env:COGNITO_ISSUER_URI = "https://cognito-idp.ap-southeast-1.amazonaws.com/$poolId"
+    $env:COGNITO_CLIENT_ID = $clientId
+    $env:VITE_COGNITO_USER_POOL_ID = $poolId
+    $env:VITE_COGNITO_CLIENT_ID = $clientId
+    Write-Host 'Cognito sign-in enabled from scripts/local-settings.json.'
+}
+
 function Test-DatabaseReady {
     $ErrorActionPreference = 'Continue'
     & docker compose exec -T postgres pg_isready -U nutrition_dev -d nutrition_dev *> $null
@@ -130,10 +149,11 @@ try {
         } while ((Get-Date) -lt $deadline)
         if (!$databaseReady) { throw 'PostgreSQL is not ready after 60 seconds.' }
         Initialize-AppDatabase
+        Import-LocalSettings
         $env:MAVEN_OPTS = '-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC'
         $env:NODE_OPTIONS = '--max-old-space-size=384'
         Write-Host 'Starting backend (usda profile, cached Maven dependencies)...'
-        $backend = Start-Owned 'backend' (Join-Path $root 'backend') 'mvnw.cmd -o -B -ntp spring-boot:run -Dspring-boot.run.profiles=usda "-Dspring-boot.run.jvmArguments=-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"'
+        $backend = Start-Owned 'backend' (Join-Path $root 'backend') '.\mvnw.cmd -o -B -ntp spring-boot:run -Dspring-boot.run.profiles=usda "-Dspring-boot.run.jvmArguments=-Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC"'
         Wait-Http 'backend' 'http://localhost:8080/actuator/health' $backend 180
         Write-Host 'Starting frontend...'
         $frontend = Start-Owned 'frontend' (Join-Path $root 'frontend') 'npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort'

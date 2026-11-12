@@ -9,7 +9,7 @@ import { Donut } from '@/components/donut';
 import { ErrorState } from '@/components/error-state';
 import { MacroBar } from '@/components/macro-bar';
 import { NutritionLabel } from '@/components/nutrition-label';
-import { ProductArt } from '@/components/product-art';
+import { ProductGallery } from './product-gallery';
 import { ProductCard } from '@/components/product-card';
 import { Note } from '@/components/ui/note';
 import { Pill } from '@/components/ui/pill';
@@ -100,10 +100,7 @@ function ProductDetail({ product }: { product: Product }) {
   return (
     <>
       <div className="grid items-start gap-6 md:grid-cols-2 md:gap-12">
-        <ProductArt
-          name={product.name}
-          className="aspect-[4/3] rounded-sheet md:aspect-square"
-        />
+        <ProductGallery name={product.name} images={product.images} />
         <header className="space-y-5">
           {product.category && (
             <p className="eyebrow">{product.category.name}</p>

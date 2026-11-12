@@ -19,6 +19,11 @@ export interface Nutrition {
   sodium_mg: number | null;
   source: string;
 }
+/** Real product photo; the first one is the primary image. */
+export interface ProductImage {
+  id: number;
+  url: string;
+}
 export interface Product {
   id: string;
   name: string;
@@ -33,6 +38,8 @@ export interface Product {
   serving_unit: string | null;
   nutrition: Nutrition | null;
   allergens: Allergen[] | null;
+  /** Missing in older responses and fixtures: treat as no photo. */
+  images?: ProductImage[];
 }
 
 export interface ProductPage {

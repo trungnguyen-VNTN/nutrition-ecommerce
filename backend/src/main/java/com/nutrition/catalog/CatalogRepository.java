@@ -2,9 +2,11 @@ package com.nutrition.catalog;
 
 import com.nutrition.catalog.CatalogModels.Allergen;
 import com.nutrition.catalog.CatalogModels.Category;
+import com.nutrition.catalog.CatalogModels.Image;
 import com.nutrition.catalog.CatalogModels.Nutrition;
 import com.nutrition.catalog.CatalogModels.Product;
 import com.nutrition.catalog.CatalogModels.ProductPage;
+import com.nutrition.images.ImageUrls;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CatalogRepository {
   private final NamedParameterJdbcTemplate jdbc;
+  private final ImageUrls imageUrls;
 
   private static final String FROM_FILTER =
       """
@@ -43,8 +46,9 @@ public class CatalogRepository {
       n.calories,n.protein_g,n.carbs_g,n.fat_g,n.sugar_g,n.fiber_g,n.sodium_mg,n.source
       """;
 
-  public CatalogRepository(NamedParameterJdbcTemplate jdbc) {
+  public CatalogRepository(NamedParameterJdbcTemplate jdbc, ImageUrls imageUrls) {
     this.jdbc = jdbc;
+    this.imageUrls = imageUrls;
   }
 
   public List<Category> categories() {
@@ -141,6 +145,11 @@ public class CatalogRepository {
                 (a, row) ->
                     new Allergen(a.getString("code"), a.getString("name"), a.getString("kind")))
             : null;
+    List<Image> images =
+        jdbc.query(
+            "SELECT id,s3_key FROM product_images WHERE product_id=:id ORDER BY sort_order,id",
+            Map.of("id", id),
+            (i, row) -> new Image(i.getLong("id"), imageUrls.url(i.getString("s3_key"))));
     Category category =
         rs.getObject("cat_id") == null
             ? null
@@ -159,6 +168,7 @@ public class CatalogRepository {
         complete,
         verified,
         nutrition,
-        allergens);
+        allergens,
+        images);
   }
 }
