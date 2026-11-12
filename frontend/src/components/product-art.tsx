@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { messages } from '@/app/messages.vi';
 import { cn } from '@/lib/utils';
 
@@ -10,18 +11,38 @@ const tones = [
   'bg-fat-tint text-ink',
 ] as const;
 
-// Placeholder until real product photos exist (no S3 upload yet); one drawing for card and detail.
+// Real product photo when one exists; otherwise (or if it fails to load) the packaging drawing.
+// The caller sizes the frame (aspect ratio), so swapping photo and drawing never shifts layout.
 export function ProductArt({
   name,
   index = 0,
   caption = true,
   className,
+  imageUrl,
+  priority = false,
 }: {
   name: string;
   index?: number;
   caption?: boolean;
   className?: string;
+  imageUrl?: string | null;
+  /** Above-the-fold image (detail page): load eagerly instead of lazily. */
+  priority?: boolean;
 }) {
+  const [failed, setFailed] = useState<string | null>(null);
+  if (imageUrl && failed !== imageUrl)
+    return (
+      <div className={cn('relative overflow-hidden bg-sunken', className)}>
+        <img
+          src={imageUrl}
+          alt={messages.productPhoto(name)}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          onError={() => setFailed(imageUrl)}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+    );
   return (
     <div
       className={cn(

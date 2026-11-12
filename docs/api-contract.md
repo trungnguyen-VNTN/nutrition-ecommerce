@@ -23,7 +23,7 @@
 | --- | --- | --- | --- |
 | GET | /api/categories | public | Danh sách category |
 | GET | /api/products | public | Tìm / lọc: `q`, `categoryId`, `maxCalories`, `minProtein`, `diet`, `excludeAllergen` (nhiều giá trị), `inStock`, phân trang |
-| GET | /api/products/{id} | public | Chi tiết kèm dinh dưỡng, allergen, ảnh |
+| GET | /api/products/{id} | public | Chi tiết kèm dinh dưỡng, allergen và `images: [{id, url}]` theo thứ tự (danh sách sản phẩm cũng có `images`; giỏ hàng có `image_url` là ảnh đại diện). URL ảnh: `/images/...` qua CloudFront trên AWS, `/api/local-images/...` khi chạy local |
 
 Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, chỉ trả sản phẩm có `nutrition_complete = true` (và `allergens_verified = true` với `excludeAllergen`).
 
@@ -39,7 +39,10 @@ Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, c
 | PUT | /api/admin/products/{id}/nutrition | ADMIN | Nhập / sửa dinh dưỡng; cập nhật `nutrition_complete` |
 | PUT | /api/admin/products/{id}/allergens | ADMIN | Nhập allergen và xác nhận (`allergens_verified`) |
 | PATCH | /api/admin/products/{id}/stock | ADMIN | Chỉnh tồn kho (`stock >= 0`) |
-| POST | /api/admin/products/{id}/images | ADMIN | Upload ảnh qua backend (giới hạn kích thước, kiểm tra loại tệp, tên file do server sinh) |
+| GET | /api/admin/products/{id}/images | ADMIN | Danh sách ảnh `[{id, url, sort_order}]` (cả sản phẩm đang ẩn) |
+| POST | /api/admin/products/{id}/images | ADMIN | Upload multipart, trường `file`; JPEG/PNG/WebP nhận diện theo nội dung (không nhận SVG), tối đa 2 MB, tối đa 5 ảnh; tên file do server sinh. Trả 201 `{id, url, sort_order}`. Lỗi: 400 `INVALID_IMAGE`, 413 `IMAGE_TOO_LARGE`, 409 `IMAGE_LIMIT` |
+| PUT | /api/admin/products/{id}/images/order | ADMIN | `{image_ids: [...]}` phải chứa đúng mọi ảnh của sản phẩm, mỗi ảnh một lần; ảnh đầu là ảnh đại diện |
+| DELETE | /api/admin/products/{id}/images/{imageId} | ADMIN | Xóa ảnh và file (204); thứ tự còn lại được đánh số lại |
 | DELETE | /api/admin/products/{id} | ADMIN | Ẩn (`active = false`) thay vì xóa cứng |
 
 ## Giỏ hàng
