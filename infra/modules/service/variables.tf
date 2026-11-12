@@ -137,3 +137,14 @@ variable "images_bucket_arn" {
   description = "Product images bucket ARN; the task may write under images/ only."
   type        = string
 }
+
+variable "extra_flyway_locations" {
+  description = "Extra Flyway locations after classpath:db/migration, e.g. classpath:db/usda for the demo catalog."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for location in var.extra_flyway_locations : startswith(location, "classpath:db/")])
+    error_message = "Only classpath:db/... locations bundled in the image are allowed."
+  }
+}

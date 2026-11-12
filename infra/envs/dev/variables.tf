@@ -43,3 +43,9 @@ variable "bedrock_inference_profile_id" {
   type        = string
   default     = ""
 }
+
+variable "load_demo_catalog" {
+  description = "Seed the 18-product USDA demo catalog (idempotent, never overwrites existing rows; D22)."
+  type        = bool
+  default     = true
+}

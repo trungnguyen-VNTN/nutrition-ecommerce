@@ -215,6 +215,8 @@ resource "aws_ecs_task_definition" "api" {
 
       environment = [
         { name = "SPRING_PROFILES_ACTIVE", value = "production" },
+        # Schema migrations, plus optional seed locations such as the USDA demo catalog (D22).
+        { name = "SPRING_FLYWAY_LOCATIONS", value = join(",", concat(["classpath:db/migration"], var.extra_flyway_locations)) },
         { name = "DB_URL", value = "jdbc:postgresql://${var.db_host}:${var.db_port}/${var.db_name}?sslmode=require" },
         { name = "COGNITO_ISSUER_URI", value = var.cognito_issuer_uri },
         { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
