@@ -137,6 +137,21 @@ resource "aws_iam_role" "task" {
   permissions_boundary = data.aws_iam_policy.boundary.arn
 }
 
+# Product images (D21): the API writes and deletes objects under images/ only.
+data "aws_iam_policy_document" "task_images" {
+  statement {
+    sid       = "ManageProductImages"
+    actions   = ["s3:PutObject", "s3:DeleteObject"]
+    resources = ["${var.images_bucket_arn}/images/*"]
+  }
+}
+
+resource "aws_iam_role_policy" "task_images" {
+  name   = "product-images"
+  role   = aws_iam_role.task.id
+  policy = data.aws_iam_policy_document.task_images.json
+}
+
 # Converse through an inference profile needs the profile in this region and the
 # foundation model in every region the profile may route to.
 data "aws_iam_policy_document" "task_bedrock" {
@@ -205,6 +220,7 @@ resource "aws_ecs_task_definition" "api" {
         { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
         { name = "BEDROCK_MODEL_ID", value = var.bedrock_model_id },
         { name = "BEDROCK_INFERENCE_PROFILE_ID", value = var.bedrock_inference_profile_id },
+        { name = "IMAGES_BUCKET", value = var.images_bucket_name },
       ]
 
       # RDS-managed secret is JSON with "username" and "password" keys.
