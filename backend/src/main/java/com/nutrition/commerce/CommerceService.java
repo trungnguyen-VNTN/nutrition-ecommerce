@@ -1,6 +1,7 @@
 package com.nutrition.commerce;
 
 import com.nutrition.common.BusinessException;
+import com.nutrition.images.ImageUrls;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CommerceService {
   private final JdbcTemplate db;
+  private final ImageUrls imageUrls;
 
-  public CommerceService(JdbcTemplate db) {
+  public CommerceService(JdbcTemplate db, ImageUrls imageUrls) {
     this.db = db;
+    this.imageUrls = imageUrls;
   }
 
   public record Item(
@@ -25,7 +28,8 @@ public class CommerceService {
       String currency,
       int stock,
       int quantity,
-      boolean active) {}
+      boolean active,
+      String imageUrl) {}
 
   public record Cart(List<Item> items, BigDecimal total) {}
 
@@ -38,7 +42,10 @@ public class CommerceService {
   private List<Item> items(long cart) {
     return db.query(
         """
-        SELECT p.id,p.name,p.price,p.currency,p.stock,c.quantity,p.active FROM cart_items c
+        SELECT p.id,p.name,p.price,p.currency,p.stock,c.quantity,p.active,
+        (SELECT i.s3_key FROM product_images i WHERE i.product_id=p.id
+         ORDER BY i.sort_order,i.id LIMIT 1) AS image_key
+        FROM cart_items c
         JOIN products p ON p.id=c.product_id WHERE c.cart_id=? ORDER BY p.id
         """,
         (rs, row) ->
@@ -49,7 +56,10 @@ public class CommerceService {
                 rs.getString("currency"),
                 rs.getInt("stock"),
                 rs.getInt("quantity"),
-                rs.getBoolean("active")),
+                rs.getBoolean("active"),
+                rs.getString("image_key") == null
+                    ? null
+                    : imageUrls.url(rs.getString("image_key"))),
         cart);
   }
 

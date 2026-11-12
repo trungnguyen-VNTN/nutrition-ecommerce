@@ -31,3 +31,18 @@ variable "api_read_timeout_seconds" {
   type        = number
   default     = 60
 }
+
+variable "images_bucket_name" {
+  description = "Product images bucket (module images)."
+  type        = string
+}
+
+variable "images_bucket_arn" {
+  description = "Product images bucket ARN."
+  type        = string
+}
+
+variable "images_bucket_regional_domain_name" {
+  description = "Regional domain of the images bucket, used as CloudFront origin."
+  type        = string
+}
