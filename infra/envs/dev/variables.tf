@@ -14,10 +14,10 @@ variable "enable_nat" {
   default     = false
 }
 
-variable "github_repository" {
-  description = "owner/name of the repository whose master branch may deploy."
+variable "github_subject_prefix" {
+  description = "OIDC sub prefix of the repository whose master branch may deploy (immutable subject: owner and repo IDs are included, so a renamed or recreated repo cannot assume the role)."
   type        = string
-  default     = "trungnguyen-VNTN/nutrition-ecommerce"
+  default     = "repo:trungnguyen-VNTN@264366223/nutrition-ecommerce@1438480231"
 }
 
 variable "app_running" {
