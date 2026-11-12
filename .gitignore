@@ -34,3 +34,6 @@ backend/.mvn/wrapper/maven-wrapper.jar
 infra/**/backend.hcl
 *.tfplan.zip
 tfplan.zip
+
+# Local launcher settings (Cognito IDs of the dev environment)
+scripts/local-settings.json
