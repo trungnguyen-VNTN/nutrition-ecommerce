@@ -91,6 +91,9 @@ export const messages = {
   illustration: (name: string) => `Hình minh họa bao bì ${name}`,
   sampleImage: 'Hình minh họa',
   noPhoto: 'Chưa có ảnh thật',
+  productPhoto: (name: string) => `Ảnh sản phẩm ${name}`,
+  productPhotoNumber: (name: string, index: number, total: number) =>
+    `Xem ảnh ${index} trên ${total} của ${name}`,
   cartCount: (count: number) => `${count} sản phẩm trong giỏ`,
   loadingPage: 'Đang tải trang',
   filters: 'Bộ lọc',

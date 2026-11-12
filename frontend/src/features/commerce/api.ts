@@ -9,6 +9,8 @@ const itemSchema = z.object({
   quantity: z.number(),
   stock: z.number(),
   active: z.boolean(),
+  // Primary product photo; absent or null means no photo yet.
+  image_url: z.string().nullish(),
 });
 export const cartSchema = z.object({
   items: z.array(itemSchema),

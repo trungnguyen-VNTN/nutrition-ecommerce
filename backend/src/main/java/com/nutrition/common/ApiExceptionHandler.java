@@ -33,6 +33,21 @@ public class ApiExceptionHandler {
         .body(new ApiError("QUOTA_EXCEEDED", "Đã hết lượt tra cứu hôm nay.", Map.of()));
   }
 
+  @ExceptionHandler(com.nutrition.images.InvalidImageException.class)
+  public ResponseEntity<ApiError> invalidImage() {
+    return ResponseEntity.badRequest()
+        .body(new ApiError("INVALID_IMAGE", "Chỉ nhận ảnh JPEG, PNG hoặc WebP.", Map.of()));
+  }
+
+  @ExceptionHandler({
+    com.nutrition.images.ImageTooLargeException.class,
+    org.springframework.web.multipart.MaxUploadSizeExceededException.class
+  })
+  public ResponseEntity<ApiError> imageTooLarge() {
+    return ResponseEntity.status(413)
+        .body(new ApiError("IMAGE_TOO_LARGE", "Ảnh tối đa 2 MB.", Map.of()));
+  }
+
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity<ApiError> conflict(BusinessException exception) {
     return ResponseEntity.status(409)
@@ -44,7 +59,10 @@ public class ApiExceptionHandler {
     MethodArgumentTypeMismatchException.class,
     IllegalArgumentException.class,
     org.springframework.web.bind.MethodArgumentNotValidException.class,
-    org.springframework.http.converter.HttpMessageNotReadableException.class
+    org.springframework.http.converter.HttpMessageNotReadableException.class,
+    org.springframework.web.multipart.support.MissingServletRequestPartException.class,
+    org.springframework.web.bind.MissingServletRequestParameterException.class,
+    org.springframework.web.multipart.MultipartException.class
   })
   public ResponseEntity<ApiError> invalid(Exception exception) {
     return ResponseEntity.badRequest()

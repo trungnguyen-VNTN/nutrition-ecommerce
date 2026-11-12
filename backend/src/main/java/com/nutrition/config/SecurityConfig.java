@@ -90,7 +90,8 @@ public class SecurityConfig {
                         "/actuator/health",
                         "/api/products",
                         "/api/products/*",
-                        "/api/categories")
+                        "/api/categories",
+                        "/api/local-images/**")
                     .permitAll()
                     .requestMatchers("/api/admin/**")
                     .hasRole("ADMIN")
