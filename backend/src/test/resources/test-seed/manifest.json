@@ -1,0 +1,6 @@
+[
+  { "product": "seed-test-a", "file": "pixel.png" },
+  { "product": "seed-test-b", "file": "pixel.png" },
+  { "product": "seed-test-missing-file", "file": "absent.png" },
+  { "product": "seed-test-no-such-product", "file": "pixel.png" }
+]
