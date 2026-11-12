@@ -14,6 +14,7 @@ infra/
     ├── service/      ALB công khai (chỉ nhận request có header bí mật từ CloudFront), ECS Fargate ARM64,
     │                 role execution / task có boundary, log group.
     ├── frontend/     Bucket S3 riêng tư + CloudFront (OAC); /api/* chuyển về ALB qua HTTP (O6).
+    ├── images/       Bucket S3 riêng tư cho ảnh sản phẩm; CloudFront phục vụ /images/* (D21).
     └── github-oidc/  OIDC provider + role deploy cho GitHub Actions, chỉ nhánh master.
 ```
 
