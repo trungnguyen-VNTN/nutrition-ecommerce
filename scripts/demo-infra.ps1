@@ -45,6 +45,30 @@ if ($LASTEXITCODE -ne 0) {
 & $terraform "-chdir=$dev" init -input=false "-backend-config=backend.hcl" | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'terraform init failed.' }
 
+if ($Mode -eq 'up') {
+  # aws_rds_instance_state waits for "available" before it acts, so it can stop the database
+  # but never start a stopped one (provider limitation). Start it here first; Terraform then
+  # finds it available and only creates the ALB and ECS service. Start/stop only, no create/delete.
+  $db = 'nutrition-dev-postgres'
+  $deadline = (Get-Date).AddMinutes(25)
+  while ($true) {
+    $status = & $aws rds describe-db-instances --db-instance-identifier $db `
+      --query 'DBInstances[0].DBInstanceStatus' --output text
+    if ($LASTEXITCODE -ne 0) { throw "Cannot read the status of RDS instance $db." }
+    if ($status -eq 'available') { break }
+    if ($status -eq 'stopped') {
+      Write-Host "Starting database $db (about 5-8 minutes)..." -ForegroundColor Cyan
+      & $aws rds start-db-instance --db-instance-identifier $db --query 'DBInstance.DBInstanceStatus' --output text | Out-Null
+      if ($LASTEXITCODE -ne 0) { throw "Could not start RDS instance $db. See the error above." }
+    } else {
+      Write-Host "Database status: $status, waiting..."
+    }
+    if ((Get-Date) -gt $deadline) { throw "Database $db is still '$status' after 25 minutes." }
+    Start-Sleep -Seconds 20
+  }
+  Write-Host "Database $db is available." -ForegroundColor Green
+}
+
 $running = if ($Mode -eq 'up') { 'true' } else { 'false' }
 Write-Host "Planning app_running=$running. Read the plan, then type yes to apply." -ForegroundColor Cyan
 & $terraform "-chdir=$dev" apply "-var=app_running=$running"
