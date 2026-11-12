@@ -44,6 +44,16 @@ export const productSchema = z
         }),
       )
       .nullable(),
+    // Product photos (D21). Only same-origin paths are accepted so API data can never
+    // point an <img> at another site or a javascript: URL.
+    images: z
+      .array(
+        z.object({
+          id: z.number().int().positive(),
+          url: z.string().regex(/^\/(?!\/)[^\s]*$/),
+        }),
+      )
+      .optional(),
   })
   .refine(
     (p) =>
