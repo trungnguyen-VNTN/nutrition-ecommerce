@@ -96,10 +96,10 @@ module "frontend" {
 module "github_oidc" {
   source = "../../modules/github-oidc"
 
-  name_prefix         = local.name_prefix
-  github_repository   = var.github_repository
-  ecr_repository_arn  = module.ecr.repository_arn
-  ecs_service_arn     = module.service.service_arn
-  frontend_bucket_arn = module.frontend.bucket_arn
-  distribution_arn    = module.frontend.distribution_arn
+  name_prefix           = local.name_prefix
+  github_subject_prefix = var.github_subject_prefix
+  ecr_repository_arn    = module.ecr.repository_arn
+  ecs_service_arn       = module.service.service_arn
+  frontend_bucket_arn   = module.frontend.bucket_arn
+  distribution_arn      = module.frontend.distribution_arn
 }

@@ -3,9 +3,18 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "github_repository" {
-  description = "owner/name of the GitHub repository allowed to deploy."
+variable "github_subject_prefix" {
+  description = <<-EOT
+    Prefix of the OIDC "sub" claim GitHub sends for the repository, without ":ref:...".
+    With immutable subjects enabled it is repo:<owner>@<owner_id>/<repo>@<repo_id>; read it from
+    GET /repos/{owner}/{repo}/actions/oidc/customization/sub (sub_claim_prefix).
+  EOT
   type        = string
+
+  validation {
+    condition     = startswith(var.github_subject_prefix, "repo:") && !strcontains(var.github_subject_prefix, "*")
+    error_message = "Must start with repo: and must not contain wildcards."
+  }
 }
 
 variable "deploy_branch" {
