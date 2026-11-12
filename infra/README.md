@@ -86,6 +86,33 @@ $env:AWS_PROFILE = "nutrition-apply"
 terraform -chdir=infra/envs/dev apply tfplan
 ```
 
+## Deploy bằng GitHub Actions
+
+Workflow `.github/workflows/deploy.yml` chạy khi có push vào `master` (đổi `backend/` hoặc
+`frontend/`) hoặc bấm *Run workflow*. Nó assume role `nutrition-dev-github-deploy` qua OIDC,
+không dùng access key:
+
+- **Backend:** build image `linux/arm64` trên runner ARM của GitHub, đẩy lên ECR với tag SHA và
+  `latest`; nếu app đang bật thì `update-service --force-new-deployment`, nếu tắt thì chỉ đẩy image.
+- **Frontend:** `npm run build` với ID Cognito, `s3 sync` lên bucket frontend (asset cache 1 năm,
+  `index.html` luôn kiểm tra lại), invalidation `/index.html`.
+
+Cần các *repository variables* (Settings → Secrets and variables → Actions → Variables). Đây là
+cấu hình công khai, không phải secret; giá trị lấy từ `terraform -chdir=infra/envs/dev output`:
+
+| Biến | Lấy từ |
+| --- | --- |
+| `AWS_DEPLOY_ROLE_ARN` | output `github_deploy_role_arn` |
+| `ECR_REPOSITORY` | `nutrition-dev-backend` (tên repo, không kèm registry) |
+| `ECS_CLUSTER` | output `ecs_cluster` |
+| `ECS_SERVICE` | output `ecs_service` |
+| `FRONTEND_BUCKET` | output `frontend_bucket` |
+| `CLOUDFRONT_DISTRIBUTION_ID` | output `cloudfront_distribution_id` |
+| `VITE_COGNITO_USER_POOL_ID` | output `cognito_user_pool_id` |
+| `VITE_COGNITO_CLIENT_ID` | output `cognito_app_client_id` |
+
+Khi chưa có `AWS_DEPLOY_ROLE_ARN`, hai job được bỏ qua (không làm đỏ CI).
+
 ## Chi phí ước tính khi đã apply (ap-southeast-1)
 
 | Trạng thái | Gồm | Ước tính |

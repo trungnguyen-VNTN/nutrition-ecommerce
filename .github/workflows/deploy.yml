@@ -1,0 +1,97 @@
+name: Deploy to AWS dev
+# Builds and ships master to the dev environment (D20, D21). No long-lived keys: the jobs
+# assume the nutrition-dev-github-deploy role through GitHub OIDC (infra/modules/github-oidc).
+# Settings are repository variables (not secrets; they are not sensitive), see infra/README.md.
+# Without AWS_DEPLOY_ROLE_ARN the jobs are skipped, so forks and fresh clones stay green.
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+env:
+  AWS_REGION: ap-southeast-1
+jobs:
+  backend:
+    name: Backend image
+    if: vars.AWS_DEPLOY_ROLE_ARN != ''
+    # Native ARM64 runner: the image must be linux/arm64 to match ECS (O2).
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}
+        run: |
+          docker build --platform linux/arm64 -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:latest" backend
+          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:latest"
+      - name: Restart the API if the app is on
+        # While the app is off (app_running = false) the service does not exist; the next
+        # "demo-infra.ps1 up" starts tasks from :latest anyway.
+        run: |
+          status=$(aws ecs describe-services --cluster "${{ vars.ECS_CLUSTER }}" \
+            --services "${{ vars.ECS_SERVICE }}" \
+            --query 'services[0].status' --output text 2>/dev/null || true)
+          if [ "$status" = "ACTIVE" ]; then
+            aws ecs update-service --cluster "${{ vars.ECS_CLUSTER }}" \
+              --service "${{ vars.ECS_SERVICE }}" --force-new-deployment > /dev/null
+            echo "New deployment started."
+          else
+            echo "Service not running (app off); image pushed only."
+          fi
+
+  frontend:
+    name: Frontend
+    if: vars.AWS_DEPLOY_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Build
+        env:
+          # Public Cognito configuration (not secrets).
+          VITE_COGNITO_USER_POOL_ID: ${{ vars.VITE_COGNITO_USER_POOL_ID }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
+        run: npm run build
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Upload to S3
+        # Hashed assets are cached for a year; index.html is always revalidated.
+        run: |
+          aws s3 sync dist "s3://${{ vars.FRONTEND_BUCKET }}" --delete \
+            --exclude index.html \
+            --cache-control "public, max-age=31536000, immutable"
+          aws s3 cp dist/index.html "s3://${{ vars.FRONTEND_BUCKET }}/index.html" \
+            --cache-control "no-cache"
+      - name: Invalidate index.html
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/index.html" "/" > /dev/null
