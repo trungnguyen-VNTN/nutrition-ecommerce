@@ -33,6 +33,7 @@ export function ProductCard({
       <ProductArt
         name={product.name}
         index={index}
+        imageUrl={product.images?.[0]?.url}
         caption={false}
         className={art}
       />

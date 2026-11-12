@@ -127,3 +127,13 @@ variable "db_state" {
   description = "RDS state from the rds module. Only used to order the ECS service after the DB starts."
   type        = string
 }
+
+variable "images_bucket_name" {
+  description = "Product images bucket (IMAGES_BUCKET)."
+  type        = string
+}
+
+variable "images_bucket_arn" {
+  description = "Product images bucket ARN; the task may write under images/ only."
+  type        = string
+}

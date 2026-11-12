@@ -79,8 +79,12 @@ Quy tắc: `products.nutrition_complete = true` chỉ khi các trường bắt b
 | --- | --- | --- |
 | id | bigint | PK |
 | product_id | bigint | FK → products ON DELETE CASCADE |
-| s3_key | text | NOT NULL |
-| sort_order | integer | NOT NULL DEFAULT 0 |
+| s3_key | text | NOT NULL UNIQUE; khóa do server sinh: `products/{product_id}/{uuid}.{jpg|png|webp}` |
+| content_type | text | NOT NULL, CHECK (`image/jpeg`, `image/png`, `image/webp`) |
+| sort_order | integer | NOT NULL DEFAULT 0, CHECK (>= 0); 0 là ảnh đại diện |
+| created_at | timestamptz | NOT NULL DEFAULT now() |
+
+Tối đa 5 ảnh mỗi sản phẩm (kiểm tra trong service, khóa dòng `products`). Migration V5 (D21).
 
 ### carts / cart_items
 `carts(id, user_id UNIQUE → app_users, updated_at)`
