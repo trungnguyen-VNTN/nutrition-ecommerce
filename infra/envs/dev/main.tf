@@ -40,6 +40,12 @@ locals {
   origin_header_name = "X-Origin-Verify"
 }
 
+module "images" {
+  source = "../../modules/images"
+
+  name_prefix = local.name_prefix
+}
+
 module "service" {
   source = "../../modules/service"
 
@@ -64,6 +70,9 @@ module "service" {
   cognito_issuer_uri = module.cognito.issuer_uri
   cognito_client_id  = module.cognito.app_client_id
 
+  images_bucket_name = module.images.bucket_name
+  images_bucket_arn  = module.images.bucket_arn
+
   bedrock_model_id             = var.bedrock_model_id
   bedrock_inference_profile_id = var.bedrock_inference_profile_id
 
@@ -78,6 +87,10 @@ module "frontend" {
   alb_dns_name        = module.service.alb_dns_name
   origin_header_name  = local.origin_header_name
   origin_header_value = random_password.origin_header.result
+
+  images_bucket_name                 = module.images.bucket_name
+  images_bucket_arn                  = module.images.bucket_arn
+  images_bucket_regional_domain_name = module.images.bucket_regional_domain_name
 }
 
 module "github_oidc" {

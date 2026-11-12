@@ -72,3 +72,8 @@ output "github_deploy_role_arn" {
   description = "GitHub repository variable AWS_DEPLOY_ROLE_ARN."
   value       = module.github_oidc.deploy_role_arn
 }
+
+output "images_bucket" {
+  description = "Product images bucket (D21)."
+  value       = module.images.bucket_name
+}
