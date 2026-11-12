@@ -77,3 +77,8 @@ output "images_bucket" {
   description = "Product images bucket (D21)."
   value       = module.images.bucket_name
 }
+
+output "bedrock_guardrail_id" {
+  description = "Chat guardrail ID (phase 6)."
+  value       = module.guardrail.guardrail_id
+}
