@@ -168,6 +168,33 @@ class ProductImagesIntegrationTest {
   }
 
   @Test
+  void cartShowsThePrimaryImage() throws Exception {
+    java.util.UUID shopper = java.util.UUID.randomUUID();
+    RequestPostProcessor user = jwt().jwt(j -> j.subject(shopper.toString()));
+    try {
+      http.perform(
+              org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(
+                      "/api/cart/items")
+                  .with(user)
+                  .contentType("application/json")
+                  .content("{\"product_id\":" + product + ",\"quantity\":1}"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.items[0].image_url").doesNotExist());
+      JsonNode primary = upload(png());
+      upload(jpeg());
+      http.perform(get("/api/cart").with(user))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.items[0].image_url").value(primary.path("url").asText()));
+    } finally {
+      db.update(
+          "DELETE FROM cart_items WHERE cart_id IN (SELECT id FROM carts WHERE user_id=?)",
+          shopper);
+      db.update("DELETE FROM carts WHERE user_id=?", shopper);
+      db.update("DELETE FROM app_users WHERE id=?", shopper);
+    }
+  }
+
+  @Test
   void limitsImagesPerProduct() throws Exception {
     for (int i = 0; i < 5; i++) upload(png());
     http.perform(multipart(base()).file(file(png(), "6.png", "image/png")).with(ADMIN))
