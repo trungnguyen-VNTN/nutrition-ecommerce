@@ -47,11 +47,11 @@ Chi tiết các quyết định đã chốt ngày 2026-11-10 nằm ở D15–D19
 
 | Spike | Câu hỏi | Khi nào | Kết quả | Ngày | Hành động tiếp theo |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Converse + inference profile + Guardrail + contextual grounding chạy được ở Singapore? | GĐ 0 | _chưa làm_ | | |
+| S1 | Converse + inference profile + Guardrail + contextual grounding chạy được ở Singapore? | GĐ 0 | _một phần (chỉ đọc, `nutrition-plan`)_: Claude Haiku 5.5 ở ap-southeast-1 **chỉ có profile `global.anthropic.claude-haiku-5-5`**, không có `apac.` (APAC chỉ có Claude 3 Haiku, Claude 3 / 3.5 Sonnet). Profile global định tuyến tới `arn:aws:bedrock:::foundation-model/anthropic.claude-haiku-5-5` và bản ap-southeast-1. `get-foundation-model-availability`: authorized, entitlement và region AVAILABLE, nhưng **agreement NOT_AVAILABLE** (chưa chấp nhận điều khoản). Chưa gọi thử Converse / Guardrail (cần quyền invoke và quota). | 2026-11-13 | Người dùng chấp nhận điều khoản model trên console; chọn lại D18 (global Haiku 5.5 hay APAC Claude 3 Haiku) |
 | S2 | State S3 + `use_lockfile` chạy được? | GĐ 0 | _đang làm_: đã viết `infra/bootstrap`, plan đạt (7 tạo) | 2026-11-11 | Người dùng apply bằng `nutrition-apply`, rồi init `envs/dev` với backend S3 |
 | S3 | Backend trong private subnet tải được JWKS của Cognito (qua endpoint `cognito-idp`)? | GĐ 3 | _không còn cần_ | 2026-11-01 | Bỏ do D2/D7 rút gọn; JWKS đi qua đường ra Internet (O3) |
 | S4 | CloudFront VPC origin → internal ALB hoạt động ở Singapore; provider hỗ trợ? | GĐ 3 | _không còn cần_ | 2026-11-01 | Đã chọn thẳng ALB công khai + prefix list CloudFront + header bí mật |
-| S5 | Quota Bedrock đủ cho demo? | GĐ 0 | _chưa làm_ | | Nếu thiếu: xin tăng sớm |
+| S5 | Quota Bedrock đủ cho demo? | GĐ 0 | **Không**: mọi quota Haiku ở ap-southeast-1 đang là **0** (global Haiku 5.5 / 4.5 tokens per minute, Claude 3 Haiku on-demand và cross-region) — tài khoản mới | 2026-11-13 | Người dùng gửi yêu cầu tăng quota trong Service Quotas (ví dụ 10 requests và 20.000 tokens mỗi phút), chờ AWS duyệt |
 
 ## Đề xuất tổ chức Terraform (2026-11-01) — đã duyệt 2026-11-10 (D19)
 
