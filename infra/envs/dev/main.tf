@@ -74,6 +74,7 @@ module "service" {
   images_bucket_arn  = module.images.bucket_arn
 
   extra_flyway_locations = var.load_demo_catalog ? ["classpath:db/usda"] : []
+  seed_demo_images       = var.load_demo_catalog
 
   bedrock_model_id             = var.bedrock_model_id
   bedrock_inference_profile_id = var.bedrock_inference_profile_id

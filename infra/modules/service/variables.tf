@@ -148,3 +148,9 @@ variable "extra_flyway_locations" {
     error_message = "Only classpath:db/... locations bundled in the image are allowed."
   }
 }
+
+variable "seed_demo_images" {
+  description = "Attach the bundled CC0 / public-domain demo photos to products without images (D23)."
+  type        = bool
+  default     = false
+}

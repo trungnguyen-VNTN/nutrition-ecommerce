@@ -223,6 +223,7 @@ resource "aws_ecs_task_definition" "api" {
         { name = "BEDROCK_MODEL_ID", value = var.bedrock_model_id },
         { name = "BEDROCK_INFERENCE_PROFILE_ID", value = var.bedrock_inference_profile_id },
         { name = "IMAGES_BUCKET", value = var.images_bucket_name },
+        { name = "NUTRITION_IMAGES_SEED_DEMO", value = tostring(var.seed_demo_images) },
       ]
 
       # RDS-managed secret is JSON with "username" and "password" keys.
