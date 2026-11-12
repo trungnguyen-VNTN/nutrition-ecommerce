@@ -49,3 +49,9 @@ variable "load_demo_catalog" {
   type        = bool
   default     = true
 }
+
+variable "guardrail_tier" {
+  description = "Bedrock guardrail tier: CLASSIC or STANDARD (confirm Vietnamese support in spike S1)."
+  type        = string
+  default     = "CLASSIC"
+}
