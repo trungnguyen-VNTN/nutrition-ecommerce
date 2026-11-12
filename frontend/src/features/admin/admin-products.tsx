@@ -17,6 +17,7 @@ import {
 } from './admin-api';
 import { AdminProductForm } from './admin-product-form';
 import { AdminProductRow } from './admin-product-item';
+import { ProductImagesPanel } from './product-images-panel';
 
 export function AdminProducts() {
   const [page, setPage] = useState(0);
@@ -170,6 +171,18 @@ export function AdminProducts() {
           })
         }
       />
+      {editing && (
+        <ProductImagesPanel
+          key={editing.id}
+          productId={editing.id}
+          productName={editing.name}
+        />
+      )}
+      {!editing && (
+        <p className="text-sm text-ink-muted">
+          Lưu sản phẩm trước, sau đó bấm Sửa để thêm ảnh.
+        </p>
+      )}
     </section>
   );
 }
