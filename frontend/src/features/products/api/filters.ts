@@ -2,12 +2,15 @@ import { z } from 'zod';
 
 export const allergenOptions = [
   { code: 'peanut', label: 'Đậu phộng' },
+  { code: 'tree_nut', label: 'Các loại hạt cây' },
+  { code: 'sesame', label: 'Mè (vừng)' },
   { code: 'milk', label: 'Sữa' },
   { code: 'egg', label: 'Trứng' },
   { code: 'soy', label: 'Đậu nành' },
   { code: 'gluten', label: 'Gluten' },
   { code: 'shellfish', label: 'Hải sản có vỏ' },
 ] as const;
+export type AllergenCode = (typeof allergenOptions)[number]['code'];
 
 const optionalNumber = (positive: boolean) =>
   z.preprocess(
@@ -24,8 +27,15 @@ export const filtersSchema = z.object({
   maxCalories: optionalNumber(false),
   minProtein: optionalNumber(false),
   excludeAllergen: z
-    .array(z.enum(['peanut', 'milk', 'egg', 'soy', 'gluten', 'shellfish']))
-    .max(6)
+    .array(
+      z.enum(
+        allergenOptions.map((option) => option.code) as [
+          AllergenCode,
+          ...AllergenCode[],
+        ],
+      ),
+    )
+    .max(allergenOptions.length)
     .optional(),
 });
 export type ProductFilters = z.infer<typeof filtersSchema>;
