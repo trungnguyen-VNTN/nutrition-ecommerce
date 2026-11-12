@@ -37,6 +37,9 @@ Người dùng tự chạy (Terraform hiện plan và hỏi `yes`):
 ```
 
 Lần apply đầu tiên dùng `down`: tạo toàn bộ hạ tầng ở trạng thái tắt.
+`up` tự bật RDS bằng AWS CLI và chờ tới khi sẵn sàng rồi mới chạy Terraform, vì resource
+`aws_rds_instance_state` không bật được instance đang dừng. Sau `down`, đợi RDS dừng hẳn
+(5–10 phút) rồi mới `up`.
 Dữ liệu RDS, user Cognito, image ECR và frontend giữ nguyên giữa các lần bật.
 **AWS tự bật lại RDS đã dừng sau 7 ngày**; nếu nghỉ lâu hơn, chạy `down` lần nữa mỗi tuần
 (Budget sẽ báo nếu quên). ECS chạy image `:latest` trong ECR, nên trước lần `up` đầu tiên
