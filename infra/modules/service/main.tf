@@ -163,6 +163,8 @@ data "aws_iam_policy_document" "task_bedrock" {
     resources = [
       "arn:aws:bedrock:${local.region}:${local.account_id}:inference-profile/${var.bedrock_inference_profile_id}",
       "arn:aws:bedrock:*::foundation-model/${var.bedrock_model_id}",
+      # Global profiles route to the region-less foundation model ARN.
+      "arn:aws:bedrock:::foundation-model/${var.bedrock_model_id}",
     ]
   }
 
