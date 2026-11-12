@@ -89,6 +89,7 @@ export function CartPage() {
                   <ProductArt
                     name={item.name}
                     index={index}
+                    imageUrl={item.image_url}
                     caption={false}
                     className="aspect-square rounded-control"
                   />
