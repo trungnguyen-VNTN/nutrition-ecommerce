@@ -24,6 +24,13 @@ public class ChatService {
 
   public static class QuotaExceeded extends RuntimeException {}
 
+  /** Shown when the Bedrock guardrail blocks a request (medical, abusive or prompt attack). */
+  static final String REFUSED =
+      "Tôi chỉ hỗ trợ tra cứu thực phẩm trong cửa hàng và không đưa ra lời khuyên y tế. Hãy hỏi về món ăn, dinh dưỡng hoặc allergen cần tránh.";
+
+  // Upper bound only; the Bedrock client already checks codes against the allergens table.
+  private static final int MAX_ALLERGENS = 20;
+
   public Reply chat(UUID user, String message) {
     // Atomic daily cap works across ECS tasks; failed requests also consume quota.
     int allowed =
@@ -35,7 +42,12 @@ public class ChatService {
         """,
             user);
     if (allowed == 0) throw new QuotaExceeded();
-    var search = llm.search(message);
+    LlmClient.Search search;
+    try {
+      search = llm.search(message);
+    } catch (AiRefusedException refused) {
+      return new Reply(REFUSED, List.of());
+    }
     if (search == null) throw new AiUnavailableException();
     if (search.medicalAdvice())
       return new Reply(
@@ -44,7 +56,7 @@ public class ChatService {
     String q = search.q() == null ? "" : search.q().trim();
     var excluded = search.excludeAllergen() == null ? List.<String>of() : search.excludeAllergen();
     if (q.length() > 100
-        || excluded.size() > 6
+        || excluded.size() > MAX_ALLERGENS
         || invalid(search.maxCalories())
         || invalid(search.minProtein())) throw new AiUnavailableException();
     try {
