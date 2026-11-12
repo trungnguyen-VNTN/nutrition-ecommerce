@@ -19,6 +19,7 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
 locals {
   s3_origin_id  = "frontend-s3"
   alb_origin_id = "api-alb"
+  images_origin = "images-s3"
 }
 
 resource "aws_s3_bucket" "frontend" {
@@ -91,6 +92,12 @@ resource "aws_cloudfront_distribution" "main" {
     origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
   }
 
+  origin {
+    origin_id                = local.images_origin
+    domain_name              = var.images_bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
+  }
+
   # The API origin and /api/* behavior only exist while the app is on (D20).
   dynamic "origin" {
     for_each = var.alb_dns_name == null ? [] : [var.alb_dns_name]
@@ -126,6 +133,17 @@ resource "aws_cloudfront_distribution" "main" {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.spa_rewrite.arn
     }
+  }
+
+  # Product images (D21): keys are random and never overwritten, so they cache well.
+  ordered_cache_behavior {
+    path_pattern           = "/images/*"
+    target_origin_id       = local.images_origin
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    compress               = false
+    cache_policy_id        = data.aws_cloudfront_cache_policy.optimized.id
   }
 
   dynamic "ordered_cache_behavior" {
@@ -190,6 +208,49 @@ data "aws_iam_policy_document" "frontend_bucket" {
       values   = ["false"]
     }
   }
+}
+
+data "aws_iam_policy_document" "images_bucket" {
+  statement {
+    sid       = "CloudFrontReadOnly"
+    actions   = ["s3:GetObject"]
+    resources = ["${var.images_bucket_arn}/images/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.main.arn]
+    }
+  }
+
+  statement {
+    sid     = "DenyInsecureTransport"
+    effect  = "Deny"
+    actions = ["s3:*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    resources = [var.images_bucket_arn, "${var.images_bucket_arn}/*"]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "images" {
+  bucket = var.images_bucket_name
+  policy = data.aws_iam_policy_document.images_bucket.json
 }
 
 resource "aws_s3_bucket_policy" "frontend" {
