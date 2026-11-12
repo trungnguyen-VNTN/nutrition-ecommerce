@@ -22,6 +22,48 @@ describe('mock catalog', () => {
     expect(screen.queryByRole('article')).not.toBeInTheDocument();
   });
 
+  it('keeps product photos from the API and shows them on the cards', async () => {
+    const [first, ...rest] = productPage.items;
+    if (!first) throw new Error('fixture has products');
+    server.use(
+      http.get('*/api/products', () =>
+        HttpResponse.json({
+          ...productPage,
+          items: [
+            { ...first, images: [{ id: 1, url: '/images/products/1/a.jpg' }] },
+            ...rest,
+          ],
+        }),
+      ),
+    );
+    renderApp(<ProductsPage />);
+    const photo = await screen.findByRole('img', {
+      name: messages.productPhoto(first.name),
+    });
+    expect(photo).toHaveAttribute('src', '/images/products/1/a.jpg');
+  });
+
+  it('rejects photo URLs that leave the site', async () => {
+    const [first, ...rest] = productPage.items;
+    if (!first) throw new Error('fixture has products');
+    for (const url of ['javascript:alert(1)', '//evil.example/x.jpg']) {
+      server.use(
+        http.get('*/api/products', () =>
+          HttpResponse.json({
+            ...productPage,
+            items: [{ ...first, images: [{ id: 1, url }] }, ...rest],
+          }),
+        ),
+      );
+      const { unmount } = renderApp(<ProductsPage />);
+      expect(await screen.findByRole('alert')).toBeVisible();
+      expect(
+        screen.queryByRole('img', { name: messages.productPhoto(first.name) }),
+      ).toBeNull();
+      unmount();
+    }
+  });
+
   it('renders eight products and explicitly labels missing data', async () => {
     renderApp(<ProductsPage />);
     expect(await screen.findAllByRole('article')).toHaveLength(8);
