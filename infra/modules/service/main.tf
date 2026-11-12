@@ -165,6 +165,17 @@ data "aws_iam_policy_document" "task_bedrock" {
       "arn:aws:bedrock:*::foundation-model/${var.bedrock_model_id}",
     ]
   }
+
+  # Converse with guardrailConfig also needs permission on that one guardrail.
+  dynamic "statement" {
+    for_each = var.bedrock_guardrail_arn == "" ? [] : [var.bedrock_guardrail_arn]
+
+    content {
+      sid       = "ApplyChatGuardrail"
+      actions   = ["bedrock:ApplyGuardrail"]
+      resources = [statement.value]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "task_bedrock" {
@@ -222,6 +233,8 @@ resource "aws_ecs_task_definition" "api" {
         { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
         { name = "BEDROCK_MODEL_ID", value = var.bedrock_model_id },
         { name = "BEDROCK_INFERENCE_PROFILE_ID", value = var.bedrock_inference_profile_id },
+        { name = "BEDROCK_GUARDRAIL_ID", value = local.use_bedrock ? var.bedrock_guardrail_id : "" },
+        { name = "BEDROCK_GUARDRAIL_VERSION", value = local.use_bedrock ? var.bedrock_guardrail_version : "" },
         { name = "IMAGES_BUCKET", value = var.images_bucket_name },
         { name = "NUTRITION_IMAGES_SEED_DEMO", value = tostring(var.seed_demo_images) },
       ]
