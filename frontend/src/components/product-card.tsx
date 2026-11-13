@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, CheckCircle } from '@phosphor-icons/react';
+import { ArrowUpRight, CheckCircle, Info } from '@phosphor-icons/react';
 import { messages } from '@/app/messages.vi';
 import type { Product } from '@/lib/api/catalog.types';
 import { formatMoney } from '@/lib/format';
@@ -70,10 +70,15 @@ export function ProductCard({
           )}
         </div>
         <div>
-          {product.allergens_verified ? (
+          {product.allergens_verified && product.allergens_reviewed ? (
             <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
-              <CheckCircle className="icon text-success" />
+              <CheckCircle className="icon text-success" aria-hidden="true" />
               {messages.allergensVerified}
+            </span>
+          ) : product.allergens_verified ? (
+            <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
+              <Info className="icon" aria-hidden="true" />
+              {messages.allergensSample}
             </span>
           ) : (
             <DataStatusBadge kind="allergens" />

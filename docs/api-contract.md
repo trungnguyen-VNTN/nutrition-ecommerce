@@ -22,10 +22,12 @@
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
 | GET | /api/categories | public | Danh sách category |
-| GET | /api/products | public | Tìm / lọc: `q`, `categoryId`, `maxCalories`, `minProtein`, `diet`, `excludeAllergen` (nhiều giá trị), `inStock`, phân trang |
+| GET | /api/products | public | Tìm / lọc: `q` (không phân biệt hoa thường và dấu tiếng Việt, `unaccent`), `categoryId`, `maxCalories`, `minProtein`, `excludeAllergen` (nhiều giá trị), phân trang `page`/`size` (≤ 50). Sắp xếp `sort`: `default`, `price_asc`, `price_desc`, `protein_desc`, `calories_asc` (giá trị khác → 400). Sắp xếp theo dinh dưỡng chỉ xếp hạng sản phẩm có dữ liệu đầy đủ; sản phẩm thiếu dữ liệu nằm cuối, không coi là 0 |
 | GET | /api/products/{id} | public | Chi tiết kèm dinh dưỡng, allergen và `images: [{id, url}]` theo thứ tự (danh sách sản phẩm cũng có `images`; giỏ hàng có `image_url` là ảnh đại diện). URL ảnh: `/images/...` qua CloudFront trên AWS, `/api/local-images/...` khi chạy local |
 
 Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, chỉ trả sản phẩm có `nutrition_complete = true` (và `allergens_verified = true` với `excludeAllergen`).
+
+Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đủ để lọc (fail-closed); `allergens_reviewed` = admin đã xác nhận theo nhãn bao bì. Giao diện chỉ ghi "Allergen đã xác minh" khi cả hai đều `true`; `verified` mà chưa `reviewed` hiển thị "Allergen theo thành phần (dữ liệu mẫu)". Chỉ `PUT /api/admin/products/{id}/allergens` với `verified = true` đặt `reviewed`.
 
 ## Admin catalog
 
