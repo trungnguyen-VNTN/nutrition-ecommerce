@@ -60,3 +60,9 @@ variable "running" {
   type        = bool
   default     = false
 }
+
+variable "restore_snapshot_identifier" {
+  description = "Create the instance from this snapshot (docs/runbook.md). Null = empty database."
+  type        = string
+  default     = null
+}
