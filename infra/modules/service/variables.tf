@@ -172,3 +172,8 @@ variable "bedrock_guardrail_arn" {
   type        = string
   default     = ""
 }
+
+variable "ecr_repository_arn" {
+  description = "Backend ECR repository; the execution role may pull from it only."
+  type        = string
+}

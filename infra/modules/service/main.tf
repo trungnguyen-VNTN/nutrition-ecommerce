@@ -112,12 +112,27 @@ resource "aws_iam_role" "execution" {
   permissions_boundary = data.aws_iam_policy.boundary.arn
 }
 
-resource "aws_iam_role_policy_attachment" "execution_managed" {
-  role       = aws_iam_role.execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
+# Phase 7 IAM review: replaces the AWS-managed AmazonECSTaskExecutionRolePolicy, which allows pulling
+# from every ECR repository and writing to every log group, with this one repository and log group.
+data "aws_iam_policy_document" "execution" {
+  statement {
+    sid       = "EcrLogin"
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"] # The action does not support resource-level permissions.
+  }
 
-data "aws_iam_policy_document" "execution_secrets" {
+  statement {
+    sid       = "PullApiImage"
+    actions   = ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"]
+    resources = [var.ecr_repository_arn]
+  }
+
+  statement {
+    sid       = "WriteApiLogs"
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.api.arn}:*"]
+  }
+
   statement {
     sid       = "ReadDbPassword"
     actions   = ["secretsmanager:GetSecretValue"]
@@ -125,10 +140,10 @@ data "aws_iam_policy_document" "execution_secrets" {
   }
 }
 
-resource "aws_iam_role_policy" "execution_secrets" {
-  name   = "read-db-secret"
+resource "aws_iam_role_policy" "execution" {
+  name   = "ecs-execution"
   role   = aws_iam_role.execution.id
-  policy = data.aws_iam_policy_document.execution_secrets.json
+  policy = data.aws_iam_policy_document.execution.json
 }
 
 resource "aws_iam_role" "task" {
