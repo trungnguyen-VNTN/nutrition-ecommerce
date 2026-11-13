@@ -22,7 +22,9 @@
       ],
       "Resource": "*",
       "Condition": {
-        "StringEquals": { "aws:RequestedRegion": "ap-southeast-1" }
+        "StringEquals": {
+          "aws:RequestedRegion": "ap-southeast-1"
+        }
       }
     },
     {
@@ -154,6 +156,20 @@
       "Resource": "*"
     },
     {
+      "Sid": "AllowModelInvokeSingaporeOrGlobal",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["ap-southeast-1", "unspecified"]
+        }
+      }
+    },
+    {
       "Sid": "DenyOtherRegions",
       "Effect": "Deny",
       "NotAction": [
@@ -166,11 +182,29 @@
         "health:*",
         "support:*",
         "organizations:Describe*",
-        "organizations:List*"
+        "organizations:List*",
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
       ],
       "Resource": "*",
       "Condition": {
-        "StringNotEquals": { "aws:RequestedRegion": "ap-southeast-1" }
+        "StringNotEquals": {
+          "aws:RequestedRegion": "ap-southeast-1"
+        }
+      }
+    },
+    {
+      "Sid": "DenyModelInvokeElsewhere",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": ["ap-southeast-1", "unspecified"]
+        }
       }
     }
   ]

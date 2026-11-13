@@ -48,3 +48,21 @@ Không có account ID, ARN cụ thể hay secret trong các file này; ARN dùng
 - Khi có domain (Giai đoạn 8) cần thêm ACM và WAF ở us-east-1; hiện chưa cho phép.
 - Policy được soạn từ tài liệu IAM, **chưa chạy thử trên tài khoản thật**. Nếu `terraform apply`
   báo `AccessDenied`, gửi nguyên câu lỗi (bỏ account ID) để bổ sung đúng quyền thiếu, không chuyển sang AdministratorAccess.
+
+## Ngoại lệ cho Bedrock global cross-Region inference (2026-11-13)
+
+Claude Haiku 5.5 ở ap-southeast-1 chỉ gọi được qua profile `global.` (D18). Với profile global, AWS
+kiểm tra quyền với `aws:RequestedRegion = "unspecified"`, nên các điều kiện "chỉ Singapore" trả về
+`AccessDeniedException ... with an explicit deny`. Cả hai policy có ngoại lệ **chỉ cho**
+`bedrock:InvokeModel` và `bedrock:InvokeModelWithResponseStream`, với region `ap-southeast-1`
+hoặc `unspecified`; mọi dịch vụ khác vẫn bị giới hạn ở Singapore.
+
+- `nutrition-apply-policy.json`: `AllowModelInvokeSingaporeOrGlobal`, hai hành động gọi model được
+  rút khỏi `DenyOtherRegions` và có lệnh cấm riêng `DenyModelInvokeElsewhere`.
+- `nutrition-boundary-policy.json`: `ModelInvokeSingaporeOrGlobal` (để task ECS gọi được model).
+
+Cập nhật trên console bằng root / admin (permission set `apply` không sửa được boundary):
+IAM → Policies → `nutrition-boundary` → **Edit** → dán JSON mới → **Save changes** (tạo version mới,
+đặt làm mặc định); IAM Identity Center → Permission sets → `nutrition-apply` → **Inline policy** →
+**Edit** → dán JSON mới → **Save**, rồi **Update** cho tài khoản nếu được nhắc (re-provision).
+Tham khảo: https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
