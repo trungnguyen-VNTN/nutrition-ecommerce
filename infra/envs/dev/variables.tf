@@ -49,3 +49,10 @@ variable "load_demo_catalog" {
   type        = bool
   default     = true
 }
+
+variable "alert_email" {
+  description = "E-mail for CloudWatch alarms (TF_VAR_alert_email; never commit it). Empty = no subscription."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

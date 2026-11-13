@@ -77,3 +77,8 @@ output "images_bucket" {
   description = "Product images bucket (D21)."
   value       = module.images.bucket_name
 }
+
+output "alerts_topic_arn" {
+  description = "SNS topic for CloudWatch alarms (phase 7)."
+  value       = module.alarms.topic_arn
+}
