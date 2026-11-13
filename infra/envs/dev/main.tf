@@ -18,10 +18,11 @@ module "ecr" {
 module "rds" {
   source = "../../modules/rds"
 
-  name_prefix       = local.name_prefix
-  subnet_ids        = module.network.db_subnet_ids
-  security_group_id = module.network.rds_security_group_id
-  running           = var.app_running
+  name_prefix                 = local.name_prefix
+  subnet_ids                  = module.network.db_subnet_ids
+  security_group_id           = module.network.rds_security_group_id
+  running                     = var.app_running
+  restore_snapshot_identifier = var.restore_snapshot_identifier
 }
 
 module "cognito" {
@@ -56,6 +57,7 @@ module "guardrail" {
 module "service" {
   source = "../../modules/service"
 
+  ecr_repository_arn    = module.ecr.repository_arn
   name_prefix           = local.name_prefix
   vpc_id                = module.network.vpc_id
   public_subnet_ids     = module.network.public_subnet_ids
@@ -115,4 +117,18 @@ module "github_oidc" {
   ecs_service_arn       = module.service.service_arn
   frontend_bucket_arn   = module.frontend.bucket_arn
   distribution_arn      = module.frontend.distribution_arn
+}
+
+module "alarms" {
+  source = "../../modules/alarms"
+
+  name_prefix             = local.name_prefix
+  alert_email             = var.alert_email
+  app_running             = var.app_running
+  alb_arn_suffix          = module.service.alb_arn_suffix
+  target_group_arn_suffix = module.service.target_group_arn_suffix
+  ecs_cluster_name        = module.service.cluster_name
+  ecs_service_name        = module.service.service_name
+  db_identifier           = module.rds.identifier
+  log_group_name          = module.service.log_group_name
 }
