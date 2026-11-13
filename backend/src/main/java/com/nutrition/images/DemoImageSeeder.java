@@ -1,7 +1,5 @@
 package com.nutrition.images;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -15,6 +13,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Attaches the bundled demo photos (CC0 / public domain, see seed-images/manifest.json) to demo
@@ -62,7 +62,8 @@ public class DemoImageSeeder implements ApplicationRunner {
     JsonNode entries;
     try (InputStream in = file.getInputStream()) {
       entries = json.readTree(in);
-    } catch (IOException exception) {
+    } catch (IOException | tools.jackson.core.JacksonException exception) {
+      // Jackson 3 reports parse errors as unchecked JacksonException.
       log.warn("Demo image manifest unreadable: {}", exception.getMessage());
       return 0;
     }
