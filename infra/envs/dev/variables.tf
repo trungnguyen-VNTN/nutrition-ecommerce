@@ -33,21 +33,27 @@ variable "api_desired_count" {
 }
 
 variable "bedrock_model_id" {
-  description = "Foundation model ID (after spike S1). Empty disables AI permissions."
+  description = "Foundation model behind the inference profile (D18). Empty disables AI permissions."
   type        = string
-  default     = ""
+  default     = "anthropic.claude-haiku-5-5"
 }
 
 variable "bedrock_inference_profile_id" {
-  description = "APAC inference profile ID (after spike S1, D18). Empty disables AI permissions."
+  description = "Global inference profile ID (D18: Haiku 5.5 has no APAC profile in Singapore). Empty disables AI permissions."
   type        = string
-  default     = ""
+  default     = "global.anthropic.claude-haiku-5-5"
 }
 
 variable "load_demo_catalog" {
   description = "Seed the 18-product USDA demo catalog (idempotent, never overwrites existing rows; D22)."
   type        = bool
   default     = true
+}
+
+variable "guardrail_tier" {
+  description = "Bedrock guardrail tier: CLASSIC or STANDARD (confirm Vietnamese support in spike S1)."
+  type        = string
+  default     = "CLASSIC"
 }
 
 variable "alert_email" {
