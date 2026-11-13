@@ -154,3 +154,8 @@ variable "seed_demo_images" {
   type        = bool
   default     = false
 }
+
+variable "ecr_repository_arn" {
+  description = "Backend ECR repository; the execution role may pull from it only."
+  type        = string
+}
