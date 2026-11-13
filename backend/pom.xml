@@ -4,7 +4,7 @@
   <groupId>com.nutrition</groupId><artifactId>nutrition-api</artifactId><version>0.0.1-SNAPSHOT</version>
   <properties><java.version>21</java.version><test.groups></test.groups><test.excludedGroups>bedrock-eval</test.excludedGroups></properties>
   <dependencies>
-    <dependency><groupId>software.amazon.awssdk</groupId><artifactId>bedrockruntime</artifactId><version>2.57.6</version></dependency>
+    <dependency><groupId>software.amazon.awssdk</groupId><artifactId>bedrockruntime</artifactId><version>2.57.12</version></dependency>
     <dependency><groupId>software.amazon.awssdk</groupId><artifactId>s3</artifactId><version>2.57.6</version></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-oauth2-resource-server</artifactId></dependency>
     <dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-test</artifactId><scope>test</scope></dependency>
