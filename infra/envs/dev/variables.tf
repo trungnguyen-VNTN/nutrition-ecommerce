@@ -56,3 +56,9 @@ variable "alert_email" {
   default     = ""
   sensitive   = true
 }
+
+variable "restore_snapshot_identifier" {
+  description = "Rebuild RDS from this snapshot when the instance is (re)created; see docs/runbook.md."
+  type        = string
+  default     = null
+}
