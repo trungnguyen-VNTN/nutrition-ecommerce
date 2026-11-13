@@ -18,6 +18,11 @@ output "master_user_secret_arn" {
   value       = aws_db_instance.main.master_user_secret[0].secret_arn
 }
 
+output "identifier" {
+  description = "RDS instance identifier (CloudWatch dimension)."
+  value       = aws_db_instance.main.identifier
+}
+
 output "state" {
   description = "available or stopped (D20)."
   value       = aws_rds_instance_state.main.state

@@ -37,3 +37,13 @@ output "log_group_name" {
   description = "CloudWatch log group of the API."
   value       = aws_cloudwatch_log_group.api.name
 }
+
+output "alb_arn_suffix" {
+  description = "ALB ARN suffix for CloudWatch metrics; null while the app is off."
+  value       = one(aws_lb.api[*].arn_suffix)
+}
+
+output "target_group_arn_suffix" {
+  description = "Target group ARN suffix for CloudWatch metrics."
+  value       = aws_lb_target_group.api.arn_suffix
+}

@@ -106,3 +106,17 @@ module "github_oidc" {
   frontend_bucket_arn   = module.frontend.bucket_arn
   distribution_arn      = module.frontend.distribution_arn
 }
+
+module "alarms" {
+  source = "../../modules/alarms"
+
+  name_prefix             = local.name_prefix
+  alert_email             = var.alert_email
+  app_running             = var.app_running
+  alb_arn_suffix          = module.service.alb_arn_suffix
+  target_group_arn_suffix = module.service.target_group_arn_suffix
+  ecs_cluster_name        = module.service.cluster_name
+  ecs_service_name        = module.service.service_name
+  db_identifier           = module.rds.identifier
+  log_group_name          = module.service.log_group_name
+}
