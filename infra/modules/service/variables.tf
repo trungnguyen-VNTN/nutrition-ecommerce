@@ -155,6 +155,24 @@ variable "seed_demo_images" {
   default     = false
 }
 
+variable "bedrock_guardrail_id" {
+  description = "Guardrail applied to every Converse call. Empty = no guardrail."
+  type        = string
+  default     = ""
+}
+
+variable "bedrock_guardrail_version" {
+  description = "Numbered guardrail version."
+  type        = string
+  default     = ""
+}
+
+variable "bedrock_guardrail_arn" {
+  description = "Guardrail ARN for the task role (bedrock:ApplyGuardrail)."
+  type        = string
+  default     = ""
+}
+
 variable "ecr_repository_arn" {
   description = "Backend ECR repository; the execution role may pull from it only."
   type        = string

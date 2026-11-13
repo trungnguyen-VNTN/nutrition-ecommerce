@@ -78,6 +78,11 @@ output "images_bucket" {
   value       = module.images.bucket_name
 }
 
+output "bedrock_guardrail_id" {
+  description = "Chat guardrail ID (phase 6)."
+  value       = module.guardrail.guardrail_id
+}
+
 output "alerts_topic_arn" {
   description = "SNS topic for CloudWatch alarms (phase 7)."
   value       = module.alarms.topic_arn

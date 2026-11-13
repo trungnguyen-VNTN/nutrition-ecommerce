@@ -47,6 +47,13 @@ module "images" {
   name_prefix = local.name_prefix
 }
 
+module "guardrail" {
+  source = "../../modules/guardrail"
+
+  name_prefix = local.name_prefix
+  tier        = var.guardrail_tier
+}
+
 module "service" {
   source = "../../modules/service"
 
@@ -80,6 +87,9 @@ module "service" {
 
   bedrock_model_id             = var.bedrock_model_id
   bedrock_inference_profile_id = var.bedrock_inference_profile_id
+  bedrock_guardrail_id         = module.guardrail.guardrail_id
+  bedrock_guardrail_version    = module.guardrail.guardrail_version
+  bedrock_guardrail_arn        = module.guardrail.guardrail_arn
 
   # Ties the ECS service to the RDS state so tasks start after the DB is available.
   db_state = module.rds.state
