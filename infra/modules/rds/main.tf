@@ -34,6 +34,13 @@ resource "aws_db_instance" "main" {
   auto_minor_version_upgrade   = true
   performance_insights_enabled = false
   apply_immediately            = false
+
+  # Rebuild from a snapshot (runbook: destroy and rebuild). Only read when the instance is created.
+  snapshot_identifier = var.restore_snapshot_identifier
+
+  lifecycle {
+    ignore_changes = [snapshot_identifier]
+  }
 }
 
 # Demo on/off (D20): stopped instances only pay for storage. AWS starts a stopped

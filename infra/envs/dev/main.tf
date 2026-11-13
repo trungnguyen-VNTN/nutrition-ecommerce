@@ -18,10 +18,11 @@ module "ecr" {
 module "rds" {
   source = "../../modules/rds"
 
-  name_prefix       = local.name_prefix
-  subnet_ids        = module.network.db_subnet_ids
-  security_group_id = module.network.rds_security_group_id
-  running           = var.app_running
+  name_prefix                 = local.name_prefix
+  subnet_ids                  = module.network.db_subnet_ids
+  security_group_id           = module.network.rds_security_group_id
+  running                     = var.app_running
+  restore_snapshot_identifier = var.restore_snapshot_identifier
 }
 
 module "cognito" {
@@ -49,6 +50,7 @@ module "images" {
 module "service" {
   source = "../../modules/service"
 
+  ecr_repository_arn    = module.ecr.repository_arn
   name_prefix           = local.name_prefix
   vpc_id                = module.network.vpc_id
   public_subnet_ids     = module.network.public_subnet_ids
