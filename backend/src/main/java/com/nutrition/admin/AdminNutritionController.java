@@ -65,7 +65,8 @@ public class AdminNutritionController {
   public Map<String, Object> data(@PathVariable @Positive long id) {
     var products =
         db.queryForList(
-            "SELECT name,serving_size,serving_unit,nutrition_complete,allergens_verified FROM products WHERE id=?",
+            "SELECT name,serving_size,serving_unit,nutrition_complete,allergens_verified,"
+                + "allergens_reviewed_at IS NOT NULL AS allergens_reviewed FROM products WHERE id=?",
             id);
     if (products.isEmpty()) throw new NoSuchElementException();
     var result = new HashMap<>(products.getFirst());
@@ -139,7 +140,11 @@ public class AdminNutritionController {
       if (changed != 1) throw new IllegalArgumentException();
     }
     db.update(
-        "UPDATE products SET allergens_verified=?,updated_at=now() WHERE id=?", input.verified, id);
+        "UPDATE products SET allergens_verified=?,"
+            + "allergens_reviewed_at=CASE WHEN ? THEN now() END,updated_at=now() WHERE id=?",
+        input.verified,
+        input.verified,
+        id);
     return Map.of("allergens_verified", input.verified);
   }
 }

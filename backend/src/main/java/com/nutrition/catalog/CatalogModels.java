@@ -35,6 +35,8 @@ public final class CatalogModels {
       String servingUnit,
       boolean nutritionComplete,
       boolean allergensVerified,
+      /** True only when an admin confirmed the allergen list; seed and demo data stay false. */
+      boolean allergensReviewed,
       Nutrition nutrition,
       List<Allergen> allergens,
       List<Image> images) {}

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { CaretUp, Funnel, X } from '@phosphor-icons/react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Field, Select } from '@/components/ui/field';
 import { Note } from '@/components/ui/note';
 import { getCategories } from './api/products';
 import { FilterSheet } from './filter-sheet';
@@ -11,7 +12,9 @@ import {
   filtersSchema,
   productQuery,
   type ProductFilters,
+  type ProductSort,
   allergenOptions,
+  sortValues,
 } from './api/filters';
 import { messages } from '@/app/messages.vi';
 import { EmptyState } from '@/components/empty-state';
@@ -43,12 +46,39 @@ function ProductList({
   filtered,
   onClearFilters,
   onPage,
+  onSort,
 }: {
   filters: ProductFilters;
   filtered: boolean;
   onClearFilters: () => void;
   onPage: (page: number) => void;
+  onSort: (sort: ProductSort) => void;
 }) {
+  const sortControl = (
+    <Field
+      label={messages.sortLabel}
+      className="w-full sm:w-56"
+      hint={
+        filters.sort === 'protein_desc' || filters.sort === 'calories_asc'
+          ? messages.sortNutritionNote
+          : undefined
+      }
+    >
+      {(control) => (
+        <Select
+          {...control}
+          value={filters.sort}
+          onChange={(event) => onSort(event.target.value as ProductSort)}
+        >
+          {sortValues.map((value) => (
+            <option key={value} value={value}>
+              {messages.sortOptions[value]}
+            </option>
+          ))}
+        </Select>
+      )}
+    </Field>
+  );
   const query = useProducts(filters);
   if (query.isFetching) {
     return (
@@ -56,7 +86,10 @@ function ProductList({
         <p className="sr-only" role="status">
           {messages.loading}
         </p>
-        <Skeleton className="mb-6 h-[var(--line-sm)] w-1/3 sm:w-1/6" />
+        <div className="mb-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <Skeleton className="h-[var(--line-sm)] w-1/3 sm:w-1/6" />
+          {sortControl}
+        </div>
         <div className={grid}>
           {Array.from({ length: 8 }, (_, index) => (
             <ProductCardSkeleton key={index} />
@@ -88,9 +121,12 @@ function ProductList({
     );
   return (
     <>
-      <p className="mb-6 text-sm text-ink-muted" role="status">
-        {messages.sampleCount(query.data.total)}
-      </p>
+      <div className="mb-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <p className="text-sm text-ink-muted" role="status">
+          {messages.sampleCount(query.data.total)}
+        </p>
+        {sortControl}
+      </div>
       <ul className={grid}>
         {query.data.items.map((product, index) => (
           <li key={product.id}>
@@ -191,6 +227,9 @@ export function ProductsPage() {
               onApply={(values) => {
                 const next = new URLSearchParams(values);
                 next.set('page', '0');
+                // Applying filters keeps the chosen order.
+                const sort = params.get('sort');
+                if (sort) next.set('sort', sort);
                 setParams(next);
                 setFiltersOpen(false);
               }}
@@ -231,6 +270,9 @@ export function ProductsPage() {
               onClearFilters={() => setParams({})}
               onPage={(page) =>
                 setParams(productQuery({ ...parsed.data, page }))
+              }
+              onSort={(sort) =>
+                setParams(productQuery({ ...parsed.data, sort, page: 0 }))
               }
             />
           ) : (
