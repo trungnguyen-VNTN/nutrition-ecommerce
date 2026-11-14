@@ -36,6 +36,11 @@ const OrderDetailPage = lazy(() =>
     default: m.OrderDetailPage,
   })),
 );
+const ForgotPasswordPage = lazy(() =>
+  import('@/features/auth/forgot-password-page').then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
+);
 const AuthPage = lazy(() =>
   import('@/features/auth/auth-page').then((m) => ({ default: m.AuthPage })),
 );
@@ -68,6 +73,7 @@ export function AppRoutes() {
         <Route path="cart" element={<CartPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="login" element={<AuthPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="chat" element={<ChatPage />} />
         <Route path="admin" element={<AdminPage />} />
         <Route
