@@ -10,6 +10,10 @@
 - Phân trang: `page`, `size` (giới hạn `size` tối đa); trả về tổng số.
 - Không trả thông tin nội bộ (stack trace, tên bảng) trong lỗi.
 
+## Giới hạn tốc độ
+
+Mọi đường dẫn `/api/**` (trừ `/actuator/health`) bị giới hạn theo cửa sổ 1 phút, đếm theo `sub` của JWT khi đã đăng nhập, theo IP người xem khi chưa đăng nhập. Mặc định: đọc (`GET`) 300, ghi khác 60, `POST /api/orders` 10, upload ảnh 30 lần/phút. Vượt ngưỡng → `429` `{code: "RATE_LIMITED"}` kèm header `Retry-After` (giây). Trên AWS, IP người xem lấy ở phần tử thứ hai từ phải của `X-Forwarded-For` (CloudFront rồi ALB cùng ghi thêm; `nutrition.rate-limit.forwarded-hops=2`). Bộ đếm nằm trong bộ nhớ của task, đủ cho một task (D20). Chat AI vẫn có quota riêng theo ngày.
+
 ## Tài khoản
 
 | Method | Path | Quyền | Mô tả |
