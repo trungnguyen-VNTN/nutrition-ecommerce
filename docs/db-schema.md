@@ -34,10 +34,11 @@
 | serving_size | numeric(10,2) | |
 | serving_unit | text | vd. 'g', 'ml' |
 | nutrition_complete | boolean | NOT NULL DEFAULT false |
-| allergens_verified | boolean | NOT NULL DEFAULT false |
+| allergens_verified | boolean | NOT NULL DEFAULT false (danh sách đủ để lọc) |
+| allergens_reviewed_at | timestamptz | NULL; admin xác nhận allergen lúc nào (V7). Dữ liệu mẫu luôn NULL |
 | created_at / updated_at | timestamptz | NOT NULL |
 
-Index: `(category_id)`, `(active)`, tìm kiếm văn bản trên `name` (🔎 chọn `pg_trgm` hoặc full-text khi làm giai đoạn 4).
+Index: `(category_id)`, `(active)`, tìm kiếm trên `name` bằng `unaccent(lower(...))` (extension `unaccent`, V7; catalog nhỏ nên chưa cần index trigram).
 
 ### product_nutrition
 Tính theo **một khẩu phần** (`serving_size`/`serving_unit` của sản phẩm).

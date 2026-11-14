@@ -10,6 +10,10 @@
 - Phân trang: `page`, `size` (giới hạn `size` tối đa); trả về tổng số.
 - Không trả thông tin nội bộ (stack trace, tên bảng) trong lỗi.
 
+## Giới hạn tốc độ
+
+Mọi đường dẫn `/api/**` (trừ `/actuator/health`) bị giới hạn theo cửa sổ 1 phút, đếm theo `sub` của JWT khi đã đăng nhập, theo IP người xem khi chưa đăng nhập. Mặc định: đọc (`GET`) 300, ghi khác 60, `POST /api/orders` 10, upload ảnh 30 lần/phút. Vượt ngưỡng → `429` `{code: "RATE_LIMITED"}` kèm header `Retry-After` (giây). Trên AWS, IP người xem lấy ở phần tử thứ hai từ phải của `X-Forwarded-For` (CloudFront rồi ALB cùng ghi thêm; `nutrition.rate-limit.forwarded-hops=2`). Bộ đếm nằm trong bộ nhớ của task, đủ cho một task (D20). Chat AI vẫn có quota riêng theo ngày.
+
 ## Tài khoản
 
 | Method | Path | Quyền | Mô tả |
@@ -22,10 +26,12 @@
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
 | GET | /api/categories | public | Danh sách category |
-| GET | /api/products | public | Tìm / lọc: `q`, `categoryId`, `maxCalories`, `minProtein`, `diet`, `excludeAllergen` (nhiều giá trị), `inStock`, phân trang |
+| GET | /api/products | public | Tìm / lọc: `q` (không phân biệt hoa thường và dấu tiếng Việt, `unaccent`), `categoryId`, `maxCalories`, `minProtein`, `excludeAllergen` (nhiều giá trị), phân trang `page`/`size` (≤ 50). Sắp xếp `sort`: `default`, `price_asc`, `price_desc`, `protein_desc`, `calories_asc` (giá trị khác → 400). Sắp xếp theo dinh dưỡng chỉ xếp hạng sản phẩm có dữ liệu đầy đủ; sản phẩm thiếu dữ liệu nằm cuối, không coi là 0 |
 | GET | /api/products/{id} | public | Chi tiết kèm dinh dưỡng, allergen và `images: [{id, url}]` theo thứ tự (danh sách sản phẩm cũng có `images`; giỏ hàng có `image_url` là ảnh đại diện). URL ảnh: `/images/...` qua CloudFront trên AWS, `/api/local-images/...` khi chạy local |
 
 Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, chỉ trả sản phẩm có `nutrition_complete = true` (và `allergens_verified = true` với `excludeAllergen`).
+
+Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đủ để lọc (fail-closed); `allergens_reviewed` = admin đã xác nhận theo nhãn bao bì. Giao diện chỉ ghi "Allergen đã xác minh" khi cả hai đều `true`; `verified` mà chưa `reviewed` hiển thị "Allergen theo thành phần (dữ liệu mẫu)". Chỉ `PUT /api/admin/products/{id}/allergens` với `verified = true` đặt `reviewed`.
 
 ## Admin catalog
 
@@ -38,6 +44,7 @@ Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, c
 | PUT | /api/admin/products/{id} | ADMIN | Sửa sản phẩm |
 | PUT | /api/admin/products/{id}/nutrition | ADMIN | Nhập / sửa dinh dưỡng; cập nhật `nutrition_complete` |
 | PUT | /api/admin/products/{id}/allergens | ADMIN | Nhập allergen và xác nhận (`allergens_verified`) |
+| GET | /api/admin/stats | ADMIN | Tổng quan: `orders {total, by_status, revenue, currency}` (doanh thu = tổng đơn chưa hủy, chưa có thanh toán), `recent_days` (7 ngày theo giờ Việt Nam), `catalog` (đang bán, hết hàng, sắp hết, thiếu dinh dưỡng, allergen chưa xác minh / dữ liệu mẫu), `low_stock_items` (tối đa 5, `stock <= low_stock_threshold`). Chỉ số liệu tổng hợp, không có thông tin khách hàng |
 | PATCH | /api/admin/products/{id}/stock | ADMIN | Chỉnh tồn kho (`stock >= 0`) |
 | GET | /api/admin/products/{id}/images | ADMIN | Danh sách ảnh `[{id, url, sort_order}]` (cả sản phẩm đang ẩn) |
 | POST | /api/admin/products/{id}/images | ADMIN | Upload multipart, trường `file`; JPEG/PNG/WebP nhận diện theo nội dung (không nhận SVG), tối đa 2 MB, tối đa 5 ảnh; tên file do server sinh. Trả 201 `{id, url, sort_order}`. Lỗi: 400 `INVALID_IMAGE`, 413 `IMAGE_TOO_LARGE`, 409 `IMAGE_LIMIT` |

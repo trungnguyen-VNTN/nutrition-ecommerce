@@ -82,6 +82,20 @@ describe('shared components', () => {
     },
   );
 
+  it('calls allergens verified only after an admin review', () => {
+    const reviewed = products.find((item) => item.id === 'oats');
+    const sample = products.find((item) => item.id === 'almonds');
+    if (!reviewed || !sample) throw new Error('Missing fixture');
+    const { unmount } = renderApp(<ProductCard product={reviewed} index={0} />);
+    expect(screen.getByText(messages.allergensVerified)).toBeVisible();
+    unmount();
+    renderApp(<ProductCard product={sample} index={0} />);
+    expect(screen.getByText(messages.allergensSample)).toBeVisible();
+    expect(
+      screen.queryByText(messages.allergensVerified),
+    ).not.toBeInTheDocument();
+  });
+
   it('shows both missing-data labels and a descriptive product link', () => {
     const product = products.find((item) => item.id === 'granola');
     if (!product) throw new Error('Missing fixture');

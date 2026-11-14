@@ -138,3 +138,26 @@ export function confirmEmail(email: string, code: string) {
     ),
   );
 }
+// Forgot password (Cognito). The pool client has prevent_user_existence_errors, so an unknown
+// email behaves like a known one and the UI never reveals whether an account exists.
+export function requestPasswordReset(email: string) {
+  return new Promise<void>((resolve, reject) =>
+    user(email).forgotPassword({
+      onSuccess: () => resolve(),
+      onFailure: (error: Error) => reject(error),
+      inputVerificationCode: () => resolve(),
+    }),
+  );
+}
+export function confirmPasswordReset(
+  email: string,
+  code: string,
+  password: string,
+) {
+  return new Promise<void>((resolve, reject) =>
+    user(email).confirmPassword(code, password, {
+      onSuccess: () => resolve(),
+      onFailure: (error: Error) => reject(error),
+    }),
+  );
+}

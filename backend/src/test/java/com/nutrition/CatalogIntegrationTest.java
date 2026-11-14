@@ -69,4 +69,53 @@ class CatalogIntegrationTest {
     assertThat(http.getForEntity("/api/products/9999", JsonNode.class).getStatusCode().value())
         .isEqualTo(404);
   }
+
+  @Test
+  void searchIgnoresVietnameseAccentsAndCase() {
+    JsonNode plain = http.getForObject("/api/products?q=yen mach", JsonNode.class);
+    Set<String> names = new HashSet<>();
+    for (JsonNode p : plain.path("items")) names.add(p.path("name").asText());
+    assertThat(names).containsExactlyInAnyOrder("Yến mạch nguyên hạt", "Sữa yến mạch");
+    // unaccent maps đ to d, so "dau" matches every "Đậu ..." product.
+    JsonNode beans = http.getForObject("/api/products?size=50&q=DAU", JsonNode.class);
+    assertThat(beans.path("total").asInt()).isEqualTo(6);
+    assertThat(http.getForObject("/api/products?q=Yến mạch", JsonNode.class).path("total").asInt())
+        .isEqualTo(2);
+  }
+
+  @Test
+  void sortingIsWhitelistedAndKeepsIncompleteNutritionLast() {
+    JsonNode cheap = http.getForObject("/api/products?size=50&sort=price_asc", JsonNode.class);
+    double previous = -1;
+    for (JsonNode p : cheap.path("items")) {
+      assertThat(p.path("price").asDouble()).isGreaterThanOrEqualTo(previous);
+      previous = p.path("price").asDouble();
+    }
+    JsonNode protein = http.getForObject("/api/products?size=50&sort=protein_desc", JsonNode.class);
+    assertThat(protein.path("total").asInt()).isEqualTo(20);
+    boolean seenIncomplete = false;
+    double highest = Double.MAX_VALUE;
+    for (JsonNode p : protein.path("items")) {
+      if (!p.path("nutrition_complete").asBoolean()) {
+        seenIncomplete = true;
+        continue;
+      }
+      assertThat(seenIncomplete).as("complete nutrition ranks before missing data").isFalse();
+      assertThat(p.path("nutrition").path("protein_g").asDouble()).isLessThanOrEqualTo(highest);
+      highest = p.path("nutrition").path("protein_g").asDouble();
+    }
+    assertThat(seenIncomplete).isTrue();
+    assertThat(
+            http.getForEntity("/api/products?sort=p.id;drop", JsonNode.class)
+                .getStatusCode()
+                .value())
+        .isEqualTo(400);
+  }
+
+  @Test
+  void seedDataIsNeverReportedAsReviewedByAPerson() {
+    JsonNode all = http.getForObject("/api/products?size=50", JsonNode.class);
+    for (JsonNode p : all.path("items"))
+      assertThat(p.path("allergens_reviewed").asBoolean()).isFalse();
+  }
 }
