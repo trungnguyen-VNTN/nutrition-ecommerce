@@ -86,6 +86,19 @@ export const messages = {
   allergensMissing: 'Chưa xác minh allergen',
   nutritionVerified: 'Có dữ liệu dinh dưỡng',
   allergensVerified: 'Allergen đã xác minh',
+  allergensSample: 'Allergen theo thành phần (dữ liệu mẫu)',
+  allergensSampleNote:
+    'Danh sách allergen được suy ra từ thành phần thường gặp của loại thực phẩm này, chưa được người kiểm tra xác nhận theo nhãn bao bì. Luôn đọc nhãn trên sản phẩm thật.',
+  sortLabel: 'Sắp xếp',
+  sortOptions: {
+    default: 'Mặc định',
+    price_asc: 'Giá thấp đến cao',
+    price_desc: 'Giá cao đến thấp',
+    protein_desc: 'Nhiều protein nhất',
+    calories_asc: 'Ít calo nhất',
+  },
+  sortNutritionNote:
+    'Sản phẩm chưa đủ dữ liệu dinh dưỡng được xếp cuối danh sách.',
   inStock: 'Còn hàng',
   outOfStock: 'Hết hàng',
   illustration: (name: string) => `Hình minh họa bao bì ${name}`,

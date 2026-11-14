@@ -29,7 +29,7 @@ public class CatalogRepository {
       FROM products p LEFT JOIN categories c ON c.id=p.category_id
       LEFT JOIN product_nutrition n ON n.product_id=p.id
       WHERE p.active
-      AND (:q = '' OR POSITION(LOWER(:q) IN LOWER(p.name)) > 0)
+      AND (:q = '' OR POSITION(unaccent(LOWER(:q)) IN unaccent(LOWER(p.name))) > 0)
       AND (CAST(:category AS bigint) IS NULL OR p.category_id=:category)
       AND (CAST(:calories AS numeric) IS NULL OR n.calories<=:calories)
       AND (CAST(:protein AS numeric) IS NULL OR n.protein_g>=:protein)
@@ -58,6 +58,7 @@ public class CatalogRepository {
         (rs, row) -> new Category(rs.getLong("id"), rs.getString("name"), rs.getString("slug")));
   }
 
+  /** Default order (used by the AI search, which ranks nothing itself). */
   public ProductPage list(
       int page,
       int size,
@@ -66,6 +67,18 @@ public class CatalogRepository {
       BigDecimal protein,
       List<String> excluded,
       String q) {
+    return list(page, size, category, calories, protein, excluded, q, ProductSort.DEFAULT);
+  }
+
+  public ProductPage list(
+      int page,
+      int size,
+      Long category,
+      BigDecimal calories,
+      BigDecimal protein,
+      List<String> excluded,
+      String q,
+      ProductSort sort) {
     List<String> codes = excluded.stream().distinct().toList();
     if (!codes.isEmpty()) {
       Integer known =
@@ -90,7 +103,7 @@ public class CatalogRepository {
     Long total = jdbc.queryForObject("SELECT count(*) " + FROM_FILTER, parameters, Long.class);
     List<Product> items =
         jdbc.query(
-            SELECT + FROM_FILTER + " ORDER BY p.id LIMIT :limit OFFSET :offset",
+            SELECT + FROM_FILTER + " ORDER BY " + sort.orderBy() + " LIMIT :limit OFFSET :offset",
             parameters,
             (rs, row) -> mapProduct(rs));
     return new ProductPage(items, page, size, total == null ? 0 : total);
@@ -122,6 +135,7 @@ public class CatalogRepository {
             && rs.getBigDecimal("serving_size") != null
             && rs.getString("serving_unit") != null;
     boolean verified = rs.getBoolean("allergens_verified");
+    boolean reviewed = verified && rs.getObject("allergens_reviewed_at") != null;
     Nutrition nutrition =
         complete
             ? new Nutrition(
@@ -167,6 +181,7 @@ public class CatalogRepository {
         rs.getString("serving_unit"),
         complete,
         verified,
+        reviewed,
         nutrition,
         allergens,
         images);

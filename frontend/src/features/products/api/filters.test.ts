@@ -31,3 +31,11 @@ it.each([
 ])('rejects invalid filter %j', (values) => {
   expect(filtersSchema.safeParse(values).success).toBe(false);
 });
+
+it('sends only whitelisted, non-default sort orders', () => {
+  expect(productQuery(filtersSchema.parse({}))).toBe('page=0&size=8');
+  expect(productQuery(filtersSchema.parse({ sort: 'protein_desc' }))).toBe(
+    'page=0&size=8&sort=protein_desc',
+  );
+  expect(filtersSchema.safeParse({ sort: 'p.id;drop' }).success).toBe(false);
+});
