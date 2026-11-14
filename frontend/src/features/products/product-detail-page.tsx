@@ -162,6 +162,11 @@ function ProductDetail({ product }: { product: Product }) {
         <Section title={messages.allergensHeading}>
           <div className="space-y-4">
             <AllergenBadge product={product} />
+            {product.allergens_verified && !product.allergens_reviewed && (
+              <p className="max-w-copy text-sm text-ink-muted">
+                {messages.allergensSampleNote}
+              </p>
+            )}
             {!product.allergens_verified && (
               <p className="max-w-copy text-sm text-ink-muted">
                 {messages.missingNotNone}
