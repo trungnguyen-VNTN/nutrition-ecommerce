@@ -11,6 +11,15 @@ resource "aws_cognito_user_pool" "users" {
     require_numbers   = true
     require_symbols   = true
   }
+
+  # Forgot password (phase 7): the reset code goes only to a verified email. Sent by Cognito's
+  # default email sender (about 50 emails a day, enough for dev; SES needs a domain, O6).
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "verified_email"
+      priority = 1
+    }
+  }
 }
 
 resource "aws_cognito_user_pool_client" "spa" {
