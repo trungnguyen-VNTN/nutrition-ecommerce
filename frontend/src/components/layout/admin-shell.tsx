@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import {
   ArrowSquareOut,
+  ChartBar,
   Package,
   Receipt,
   SquaresFour,
@@ -10,6 +11,7 @@ import { messages } from '@/app/messages.vi';
 import { useSession } from '@/features/auth/session';
 
 const sections = [
+  ['admin-stats', 'Tổng quan', ChartBar],
   ['admin-products', 'Sản phẩm & tồn kho', Package],
   ['admin-categories', 'Danh mục', SquaresFour],
   ['admin-orders', 'Đơn hàng', Receipt],

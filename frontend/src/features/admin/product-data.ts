@@ -19,6 +19,7 @@ export const productDataSchema = z.object({
   serving_unit: z.string().nullable(),
   nutrition_complete: z.boolean(),
   allergens_verified: z.boolean(),
+  allergens_reviewed: z.boolean().default(false),
   nutrition: z
     .object({
       calories: nullableNumber,

@@ -18,6 +18,7 @@ const complete: Product = {
   stock: 5,
   nutrition_complete: true,
   allergens_verified: true,
+  allergens_reviewed: true,
   description: null,
   category: { id: 1, name: 'Ngũ cốc', slug: 'ngu-coc' },
   serving_size: 100,

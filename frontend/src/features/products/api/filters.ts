@@ -10,6 +10,15 @@ export const allergenOptions = [
   { code: 'gluten', label: 'Gluten' },
   { code: 'shellfish', label: 'Hải sản có vỏ' },
 ] as const;
+export const sortValues = [
+  'default',
+  'price_asc',
+  'price_desc',
+  'protein_desc',
+  'calories_asc',
+] as const;
+export type ProductSort = (typeof sortValues)[number];
+
 export type AllergenCode = (typeof allergenOptions)[number]['code'];
 
 const optionalNumber = (positive: boolean) =>
@@ -37,9 +46,14 @@ export const filtersSchema = z.object({
     )
     .max(allergenOptions.length)
     .optional(),
+  sort: z.enum(sortValues).default('default'),
 });
 export type ProductFilters = z.infer<typeof filtersSchema>;
-export function productQuery(filters: ProductFilters) {
+/** Filters as callers pass them; the order defaults to the API default. */
+export type ProductQuery = Omit<ProductFilters, 'sort'> & {
+  sort?: ProductSort;
+};
+export function productQuery(filters: ProductQuery) {
   const params = new URLSearchParams({ page: String(filters.page), size: '8' });
   for (const field of [
     'q',
@@ -51,5 +65,7 @@ export function productQuery(filters: ProductFilters) {
   }
   for (const code of filters.excludeAllergen ?? [])
     params.append('excludeAllergen', code);
+  if (filters.sort && filters.sort !== 'default')
+    params.set('sort', filters.sort);
   return params.toString();
 }
