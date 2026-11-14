@@ -40,6 +40,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 | PUT | /api/admin/products/{id} | ADMIN | Sửa sản phẩm |
 | PUT | /api/admin/products/{id}/nutrition | ADMIN | Nhập / sửa dinh dưỡng; cập nhật `nutrition_complete` |
 | PUT | /api/admin/products/{id}/allergens | ADMIN | Nhập allergen và xác nhận (`allergens_verified`) |
+| GET | /api/admin/stats | ADMIN | Tổng quan: `orders {total, by_status, revenue, currency}` (doanh thu = tổng đơn chưa hủy, chưa có thanh toán), `recent_days` (7 ngày theo giờ Việt Nam), `catalog` (đang bán, hết hàng, sắp hết, thiếu dinh dưỡng, allergen chưa xác minh / dữ liệu mẫu), `low_stock_items` (tối đa 5, `stock <= low_stock_threshold`). Chỉ số liệu tổng hợp, không có thông tin khách hàng |
 | PATCH | /api/admin/products/{id}/stock | ADMIN | Chỉnh tồn kho (`stock >= 0`) |
 | GET | /api/admin/products/{id}/images | ADMIN | Danh sách ảnh `[{id, url, sort_order}]` (cả sản phẩm đang ẩn) |
 | POST | /api/admin/products/{id}/images | ADMIN | Upload multipart, trường `file`; JPEG/PNG/WebP nhận diện theo nội dung (không nhận SVG), tối đa 2 MB, tối đa 5 ảnh; tên file do server sinh. Trả 201 `{id, url, sort_order}`. Lỗi: 400 `INVALID_IMAGE`, 413 `IMAGE_TOO_LARGE`, 409 `IMAGE_LIMIT` |
