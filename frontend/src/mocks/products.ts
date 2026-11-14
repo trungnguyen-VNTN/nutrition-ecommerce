@@ -94,6 +94,7 @@ export const products: Product[] = fixtures.map((p) => ({
       }
     : null,
   allergens: p.allergens_verified ? [] : null,
+  allergens_reviewed: p.allergens_verified && p.id === 'oats',
 }));
 export const productPage: ProductPage = {
   items: products,
