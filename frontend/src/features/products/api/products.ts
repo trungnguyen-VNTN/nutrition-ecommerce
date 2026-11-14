@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { Product, ProductPage } from '@/lib/api/catalog.types';
 import { getJson } from '@/lib/api/client';
-import { productQuery, type ProductFilters } from './filters';
+import { productQuery, type ProductQuery } from './filters';
 const nonnegative = z.number().finite().nonnegative();
 const categorySchema = z.object({
   id: z.number().int().positive(),
@@ -19,6 +19,8 @@ export const productSchema = z
     stock: z.number().int().nonnegative(),
     nutrition_complete: z.boolean(),
     allergens_verified: z.boolean(),
+    // True only when an admin confirmed the list; seed and demo data are never "verified".
+    allergens_reviewed: z.boolean().default(false),
     description: z.string().nullable(),
     category: categorySchema.nullable(),
     serving_size: nonnegative.nullable(),
@@ -62,7 +64,8 @@ export const productSchema = z
         p.serving_size !== null &&
         p.serving_unit !== null),
   )
-  .refine((p) => !p.allergens_verified || p.allergens !== null);
+  .refine((p) => !p.allergens_verified || p.allergens !== null)
+  .refine((p) => p.allergens_verified || !p.allergens_reviewed);
 const pageSchema = z.object({
   items: z.array(productSchema),
   page: z.number().int().nonnegative(),
@@ -70,7 +73,7 @@ const pageSchema = z.object({
   total: z.number().int().nonnegative(),
 });
 export async function getProducts(
-  filters: ProductFilters,
+  filters: ProductQuery,
   signal?: AbortSignal,
 ): Promise<ProductPage> {
   return pageSchema.parse(
