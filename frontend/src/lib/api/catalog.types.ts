@@ -32,6 +32,8 @@ export interface Product {
   stock: number;
   nutrition_complete: boolean;
   allergens_verified: boolean;
+  /** An admin confirmed the allergen list (otherwise it is sample data derived from ingredients). */
+  allergens_reviewed: boolean;
   description: string | null;
   category: Category | null;
   serving_size: number | null;
