@@ -23,11 +23,17 @@ const promises = [
   'AI hỗ trợ tra cứu, không tư vấn y tế',
 ];
 
-function PasswordField({ register }: { register: boolean }) {
+export function PasswordField({
+  register,
+  label = 'Mật khẩu',
+}: {
+  register: boolean;
+  label?: string;
+}) {
   const [visible, setVisible] = useState(false);
   return (
     <Field
-      label="Mật khẩu"
+      label={label}
       required
       hint={
         register
@@ -159,6 +165,14 @@ export function AuthPage({ register = false }: { register?: boolean }) {
               </Field>
             ) : (
               <PasswordField register={register} />
+            )}
+            {!register && !confirm && (
+              <Link
+                className="inline-flex min-h-touch items-center text-sm font-semibold text-brand underline underline-offset-4"
+                to="/forgot-password"
+              >
+                Quên mật khẩu?
+              </Link>
             )}
             <Button
               className="w-full"
