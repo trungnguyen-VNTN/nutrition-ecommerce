@@ -142,4 +142,23 @@ describe('mock catalog', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByLabelText(messages.maxCalories)).toHaveValue(150);
   });
+
+  it('sorts through the API and explains where missing nutrition goes', async () => {
+    const user = userEvent.setup();
+    const requests: string[] = [];
+    server.use(
+      http.get('*/api/products', ({ request }) => {
+        requests.push(new URL(request.url).search);
+        return HttpResponse.json(productPage);
+      }),
+    );
+    renderApp(<ProductsPage />, '/products?page=1&maxCalories=300');
+    await screen.findAllByRole('article');
+    const sort = screen.getByLabelText(messages.sortLabel);
+    await user.selectOptions(sort, 'protein_desc');
+    await waitFor(() => expect(requests.at(-1)).toContain('sort=protein_desc'));
+    expect(requests.at(-1)).toContain('page=0');
+    expect(requests.at(-1)).toContain('maxCalories=300');
+    expect(await screen.findByText(messages.sortNutritionNote)).toBeVisible();
+  });
 });
