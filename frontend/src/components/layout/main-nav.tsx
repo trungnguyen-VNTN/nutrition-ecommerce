@@ -1,4 +1,5 @@
 import {
+  Calculator,
   ChatCircleText,
   GearSix,
   House,
@@ -13,6 +14,7 @@ import { messages } from '@/app/messages.vi';
 const links: readonly (readonly [string, string, Icon])[] = [
   ['/', messages.home, House],
   ['/products', messages.products, Storefront],
+  ['/meal-analyzer', 'Phân tích bữa ăn', Calculator],
   ['/chat', messages.chat, ChatCircleText],
   ['/cart', messages.cart, ShoppingCartSimple],
   ['/orders', messages.orders, Receipt],
@@ -36,8 +38,9 @@ export function MainNav({
             key={to}
             to={to}
             end={to === '/'}
-            // The dock keeps five tabs; admins reach admin from the header on phones.
-            className={`nav-link control-transition ${to === '/admin' ? 'hidden md:inline-flex' : ''}`}
+            // The dock keeps five tabs; admin and the meal analyzer stay in the header row on wider
+            // screens and are linked from the products and product pages on phones.
+            className={`nav-link control-transition ${to === '/admin' || to === '/meal-analyzer' ? 'hidden md:inline-flex' : ''}`}
           >
             {({ isActive }) => (
               <>

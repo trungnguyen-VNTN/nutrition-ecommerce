@@ -34,6 +34,12 @@ Nhãn dinh dưỡng `diet_labels` (D26) do backend tính từ số liệu trong 
 
 Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đủ để lọc (fail-closed); `allergens_reviewed` = admin đã xác nhận theo nhãn bao bì. Giao diện chỉ ghi "Allergen đã xác minh" khi cả hai đều `true`; `verified` mà chưa `reviewed` hiển thị "Allergen theo thành phần (dữ liệu mẫu)". Chỉ `PUT /api/admin/products/{id}/allergens` với `verified = true` đặt `reviewed`.
 
+## Phân tích bữa ăn (công khai, chỉ đọc)
+
+| Method | Path | Quyền | Mô tả |
+| --- | --- | --- | --- |
+| POST | /api/nutrition/analyze | public | `{items: [{product_id, grams}]}`, 1–30 dòng, 1–5000 g. Trả `items[]` (từng dòng đã nhân theo gram / khẩu phần; `amounts = null` khi sản phẩm thiếu dinh dưỡng), `total_grams`, `total`, `complete`, `incomplete_products` (tên), `diet_labels` của cả bữa. Thiếu đường / chất xơ / natri ở một dòng thì tổng của chất đó là `null`, không phải 0. Bữa có dòng thiếu dữ liệu: `complete = false`, không có nhãn. Sản phẩm không tồn tại hoặc đang ẩn → 400 |
+
 ## Admin catalog
 
 | Method | Path | Quyền | Mô tả |
