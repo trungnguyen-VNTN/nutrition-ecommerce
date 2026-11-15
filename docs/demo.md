@@ -10,7 +10,7 @@
 
 ## Kịch bản 1: tra cứu dinh dưỡng minh bạch
 
-1. Trang **Sản phẩm**: 152 sản phẩm trong 11 danh mục (rau củ, trái cây, thịt cá, đồ uống…), 104 sản phẩm có ảnh thật, mỗi thẻ có kcal / protein và trạng thái allergen.
+1. Trang **Sản phẩm**: 152 sản phẩm trong 11 danh mục (rau củ, trái cây, thịt cá, đồ uống…), 118 sản phẩm có ảnh thật, mỗi thẻ có kcal / protein và trạng thái allergen.
 2. Lọc **Calo tối đa 200** và **Protein tối thiểu 10**: chỉ còn sản phẩm có đủ dữ liệu đáp ứng.
 3. Mở **Bơ sáp**: nhãn dinh dưỡng, nguồn **USDA FoodData Central** và mã FDC trong mô tả.
 4. Điểm nhấn: số liệu lấy từ DB và ghi nguồn; giá, tồn kho là dữ liệu mẫu (có ghi rõ).

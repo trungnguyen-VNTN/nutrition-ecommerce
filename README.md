@@ -10,7 +10,7 @@
 Ứng dụng thương mại điện tử thực phẩm với chức năng tra cứu dinh dưỡng bằng AI.
 Người dùng có thể xem sản phẩm, tìm kiếm không dấu, lọc và sắp xếp theo dinh dưỡng,
 quản lý giỏ hàng và đặt hàng. Catalog demo gồm 152 sản phẩm trong 11 danh mục, dinh dưỡng
-từ USDA FoodData Central và 104 ảnh thật (CC0 / public domain). Dữ liệu còn thiếu hoặc chưa được
+từ USDA FoodData Central và 118 ảnh thật (CC0 / public domain). Dữ liệu còn thiếu hoặc chưa được
 người kiểm tra xác nhận được ghi rõ, không bao giờ hiển thị như "đã xác minh".
 Ứng dụng đã chạy trên AWS (CloudFront + ECS Fargate + RDS) và chỉ được bật khi demo (D20).
 
