@@ -508,7 +508,7 @@
   }
 }
 
-/* Product filters: bottom sheet below 940px, sticky side panel above. */
+/* Product filters: bottom sheet below 940px, full-height side panel above. */
 @layer components {
   .filter-scrim {
     position: fixed;
@@ -552,12 +552,14 @@
     }
     .filter-sheet,
     .filter-sheet[data-open='true'] {
+      /* Full height in the page flow: the whole form is visible and scrolls with the page,
+         no nested scroll area (scroll-behavior guideline). */
       display: block;
-      position: sticky;
+      position: static;
       inset: auto;
-      top: calc(var(--header-height) * 2 + var(--space-4));
       z-index: auto;
-      max-height: calc(100dvh - var(--header-height) * 2 - var(--space-8));
+      max-height: none;
+      overflow: visible;
       padding: var(--space-4);
       border: var(--border-width) solid var(--line);
       border-radius: var(--corner-card);
