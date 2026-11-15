@@ -1,3 +1,4 @@
+import { messages } from '@/app/messages.vi';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, CheckCircle, WarningCircle } from '@phosphor-icons/react';
@@ -241,9 +242,13 @@ function AllergensForm({
       }}
     >
       <h3 className="text-xl font-bold">Allergen</h3>
-      {data.allergens_verified ? (
+      {data.allergens_verified && data.allergens_reviewed ? (
         <Tag tone="success" icon={<CheckCircle />}>
-          Allergen đã xác minh
+          {messages.allergensVerified}
+        </Tag>
+      ) : data.allergens_verified ? (
+        <Tag tone="warning" dashed icon={<WarningCircle />}>
+          {messages.allergensSample}: chưa có người xác nhận
         </Tag>
       ) : (
         <Tag tone="warning" dashed icon={<WarningCircle />}>
@@ -251,7 +256,8 @@ function AllergensForm({
         </Tag>
       )}
       <p className="text-sm text-ink-muted">
-        Chỉ đánh dấu đã xác minh sau khi kiểm tra nguồn dữ liệu.
+        Chỉ đánh dấu đã xác minh sau khi đối chiếu nhãn bao bì. Lưu với ô đã
+        đánh dấu sẽ ghi nhận bạn đã xác nhận.
       </p>
       {data.available_allergens.map((allergen) => (
         <Field key={allergen.code} label={allergen.name}>
