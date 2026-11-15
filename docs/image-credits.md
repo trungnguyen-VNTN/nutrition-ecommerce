@@ -4,7 +4,7 @@
 
 Ảnh được chọn bằng mắt từ tối đa 6 ứng viên mỗi sản phẩm. Loại bỏ: ảnh món đã nấu khi sản phẩm là nguyên liệu sống, tranh vẽ thực vật, ảnh sai món, và ảnh chụp sản phẩm có nhãn hiệu thương mại.
 
-104 / 152 sản phẩm có ảnh. 48 sản phẩm không tìm được ảnh tự do phù hợp nên giữ hình minh họa: Gạo nếp, Bánh mì nguyên cám, Mì ống khô, Bún gạo khô, Bột bắp nguyên hạt, Bắp cải, Khoai tây, Khổ qua, Táo đỏ, Xoài, Đu đủ, Thơm (dứa), Dưa hấu, Chanh dây, Sầu riêng, Mít, Chanh vàng, Đùi gà rút xương, Thịt bò xay 90% nạc, Thăn bò (sirloin), Thịt vịt, Cá ngừ vây vàng, Cá trê phi lê, Mực ống, Cá mòi ngâm dầu (hộp), Sữa chua Hy Lạp ít béo, Sữa tươi nguyên kem, Sữa tách béo, Sữa chua không đường, Sữa đậu nành, Nước dừa tươi, Trà xanh pha sẵn, Hồng trà pha sẵn, Kefir ít béo, Đậu nành, Đậu trắng, Hạt phỉ, Hạt bí rang không muối, Hạt gai dầu tách vỏ, Táo sấy, Dầu dừa, Dầu hạt cải, Dầu mè, Giấm táo, Nước tương, Nước mắm, Siro lá phong, Bơ hạnh nhân không muối.
+118 / 152 sản phẩm có ảnh. 34 sản phẩm không tìm được ảnh tự do phù hợp nên giữ hình minh họa: Gạo nếp, Bánh mì nguyên cám, Mì ống khô, Bún gạo khô, Bột bắp nguyên hạt, Bắp cải, Khoai tây, Chanh vàng, Đùi gà rút xương, Thịt bò xay 90% nạc, Thăn bò (sirloin), Thịt vịt, Cá ngừ vây vàng, Cá trê phi lê, Cá mòi ngâm dầu (hộp), Sữa chua Hy Lạp ít béo, Sữa tươi nguyên kem, Sữa đậu nành, Nước dừa tươi, Trà xanh pha sẵn, Hồng trà pha sẵn, Kefir ít béo, Đậu nành, Hạt phỉ, Hạt bí rang không muối, Hạt gai dầu tách vỏ, Dầu dừa, Dầu hạt cải, Dầu mè, Giấm táo, Nước tương, Nước mắm, Siro lá phong, Bơ hạnh nhân không muối.
 
 | Sản phẩm | File gốc | Tác giả | Giấy phép |
 | --- | --- | --- | --- |
@@ -115,3 +115,17 @@ Edited Version by: Arad | Public domain |
 | Sung khô | [Fig (Dried).jpg](https://commons.wikimedia.org/wiki/File:Fig_(Dried).jpg) | Miansari66 | Public domain |
 | Chuối sấy giòn | [Dried banana chips.jpg](https://commons.wikimedia.org/wiki/File:Dried_banana_chips.jpg) | Fumikas Sagisavas | CC0 |
 | Sốt mè tahini | [Tahini with oil.JPG](https://commons.wikimedia.org/wiki/File:Tahini_with_oil.JPG) | Miansari66 | CC0 |
+| Khổ qua | [Bitter gourd at Hyderabad market.jpg](https://commons.wikimedia.org/wiki/File:Bitter_gourd_at_Hyderabad_market.jpg) | Bhaskaranaidu | Public domain |
+| Táo đỏ | [HK TW 荃灣 Tsuen Wan shop fruit red apple August 2025 N13P 03.jpg](https://commons.wikimedia.org/wiki/File:HK_TW_%E8%8D%83%E7%81%A3_Tsuen_Wan_shop_fruit_red_apple_August_2025_N13P_03.jpg) | Wandenging Biimou | CC0 |
+| Xoài | [Carabao Mangoes from Cebu, Philippines.jpg](https://commons.wikimedia.org/wiki/File:Carabao_Mangoes_from_Cebu,_Philippines.jpg) | Bim24 | CC0 |
+| Đu đủ | [K10916-2 (8454754323).jpg](https://commons.wikimedia.org/wiki/File:K10916-2_(8454754323).jpg) | USDAgov | Public domain |
+| Thơm (dứa) | [Pineapple fruit 2.jpg](https://commons.wikimedia.org/wiki/File:Pineapple_fruit_2.jpg) | Wilfredor | CC0 |
+| Dưa hấu | [Watermelon.jpg](https://commons.wikimedia.org/wiki/File:Watermelon.jpg) | USDA photo by Scott Bauer | Public domain |
+| Chanh dây | [Cut and uncut passion fruits.jpg](https://commons.wikimedia.org/wiki/File:Cut_and_uncut_passion_fruits.jpg) | Nana Pearls | CC0 |
+| Sầu riêng | [Durian 2.jpg](https://commons.wikimedia.org/wiki/File:Durian_2.jpg) | Brücke-Osteuropa | CC0 |
+| Mít | [Jackfruit-1938193.jpg](https://commons.wikimedia.org/wiki/File:Jackfruit-1938193.jpg) | DEZALB | CC0 |
+| Mực ống | [Frozen fresh squid.jpg](https://commons.wikimedia.org/wiki/File:Frozen_fresh_squid.jpg) | Fumikas Sagisavas | CC0 |
+| Sữa tách béo | [Milk 2.jpg](https://commons.wikimedia.org/wiki/File:Milk_2.jpg) | Daria-Yakovleva | CC0 |
+| Sữa chua không đường | [Food Portions (Team Nutrition) (20210902-FNS-UNC-0054).jpg](https://commons.wikimedia.org/wiki/File:Food_Portions_(Team_Nutrition)_(20210902-FNS-UNC-0054).jpg) | USDAgov | Public domain |
+| Đậu trắng | [0050Cuisine food of Bulacan in Baliuag 35.jpg](https://commons.wikimedia.org/wiki/File:0050Cuisine_food_of_Bulacan_in_Baliuag_35.jpg) | Judgefloro | CC0 |
+| Táo sấy | [Dried apple slices.jpg](https://commons.wikimedia.org/wiki/File:Dried_apple_slices.jpg) | Fumikas Sagisavas | CC0 |
