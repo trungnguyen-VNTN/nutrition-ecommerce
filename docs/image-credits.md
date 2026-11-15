@@ -1,10 +1,10 @@
 # Nguồn ảnh sản phẩm mẫu
 
-Ảnh trong `backend/src/main/resources/seed-images/` lấy từ Wikimedia Commons, chỉ dùng giấy phép **CC0** hoặc **Public domain** (D23, D26): được dùng tự do, không bắt buộc ghi công. Bảng dưới vẫn ghi nguồn để minh bạch. Ảnh đã được cắt 4:3, thu về 960×720 JPEG và bỏ metadata EXIF; dữ liệu đầy đủ ở `seed-images/manifest.json`.
+Ảnh trong `backend/src/main/resources/seed-images/` lấy từ Wikimedia Commons và, cho lượt cuối, từ [Openverse](https://openverse.org) (nguồn Flickr, rawpixel, StockSnap, WordPress Photo Directory), chỉ dùng giấy phép **CC0** hoặc **Public domain** (D23, D26): được dùng tự do, không bắt buộc ghi công. Bảng dưới vẫn ghi nguồn để minh bạch. Ảnh đã được cắt 4:3, thu về 960×720 JPEG và bỏ metadata EXIF; dữ liệu đầy đủ ở `seed-images/manifest.json`.
 
 Ảnh được chọn bằng mắt từ tối đa 6 ứng viên mỗi sản phẩm. Loại bỏ: ảnh món đã nấu khi sản phẩm là nguyên liệu sống, tranh vẽ thực vật, ảnh sai món, và ảnh chụp sản phẩm có nhãn hiệu thương mại.
 
-118 / 152 sản phẩm có ảnh. 34 sản phẩm không tìm được ảnh tự do phù hợp nên giữ hình minh họa: Gạo nếp, Bánh mì nguyên cám, Mì ống khô, Bún gạo khô, Bột bắp nguyên hạt, Bắp cải, Khoai tây, Chanh vàng, Đùi gà rút xương, Thịt bò xay 90% nạc, Thăn bò (sirloin), Thịt vịt, Cá ngừ vây vàng, Cá trê phi lê, Cá mòi ngâm dầu (hộp), Sữa chua Hy Lạp ít béo, Sữa tươi nguyên kem, Sữa đậu nành, Nước dừa tươi, Trà xanh pha sẵn, Hồng trà pha sẵn, Kefir ít béo, Đậu nành, Hạt phỉ, Hạt bí rang không muối, Hạt gai dầu tách vỏ, Dầu dừa, Dầu hạt cải, Dầu mè, Giấm táo, Nước tương, Nước mắm, Siro lá phong, Bơ hạnh nhân không muối.
+138 / 152 sản phẩm có ảnh. 14 sản phẩm chưa tìm được ảnh tự do phù hợp sau bốn lượt tìm (Commons hai lượt, Openverse hai lượt) nên giữ hình minh họa; admin có thể tải ảnh riêng ở trang quản trị: Gạo nếp, Bún gạo khô, Đùi gà rút xương, Thịt vịt, Cá trê phi lê, Hồng trà pha sẵn, Kefir ít béo, Đậu nành, Hạt gai dầu tách vỏ, Dầu hạt cải, Dầu mè, Nước tương, Siro lá phong, Bơ hạnh nhân không muối.
 
 | Sản phẩm | File gốc | Tác giả | Giấy phép |
 | --- | --- | --- | --- |
@@ -129,3 +129,23 @@ Edited Version by: Arad | Public domain |
 | Sữa chua không đường | [Food Portions (Team Nutrition) (20210902-FNS-UNC-0054).jpg](https://commons.wikimedia.org/wiki/File:Food_Portions_(Team_Nutrition)_(20210902-FNS-UNC-0054).jpg) | USDAgov | Public domain |
 | Đậu trắng | [0050Cuisine food of Bulacan in Baliuag 35.jpg](https://commons.wikimedia.org/wiki/File:0050Cuisine_food_of_Bulacan_in_Baliuag_35.jpg) | Judgefloro | CC0 |
 | Táo sấy | [Dried apple slices.jpg](https://commons.wikimedia.org/wiki/File:Dried_apple_slices.jpg) | Fumikas Sagisavas | CC0 |
+| Bánh mì nguyên cám | [Wheat Bread #1](https://www.flickr.com/photos/37996646802@N01/3544028525) | cogdogblog | CC0 |
+| Bắp cải | [Free green cabbage background image](https://www.rawpixel.com/image/5925680/photo-image-background-public-domain-green) | Không ghi | CC0 |
+| Thịt bò xay 90% nạc | [Free ground beef image](https://www.rawpixel.com/image/5928095/photo-image-background-public-domain-kitchen) | Không ghi | CC0 |
+| Cá mòi ngâm dầu (hộp) | [untitled](https://www.rawpixel.com/image/5942696/free-public-domain-cc0-photo) | Không ghi | CC0 |
+| Cá ngừ vây vàng | [Tuna display fish market](https://www.rawpixel.com/image/448140/free-photo-image-tuna-fish-food) | Jakub Kapusnak | CC0 |
+| Chanh vàng | [Lemons](https://www.flickr.com/photos/40632439@N00/24579753002) | Thad Zajdowicz | CC0 |
+| Dầu dừa | [Coconut oil hardened](https://commons.wikimedia.org/w/index.php?curid=17189180) | Sentient Planet | CC0 |
+| Giấm táo | [9896Barnes Naturals Apple Cider Vinegar 06](https://commons.wikimedia.org/w/index.php?curid=104101052) | JFVelasquez Floro | CC0 |
+| Hạt bí rang không muối | [Many pumpkin seeds - macro, no flash, plastic box stabilized #2](https://www.flickr.com/photos/21051491@N02/5017424174) | qubodup | CC0 |
+| Hạt phỉ | [Hazelnuts Food](https://stocksnap.io/photo/hazelnuts-food-Z7DH3GTP8X) | Lukasz Dec | CC0 |
+| Khoai tây | [Mini potato harvest](https://www.flickr.com/photos/25828087@N05/10779704966) | Mary Hutchison | Public domain |
+| Mì ống khô | [A detailed close-up of uncooked penne pasta arranged naturally, highlighting its hollow shape and smooth yellow surface. The image captures a common pantry ingredient often used in home cooking in Kozhikode, Kerala, with clean composition and sharp focus.](https://wordpress.org/photos/photo/742694ac69/) | Bigul Malayi | CC0 |
+| Nước dừa tươi | [Fresh Coconut with Coconut Water](https://commons.wikimedia.org/w/index.php?curid=16027989) | Miansari66 | CC0 |
+| Nước mắm | [Red Boat fish sauce](https://commons.wikimedia.org/w/index.php?curid=148948585) | Valereee | CC0 |
+| Sữa chua Hy Lạp ít béo | [Yogurt topped blueberries](https://www.rawpixel.com/image/8733851/photo-image-public-domain-food-fruit) | U.S. Department of Agriculture | CC0 |
+| Sữa đậu nành | [Free soy milk image](https://www.rawpixel.com/image/5917353/image-background-public-domain-food) | Không ghi | CC0 |
+| Sữa tươi nguyên kem | [Two Glasses of Milk](https://www.flickr.com/photos/184594136@N08/52633675811) | Alabama Extension | CC0 |
+| Thăn bò (sirloin) | [Raw beef steaks](https://www.rawpixel.com/image/447741/free-photo-image-meat-steak-beef) | Jakub Kapusnak | CC0 |
+| Trà xanh pha sẵn | [Free hot green tea cup](https://www.rawpixel.com/image/5915419/image-public-domain-leaf-green) | Không ghi | CC0 |
+| Bột bắp nguyên hạt | [Maize flour or Maize flour](https://commons.wikimedia.org/w/index.php?curid=170416935) | Sman099 | CC0 |
