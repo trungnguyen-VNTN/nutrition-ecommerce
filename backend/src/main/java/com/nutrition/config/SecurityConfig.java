@@ -93,6 +93,9 @@ public class SecurityConfig {
                         "/api/categories",
                         "/api/local-images/**")
                     .permitAll()
+                    // Read-only meal calculator over public catalog data (D26).
+                    .requestMatchers(HttpMethod.POST, "/api/nutrition/analyze")
+                    .permitAll()
                     .requestMatchers("/api/admin/**")
                     .hasRole("ADMIN")
                     .requestMatchers("/api/**")
