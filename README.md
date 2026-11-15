@@ -2,15 +2,17 @@
 
 [![Verify application](https://github.com/trungnguyen-VNTN/nutrition-ecommerce/actions/workflows/ci.yml/badge.svg)](https://github.com/trungnguyen-VNTN/nutrition-ecommerce/actions/workflows/ci.yml)
 ![Java 21](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
-![Spring Boot 3.5](https://img.shields.io/badge/Spring_Boot-3.5-6DB33F?logo=springboot&logoColor=white)
+![Spring Boot 4.1](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot&logoColor=white)
 ![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A51.10-7B42BC?logo=terraform&logoColor=white)
 
 Ứng dụng thương mại điện tử thực phẩm với chức năng tra cứu dinh dưỡng bằng AI.
-Người dùng có thể xem sản phẩm, lọc dinh dưỡng, quản lý giỏ hàng và đặt hàng.
-Dữ liệu dinh dưỡng lấy từ database; dữ liệu còn thiếu được hiển thị rõ ràng.
-Dự án đang được kiểm chứng trên local; triển khai AWS vẫn đang chờ.
+Người dùng có thể xem sản phẩm, tìm kiếm không dấu, lọc và sắp xếp theo dinh dưỡng,
+quản lý giỏ hàng và đặt hàng. Catalog demo gồm 41 sản phẩm với dinh dưỡng từ USDA
+FoodData Central và ảnh thật (CC0 / public domain). Dữ liệu còn thiếu hoặc chưa được
+người kiểm tra xác nhận được ghi rõ, không bao giờ hiển thị như "đã xác minh".
+Ứng dụng đã chạy trên AWS (CloudFront + ECS Fargate + RDS) và chỉ được bật khi demo (D20).
 
 ![Trang chủ](docs/screenshots/home.png)
 
@@ -21,7 +23,7 @@ Dự án đang được kiểm chứng trên local; triển khai AWS vẫn đang
 | --- | --- |
 | ![Danh sách sản phẩm](docs/screenshots/products.png) | ![Chi tiết sản phẩm](docs/screenshots/product-detail.png) |
 
-Ảnh chụp với API và PostgreSQL local, dữ liệu seed mẫu (không phải sản phẩm thật).
+Ảnh chụp với API và PostgreSQL local. Giá và tồn kho là dữ liệu mẫu; dinh dưỡng từ USDA.
 
 </details>
 
@@ -43,13 +45,32 @@ MVP gồm catalog, tài khoản, giỏ hàng, đặt hàng/quản lý đơn, qu�
 AI tra cứu chỉ đọc. Không có thanh toán hoặc tư vấn y tế. Khi lọc dinh dưỡng hay
 allergen, sản phẩm thiếu dữ liệu liên quan bị loại khỏi kết quả.
 
-- Backend: Java 21, Spring Boot 3.5, JDBC, Flyway, PostgreSQL.
-- Frontend: React, TypeScript, Vite, Tailwind; Vitest và Playwright/axe.
-- AWS dự kiến: Cognito, Bedrock và hạ tầng Terraform tại `ap-southeast-1`.
+Chức năng chính:
+
+- **Catalog:** tìm kiếm không phân biệt dấu (`unaccent`), lọc theo danh mục, calo,
+  protein, allergen (fail-closed), sắp xếp theo giá / protein / calo (sản phẩm thiếu
+  dữ liệu xếp cuối), ảnh sản phẩm, nhãn dinh dưỡng theo khẩu phần.
+- **Allergen trung thực:** "Allergen đã xác minh" chỉ hiện khi admin xác nhận;
+  dữ liệu mẫu ghi "Allergen theo thành phần (dữ liệu mẫu)" (D25).
+- **Tài khoản (Cognito):** đăng ký, xác minh email, đăng nhập, quên mật khẩu.
+- **Mua hàng:** giỏ hàng, đặt hàng (trừ kho có điều kiện trong transaction), hủy đơn.
+- **Quản trị:** tổng quan thống kê (đơn, doanh thu, tồn kho thấp, chất lượng dữ liệu),
+  sản phẩm, dinh dưỡng / allergen, ảnh, danh mục, xử lý đơn.
+- **AI tra cứu (Bedrock):** chỉ trích bộ lọc, sản phẩm và số liệu lấy từ DB, có
+  Guardrail và quota; đang chờ AWS mở quyền model cho tài khoản.
+- **Bảo vệ:** JWT Cognito, giới hạn tốc độ API theo user / IP, CloudFront → ALB có
+  header bí mật, cảnh báo CloudWatch qua SNS.
+
+Công nghệ:
+
+- Backend: Java 21, Spring Boot 4.1 (Jackson 3), JDBC, Flyway, PostgreSQL 17.
+- Frontend: React 19, TypeScript, Vite, Tailwind, TanStack Query, zod; Vitest và Playwright/axe.
+- AWS (`ap-southeast-1`, Terraform): CloudFront, S3, ALB, ECS Fargate ARM64, RDS,
+  Cognito, Bedrock + Guardrail, CloudWatch / SNS; deploy bằng GitHub Actions OIDC.
 
 ## Kiến trúc
 
-Kiến trúc mục tiêu trên AWS (chưa triển khai). ALB công khai đứng sau CloudFront,
+Kiến trúc đã triển khai trên AWS (bật / tắt theo buổi demo, xem `infra/README.md`). ALB công khai đứng sau CloudFront,
 chỉ nhận lưu lượng từ CloudFront; chi tiết xem [kiến trúc](docs/architecture.md)
 và [quyết định](docs/decisions.md).
 
@@ -75,8 +96,9 @@ backend/                Spring Boot, Flyway migrations, tests, Maven Wrapper
 frontend/               React, Vitest, Playwright/axe, screenshots local
 infra/bootstrap/        Bucket lưu Terraform state (state local)
 infra/envs/dev/         Root Terraform duy nhất, backend S3 (D19)
-infra/modules/          Module: network, ecr, rds, cognito
-scripts/                Launcher local cho Windows
+infra/modules/          Module: network, ecr, rds, cognito, images, service, frontend,
+                        github-oidc, guardrail, alarms
+scripts/                Launcher local, bật / tắt AWS (demo-infra.ps1), nhập USDA
 .github/                CI, Dependabot, mẫu PR và issue
 docs/                   Kiến trúc, quyết định, API, DB, tiến độ
 docs/screenshots/       Ảnh dùng trong README
@@ -113,8 +135,8 @@ Chạy thủ công trong các terminal riêng:
    ```
 
    Windows PowerShell dùng `./mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=usda"`.
-   Giá và tồn kho là dữ liệu mẫu; USDA không có dữ liệu allergen nên sản phẩm hiện
-   "Chưa xác minh allergen" và bị loại khi lọc allergen cho tới khi admin xác minh.
+   Giá và tồn kho là dữ liệu mẫu. USDA không có dữ liệu allergen: allergen của catalog
+   demo được suy ra từ thành phần và hiển thị là "dữ liệu mẫu" cho tới khi admin xác nhận (D23, D25).
    Profile `local` với DB `nutrition_dev` chỉ dùng dữ liệu giả cho kiểm thử tích hợp.
    Tạo lại dữ liệu bằng `node scripts/usda-import.mjs` (đọc `USDA_API_KEY`, mặc định `DEMO_KEY`).
    API tại `http://localhost:8080`; health tại `http://localhost:8080/actuator/health`.
@@ -184,7 +206,7 @@ Dừng dev/preview server đang chiếm cổng 5173/4173 trước khi chạy Pla
 config kiểm thử tự quản lý server. Ảnh nằm trong `frontend/.screenshots/`, không commit.
 Build có kiểm tra production bundle không chứa mock API.
 
-Terraform (chưa triển khai tài nguyên; thứ tự apply xem `infra/README.md`):
+Terraform (bật / tắt và thứ tự apply xem `infra/README.md`; chỉ chạy tới `plan` rồi dừng):
 
 ```sh
 terraform fmt -check -recursive infra
@@ -194,18 +216,22 @@ terraform -chdir=infra/envs/dev validate
 
 ## Trạng thái dự án
 
-Đã có API/UI catalog, bộ lọc, chi tiết, tài khoản, cart/checkout/orders, admin và
-AI chỉ đọc; launcher local đã được thử trên Windows. Các đợt kiểm chứng trước
-đã chạy unit, E2E/axe, build và smoke với PostgreSQL/API thật; xem
-[tiến độ](docs/PROGRESS.md) để phân biệt kết quả từng đợt và lịch sử lỗi.
-[Bằng chứng dependency/audit ngày 29/10](docs/verification/frontend-2026-10-29/REVIEW.md)
-là kết quả lịch sử, không phải audit mới.
+Giai đoạn 0–5 và phần lớn giai đoạn 7 đã xong; giai đoạn 6 (AI) đã có code, Guardrail
+và bộ đánh giá nhưng đang chờ AWS Support mở quyền gọi model cho tài khoản. Chi tiết
+từng đợt xem [tiến độ](docs/PROGRESS.md).
 
-Cognito/Bedrock end-to-end với AWS thật chưa được kiểm chứng. Còn thiếu ảnh sản phẩm
-thật/upload S3, workflow deploy/rollback và hạ tầng triển khai đầy đủ.
-Chưa có domain nên CloudFront → ALB đi HTTP (rủi ro đã chấp nhận, xem O6); Docker
-image build từng bị chặn bởi lỗi filesystem Docker Desktop. Chưa tuyên bố MVP đã
-deploy. CI trên GitHub đã xanh từ 2026-11-01. Đề xuất tách Terraform thành module/môi trường vẫn chờ duyệt.
+- **Đã kiểm chứng trên AWS** (qua `https://<id>.cloudfront.net`): catalog 41 sản phẩm,
+  ảnh từ S3 qua CloudFront, bộ lọc allergen, deploy bằng GitHub Actions. Đăng ký /
+  đăng nhập với Cognito thật đã thử khi chạy local. Hạ tầng mặc định tắt; `scripts/demo-infra.ps1 up` / `down` khi demo.
+- **Kiểm thử:** backend 44 test (tích hợp với PostgreSQL thật), frontend 104 unit test,
+  CI xanh trên GitHub. E2E/axe (Playwright) chưa chạy lại sau đợt rà soát giai đoạn 7
+  vì máy phát triển thiếu Chromium.
+- **Chưa kiểm chứng trên AWS:** các thay đổi của đợt rà soát giai đoạn 7 (tìm không dấu,
+  sắp xếp, quên mật khẩu, thống kê admin, giới hạn tốc độ, Spring Boot 4); làm ở lần bật app tới.
+- **Giới hạn đã biết:** chưa có domain nên CloudFront → ALB đi HTTP (O6, đã chấp nhận);
+  email Cognito dùng sender mặc định (khoảng 50 email/ngày); giới hạn tốc độ nằm trong
+  bộ nhớ của một task; không có thanh toán (D6).
+- **Kế hoạch chạy lại bằng chứng:** [diễn tập demo](docs/demo.md), [runbook](docs/runbook.md).
 
 ## Đóng góp
 
