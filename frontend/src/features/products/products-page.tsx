@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CaretUp, Funnel, X } from '@phosphor-icons/react';
+import {
+  ArrowRight,
+  Calculator,
+  CaretUp,
+  Funnel,
+  X,
+} from '@phosphor-icons/react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Field, Select } from '@/components/ui/field';
@@ -194,19 +200,67 @@ export function ProductsPage() {
           : value;
   return (
     <div className="space-y-6 md:space-y-8">
-      <header className="max-w-copy space-y-3">
-        <p className="eyebrow">{messages.eyebrow}</p>
-        <h1 className="text-3xl font-extrabold md:text-4xl">
-          {messages.products}
-        </h1>
-        <p className="text-ink-muted">{messages.productsDescription}</p>
+      <header className="grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
+        <div className="max-w-copy space-y-3">
+          <p className="eyebrow">{messages.eyebrow}</p>
+          <h1 className="text-3xl font-extrabold md:text-4xl">
+            {messages.products}
+          </h1>
+          <p className="text-ink-muted">{messages.productsDescription}</p>
+        </div>
         <Link
-          className="inline-flex min-h-touch items-center font-semibold text-brand underline underline-offset-4"
           to="/meal-analyzer"
+          className="group control-transition flex items-start gap-4 rounded-card border border-line bg-lime-soft p-4 hover:border-ink md:p-5"
         >
-          Phân tích dinh dưỡng một bữa ăn
+          <span
+            aria-hidden="true"
+            className="grid size-12 shrink-0 place-items-center rounded-pill bg-brand text-2xl text-lime"
+          >
+            <Calculator />
+          </span>
+          <span className="space-y-1">
+            <span className="flex items-center gap-1 font-bold group-hover:underline">
+              Phân tích bữa ăn
+              <ArrowRight aria-hidden="true" className="icon" />
+            </span>
+            <span className="block text-sm text-ink-muted">
+              Cộng dinh dưỡng của nhiều sản phẩm theo gram và xem nhãn của cả
+              bữa.
+            </span>
+          </span>
         </Link>
       </header>
+      {categories.data && categories.data.length > 0 && (
+        <nav
+          aria-label="Danh mục sản phẩm"
+          className="-mt-2 hidden md:-mt-4 md:block"
+        >
+          <ul className="flex flex-wrap gap-2">
+            {[{ id: null, name: 'Tất cả' }, ...categories.data].map(
+              (category) => {
+                const active =
+                  (params.get('categoryId') ?? null) ===
+                  (category.id === null ? null : String(category.id));
+                const next = new URLSearchParams(params);
+                next.delete('page');
+                if (category.id === null) next.delete('categoryId');
+                else next.set('categoryId', String(category.id));
+                return (
+                  <li key={category.id ?? 'all'}>
+                    <Link
+                      to={`/products?${next.toString()}`}
+                      aria-current={active ? 'page' : undefined}
+                      className={`control-transition inline-flex min-h-touch items-center rounded-pill border px-4 text-sm font-semibold ${active ? 'border-ink bg-ink text-cream' : 'border-line-strong bg-surface hover:border-ink'}`}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                );
+              },
+            )}
+          </ul>
+        </nav>
+      )}
       <div className="grid items-start gap-6 md:grid-cols-[var(--filter-width)_minmax(0,1fr)] md:gap-8">
         <aside aria-label="Bộ lọc sản phẩm">
           <Button
