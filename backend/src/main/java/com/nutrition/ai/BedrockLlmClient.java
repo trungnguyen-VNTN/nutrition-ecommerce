@@ -1,8 +1,5 @@
 package com.nutrition.ai;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import jakarta.annotation.PreDestroy;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -30,6 +27,9 @@ import software.amazon.awssdk.services.bedrockruntime.model.Tool;
 import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
 import software.amazon.awssdk.services.bedrockruntime.model.ToolInputSchema;
 import software.amazon.awssdk.services.bedrockruntime.model.ToolSpecification;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.PropertyNamingStrategies;
 
 /**
  * Turns a customer question into catalog search filters with one Bedrock Converse tool call. The
@@ -96,7 +96,7 @@ public class BedrockLlmClient implements LlmClient {
     this.guardrailId = guardrailId == null ? "" : guardrailId;
     this.guardrailVersion = guardrailVersion == null ? "" : guardrailVersion;
     this.mapper =
-        mapper.copy().setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
+        mapper.rebuild().propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE).build();
     this.allergenCodes = allergenCodes;
     if (gateway != null || this.model.isBlank()) {
       this.runtime = null;
@@ -177,8 +177,8 @@ public class BedrockLlmClient implements LlmClient {
     JsonNode data = mapper.readTree(tools.getFirst().toolUse().input().toString());
     if (!data.isObject() || !data.path("medicalAdvice").isBoolean())
       throw new AiUnavailableException();
-    var names = data.fieldNames();
-    while (names.hasNext()) if (!FIELDS.contains(names.next())) throw new AiUnavailableException();
+    for (String name : data.propertyNames())
+      if (!FIELDS.contains(name)) throw new AiUnavailableException();
     Search search = mapper.treeToValue(data, Search.class);
     if (search.q() != null && search.q().length() > 100) throw new AiUnavailableException();
     if (outOfRange(search.maxCalories()) || outOfRange(search.minProtein()))
