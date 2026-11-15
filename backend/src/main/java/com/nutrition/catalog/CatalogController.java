@@ -40,7 +40,9 @@ public class CatalogController {
       @RequestParam(required = false) @DecimalMin("0") BigDecimal minProtein,
       @RequestParam(defaultValue = "") List<String> excludeAllergen,
       @RequestParam(defaultValue = "") @jakarta.validation.constraints.Size(max = 100) String q,
-      @RequestParam(defaultValue = "default") String sort) {
+      @RequestParam(defaultValue = "default") String sort,
+      @RequestParam(defaultValue = "") @jakarta.validation.constraints.Size(max = 6)
+          List<String> label) {
     return catalog.list(
         page,
         size,
@@ -49,7 +51,8 @@ public class CatalogController {
         minProtein,
         excludeAllergen,
         q,
-        ProductSort.parse(sort));
+        ProductSort.parse(sort),
+        label.stream().filter(value -> !value.isBlank()).map(DietLabel::parse).toList());
   }
 
   @GetMapping("/products/{id}")
