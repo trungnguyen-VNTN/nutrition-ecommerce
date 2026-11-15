@@ -2,8 +2,6 @@ package com.nutrition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nutrition.ai.AiRefusedException;
 import com.nutrition.ai.AiUnavailableException;
 import com.nutrition.ai.BedrockLlmClient;
@@ -16,6 +14,8 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Evaluation against the real Bedrock model (phase 6). Not part of the normal build: run with
