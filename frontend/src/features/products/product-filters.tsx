@@ -6,6 +6,7 @@ import { controlClass } from '@/components/ui/field';
 import { messages } from '@/app/messages.vi';
 import { getCategories } from './api/products';
 import { allergenOptions, type ProductFilters } from './api/filters';
+import { dietLabelCodes, dietLabelNote, dietLabels } from '@/lib/diet-labels';
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -105,6 +106,29 @@ export function ProductFiltersForm({
             defaultValue={filters?.minProtein ?? ''}
           />
         </label>
+      </Group>
+      <Group title="Đặc điểm dinh dưỡng">
+        <fieldset>
+          <legend className="sr-only">Đặc điểm dinh dưỡng</legend>
+          <div className="flex flex-wrap gap-2">
+            {dietLabelCodes.map((code) => (
+              <label
+                key={code}
+                title={dietLabels[code].description}
+                className="control-transition flex min-h-touch items-center gap-2 rounded-control border border-line-strong px-3 has-checked:border-ink has-checked:bg-lime"
+              >
+                <input
+                  type="checkbox"
+                  name="label"
+                  value={code}
+                  defaultChecked={filters?.label?.includes(code) ?? false}
+                />
+                {dietLabels[code].label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <p className="text-ink-muted">{dietLabelNote}</p>
       </Group>
       <Group title="Loại trừ allergen">
         <fieldset>

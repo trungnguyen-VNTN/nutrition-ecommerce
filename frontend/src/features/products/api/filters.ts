@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { dietLabelCodes } from '@/lib/diet-labels';
 
 export const allergenOptions = [
   { code: 'peanut', label: 'Đậu phộng' },
@@ -48,6 +49,7 @@ export const filtersSchema = z.object({
     .max(allergenOptions.length)
     .optional(),
   sort: z.enum(sortValues).default('default'),
+  label: z.array(z.enum(dietLabelCodes)).max(dietLabelCodes.length).optional(),
 });
 export type ProductFilters = z.infer<typeof filtersSchema>;
 /** Filters as callers pass them; the order defaults to the API default. */
@@ -66,6 +68,7 @@ export function productQuery(filters: ProductQuery) {
   }
   for (const code of filters.excludeAllergen ?? [])
     params.append('excludeAllergen', code);
+  for (const label of filters.label ?? []) params.append('label', label);
   if (filters.sort && filters.sort !== 'default')
     params.set('sort', filters.sort);
   return params.toString();

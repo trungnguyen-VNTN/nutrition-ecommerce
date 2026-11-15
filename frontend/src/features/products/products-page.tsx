@@ -17,6 +17,7 @@ import {
   sortValues,
 } from './api/filters';
 import { messages } from '@/app/messages.vi';
+import { dietLabels, isDietLabel } from '@/lib/diet-labels';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
 import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
@@ -30,6 +31,7 @@ const filterKeys = [
   'maxCalories',
   'minProtein',
   'excludeAllergen',
+  'label',
 ];
 
 const chipPrefix: Record<string, string> = {
@@ -38,6 +40,7 @@ const chipPrefix: Record<string, string> = {
   maxCalories: 'Calo ≤ ',
   minProtein: 'Protein ≥ ',
   excludeAllergen: 'Không chứa: ',
+  label: 'Đặc điểm: ',
 };
 const grid = 'grid gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3';
 
@@ -168,6 +171,7 @@ export function ProductsPage() {
   const parsed = filtersSchema.safeParse({
     ...Object.fromEntries(params),
     excludeAllergen: params.getAll('excludeAllergen'),
+    label: params.getAll('label'),
   });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const categories = useQuery({
@@ -181,9 +185,12 @@ export function ProductsPage() {
   const chipValue = (key: string, value: string) =>
     key === 'excludeAllergen'
       ? (allergenOptions.find((o) => o.code === value)?.label ?? value)
-      : key === 'categoryId'
-        ? (categories.data?.find((c) => String(c.id) === value)?.name ?? value)
-        : value;
+      : key === 'label' && isDietLabel(value)
+        ? dietLabels[value].label
+        : key === 'categoryId'
+          ? (categories.data?.find((c) => String(c.id) === value)?.name ??
+            value)
+          : value;
   return (
     <div className="space-y-6 md:space-y-8">
       <header className="max-w-copy space-y-3">
