@@ -9,8 +9,8 @@
 
 Ứng dụng thương mại điện tử thực phẩm với chức năng tra cứu dinh dưỡng bằng AI.
 Người dùng có thể xem sản phẩm, tìm kiếm không dấu, lọc và sắp xếp theo dinh dưỡng,
-quản lý giỏ hàng và đặt hàng. Catalog demo gồm 41 sản phẩm với dinh dưỡng từ USDA
-FoodData Central và ảnh thật (CC0 / public domain). Dữ liệu còn thiếu hoặc chưa được
+quản lý giỏ hàng và đặt hàng. Catalog demo gồm 152 sản phẩm trong 11 danh mục, dinh dưỡng
+từ USDA FoodData Central và 118 ảnh thật (CC0 / public domain). Dữ liệu còn thiếu hoặc chưa được
 người kiểm tra xác nhận được ghi rõ, không bao giờ hiển thị như "đã xác minh".
 Ứng dụng đã chạy trên AWS (CloudFront + ECS Fargate + RDS) và chỉ được bật khi demo (D20).
 
@@ -218,7 +218,7 @@ terraform -chdir=infra/envs/dev validate
 Giai đoạn 0–5 và phần lớn giai đoạn 7 đã xong; giai đoạn 6 (AI) đã có code, Guardrail
 và bộ đánh giá nhưng đang chờ AWS Support mở quyền gọi model cho tài khoản. Chi tiết
 
-- **Đã kiểm chứng trên AWS** (qua `https://<id>.cloudfront.net`): catalog 41 sản phẩm,
+- **Đã kiểm chứng trên AWS** (qua `https://<id>.cloudfront.net`): catalog (lúc đó 41 sản phẩm),
   ảnh từ S3 qua CloudFront, bộ lọc allergen, deploy bằng GitHub Actions. Đăng ký /
   đăng nhập với Cognito thật đã thử khi chạy local. Hạ tầng mặc định tắt; `scripts/demo-infra.ps1 up` / `down` khi demo.
 - **Kiểm thử:** backend 44 test (tích hợp với PostgreSQL thật), frontend 104 unit test,
