@@ -85,4 +85,13 @@ describe('forgot password', () => {
     expect(screen.getByLabelText('Email')).toBeInvalid();
     expect(requestPasswordReset).not.toHaveBeenCalled();
   });
+
+  it('moves focus to the heading of each new step', async () => {
+    mount();
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Email'), 'demo@example.com');
+    await user.click(screen.getByRole('button', { name: 'Gửi mã' }));
+    await screen.findByLabelText('Mã đặt lại');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveFocus();
+  });
 });

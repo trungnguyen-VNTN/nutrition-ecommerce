@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Field, Input } from '@/components/ui/field';
@@ -21,12 +21,18 @@ export function ForgotPasswordPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const heading = useRef<HTMLHeadingElement>(null);
+  const moved = useRef(false);
+  // Move focus to the new step's heading for screen reader and keyboard users. Done right after
+  // the step renders (not a frame later), so it never steals focus from a field the user is
+  // already typing in.
+  useEffect(() => {
+    if (moved.current) heading.current?.focus();
+  }, [step]);
   if (identity) return <Navigate to="/products" replace />;
 
   const go = (next: Step) => {
+    moved.current = true;
     setStep(next);
-    // Move focus to the new step's heading for screen reader and keyboard users.
-    requestAnimationFrame(() => heading.current?.focus());
   };
 
   return (
