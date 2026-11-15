@@ -19,6 +19,7 @@ const complete: Product = {
   nutrition_complete: true,
   allergens_verified: true,
   allergens_reviewed: true,
+  diet_labels: [],
   description: null,
   category: { id: 1, name: 'Ngũ cốc', slug: 'ngu-coc' },
   serving_size: 100,

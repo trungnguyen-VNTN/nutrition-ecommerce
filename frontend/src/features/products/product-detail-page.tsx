@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import { messages } from '@/app/messages.vi';
 import { AllergenBadge } from '@/components/allergen-badge';
 import { DataStatusBadge } from '@/components/data-status-badge';
+import { dietLabelNote, dietLabels } from '@/lib/diet-labels';
 import { Donut } from '@/components/donut';
 import { ErrorState } from '@/components/error-state';
 import { MacroBar } from '@/components/macro-bar';
@@ -157,6 +158,33 @@ function ProductDetail({ product }: { product: Product }) {
                 <MacroBar product={product} />
               </div>
             )}
+          </div>
+        </Section>
+        <Section title="Đặc điểm dinh dưỡng">
+          <div className="space-y-4">
+            {product.diet_labels.length > 0 ? (
+              <dl className="grid gap-3 sm:grid-cols-2">
+                {product.diet_labels.map((code) => (
+                  <div
+                    key={code}
+                    className="rounded-control border border-line bg-surface p-3"
+                  >
+                    <dt>
+                      <Tag tone="lime">{dietLabels[code].label}</Tag>
+                    </dt>
+                    <dd className="mt-2 text-sm text-ink-muted">
+                      {dietLabels[code].description}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p className="text-sm text-ink-muted">
+                Sản phẩm không đạt ngưỡng nhãn nào, hoặc chưa đủ dữ liệu để tính
+                nhãn.
+              </p>
+            )}
+            <p className="max-w-copy text-xs text-ink-muted">{dietLabelNote}</p>
           </div>
         </Section>
         <Section title={messages.allergensHeading}>
