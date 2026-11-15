@@ -1,8 +1,30 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-12_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-13_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Rà soát giai đoạn 7 (2026-11-13, D25).** Người dùng duyệt làm cả 9 mục rà soát. Mỗi nhóm một PR:
+  - #44 catalog: V7 `allergens_reviewed_at`, chỉ hiện "Allergen đã xác minh" khi admin xác nhận, còn lại "Allergen theo thành phần (dữ liệu mẫu)"; tìm không dấu bằng `unaccent`; `sort` theo danh sách trắng (thiếu dinh dưỡng xếp cuối).
+  - #45 quên mật khẩu: trang `/forgot-password` 2 bước, không tiết lộ email có tồn tại; Terraform Cognito khai báo `account_recovery_setting = verified_email` (plan: sửa tại chỗ, bỏ phương án điện thoại không dùng).
+  - #46 thống kê admin `GET /api/admin/stats` + mục "Tổng quan" (xếp chồng trên #44).
+  - #47 giới hạn tốc độ trong backend (đọc 300, ghi 60, đặt hàng 10, upload 30 / phút; theo `sub` hoặc IP người xem ở phần tử thứ 2 từ phải của `X-Forwarded-For`). Chọn backend thay WAF để không tốn tiền.
+  - #48 Spring Boot 4.1.2 + Jackson 3, thay Dependabot #7.
+  - PR tài liệu này: README (phiên bản, chức năng, trạng thái AWS), PROGRESS.
+  - Kiểm chứng: gộp cả 5 nhánh trên nhánh tạm local `tmp/phase7-integration` (không push): `./mvnw verify` 44 test xanh; frontend format / lint / typecheck / 104 test / build xanh. Jar Boot 4 chạy thật với profile `usda`: health UP, JSON snake_case, Flyway validate.
+  - **Đang dở:**
+    - E2E/axe và ảnh chụp README chưa chạy lại: Chromium của Playwright trên máy thiếu `chrome.exe` / `headless_shell` (lần tải trước bị gián đoạn).
+    - Các thay đổi chưa deploy / kiểm chứng trên AWS.
+  - **Bước tiếp theo:**
+    1. Merge theo thứ tự #44 → #45 → #46 → #47; sau đó rebase #48 và đổi import test sang package của Boot 4 (`webmvc.test.autoconfigure.AutoConfigureMockMvc`) cho `AdminAllergenReviewTest`, `AdminStatsTest`, `RateLimitIntegrationTest`; cuối cùng merge PR tài liệu.
+    2. Người dùng cài lại Chromium (`cd frontend` rồi `npm exec -- playwright install chromium`), sau đó chạy `npm run test:e2e` và `npm run screenshots`, rồi cập nhật `docs/screenshots/`.
+    3. Bật app (`demo-infra.ps1 up`):
+       - kiểm chứng tìm không dấu, sắp xếp, quên mật khẩu (email thật), thống kê admin;
+       - kiểm chứng 429 khi gọi API dồn dập, để xác nhận vị trí IP trong `X-Forwarded-For`;
+       - lần apply này cũng áp dụng guardrail của #41 và `account_recovery_setting`.
+  - **Câu hỏi mở:**
+    - AI vẫn chờ AWS Support (Anthropic / Nova Lite quota). Sau khi có quyền: bỏ `temperature(0F)` (Haiku 5.5 không nhận), chạy `-Pbedrock-eval`, chốt model D18.
+    - Thư mục `.agents/` và `.claude/worktrees/` chưa rõ nguồn: chờ người dùng quyết định có xóa không.
 
 - **Giai đoạn 6 AI (2026-11-13, D24, nhánh feat/ai-guardrail-eval).** `BedrockLlmClient` có seam `Gateway` để test, allergen trong schema tool lấy từ DB (có `tree_nut`, `sesame`), gắn Guardrail khi cấu hình, `GUARDRAIL_INTERVENED` → câu từ chối cố định. Test fail-closed 10 kiểu đầu ra xấu của model. Bộ 30 prompt + `BedrockEvalTest` (`-Pbedrock-eval`, ngoài CI; đã xác nhận profile chọn đúng test và đánh trượt khi chưa có model). Terraform module `guardrail` (topic y tế, content filter, prompt attack, profanity, version), quyền `bedrock:ApplyGuardrail` cho đúng guardrail. Backend verify 33/33; plan: tạo guardrail + version, thay task definition. **Chưa làm:** spike S1 (model / profile APAC ở Singapore, quota, tiếng Việt với Guardrail); đặt `bedrock_model_id` / `bedrock_inference_profile_id`; chạy bộ đánh giá với model thật; giao diện chat chưa kiểm chứng trên AWS. **Lưu ý:** app AWS vẫn bật lúc ghi (người dùng cần `down`).
 
