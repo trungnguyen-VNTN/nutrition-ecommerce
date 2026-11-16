@@ -20,7 +20,7 @@ it('omits blank filters while preserving explicit zero thresholds', () => {
     maxCalories: '0',
     minProtein: '',
   });
-  expect(productQuery(filters)).toBe('page=0&size=8&maxCalories=0');
+  expect(productQuery(filters)).toBe('page=0&size=9&maxCalories=0');
 });
 
 it.each([
@@ -33,9 +33,9 @@ it.each([
 });
 
 it('sends only whitelisted, non-default sort orders', () => {
-  expect(productQuery(filtersSchema.parse({}))).toBe('page=0&size=8');
+  expect(productQuery(filtersSchema.parse({}))).toBe('page=0&size=9');
   expect(productQuery(filtersSchema.parse({ sort: 'protein_desc' }))).toBe(
-    'page=0&size=8&sort=protein_desc',
+    'page=0&size=9&sort=protein_desc',
   );
   expect(filtersSchema.safeParse({ sort: 'p.id;drop' }).success).toBe(false);
 });

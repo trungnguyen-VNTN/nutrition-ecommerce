@@ -15,7 +15,7 @@ describe('diet labels', () => {
   it('sends label filters and rejects unknown ones', () => {
     expect(
       productQuery(filtersSchema.parse({ label: ['LOW_SUGAR', 'HIGH_FIBER'] })),
-    ).toBe('page=0&size=8&label=LOW_SUGAR&label=HIGH_FIBER');
+    ).toBe('page=0&size=9&label=LOW_SUGAR&label=HIGH_FIBER');
     expect(filtersSchema.safeParse({ label: ['KETO'] }).success).toBe(false);
   });
 

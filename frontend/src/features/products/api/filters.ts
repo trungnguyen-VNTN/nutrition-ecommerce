@@ -12,6 +12,9 @@ export const allergenOptions = [
   { code: 'shellfish', label: 'Hải sản có vỏ' },
   { code: 'fish', label: 'Cá' },
 ] as const;
+/** Products per page: three full rows in the three-column desktop grid. */
+export const productPageSize = 9;
+
 export const sortValues = [
   'default',
   'price_asc',
@@ -57,7 +60,10 @@ export type ProductQuery = Omit<ProductFilters, 'sort'> & {
   sort?: ProductSort;
 };
 export function productQuery(filters: ProductQuery) {
-  const params = new URLSearchParams({ page: String(filters.page), size: '8' });
+  const params = new URLSearchParams({
+    page: String(filters.page),
+    size: String(productPageSize),
+  });
   for (const field of [
     'q',
     'categoryId',

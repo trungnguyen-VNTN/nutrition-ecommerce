@@ -18,7 +18,7 @@ describe('mock catalog', () => {
     );
     renderApp(<ProductsPage />);
     expect(screen.getByRole('status')).toHaveTextContent(messages.loading);
-    expect(screen.getAllByTestId('product-skeleton')).toHaveLength(8);
+    expect(screen.getAllByTestId('product-skeleton')).toHaveLength(9);
     expect(screen.queryByRole('article')).not.toBeInTheDocument();
   });
 
