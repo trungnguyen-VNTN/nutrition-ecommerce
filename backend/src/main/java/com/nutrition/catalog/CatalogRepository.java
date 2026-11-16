@@ -10,9 +10,12 @@ import com.nutrition.images.ImageUrls;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -44,7 +47,11 @@ public class CatalogRepository {
       """
       SELECT p.*, c.id AS cat_id, c.name AS cat_name, c.slug AS cat_slug,
       n.calories,n.protein_g,n.carbs_g,n.fat_g,n.sugar_g,n.fiber_g,n.sodium_mg,n.source
-      """;
+      """
+          + Arrays.stream(DietLabel.values())
+              .map(label -> ", coalesce(" + label.condition() + ", false) AS " + label.column())
+              .collect(Collectors.joining())
+          + "\n";
 
   public CatalogRepository(NamedParameterJdbcTemplate jdbc, ImageUrls imageUrls) {
     this.jdbc = jdbc;
@@ -67,7 +74,8 @@ public class CatalogRepository {
       BigDecimal protein,
       List<String> excluded,
       String q) {
-    return list(page, size, category, calories, protein, excluded, q, ProductSort.DEFAULT);
+    return list(
+        page, size, category, calories, protein, excluded, q, ProductSort.DEFAULT, List.of());
   }
 
   public ProductPage list(
@@ -78,7 +86,15 @@ public class CatalogRepository {
       BigDecimal protein,
       List<String> excluded,
       String q,
-      ProductSort sort) {
+      ProductSort sort,
+      List<DietLabel> labels) {
+    // Each label is a fixed condition from DietLabel, never request text.
+    String filter =
+        FROM_FILTER
+            + labels.stream()
+                .distinct()
+                .map(label -> " AND " + label.condition())
+                .collect(Collectors.joining());
     List<String> codes = excluded.stream().distinct().toList();
     if (!codes.isEmpty()) {
       Integer known =
@@ -100,10 +116,10 @@ public class CatalogRepository {
             .addValue("excluded", codes.isEmpty() ? List.of("__none__") : codes)
             .addValue("limit", size)
             .addValue("offset", (long) page * size);
-    Long total = jdbc.queryForObject("SELECT count(*) " + FROM_FILTER, parameters, Long.class);
+    Long total = jdbc.queryForObject("SELECT count(*) " + filter, parameters, Long.class);
     List<Product> items =
         jdbc.query(
-            SELECT + FROM_FILTER + " ORDER BY " + sort.orderBy() + " LIMIT :limit OFFSET :offset",
+            SELECT + filter + " ORDER BY " + sort.orderBy() + " LIMIT :limit OFFSET :offset",
             parameters,
             (rs, row) -> mapProduct(rs));
     return new ProductPage(items, page, size, total == null ? 0 : total);
@@ -164,6 +180,9 @@ public class CatalogRepository {
             "SELECT id,s3_key FROM product_images WHERE product_id=:id ORDER BY sort_order,id",
             Map.of("id", id),
             (i, row) -> new Image(i.getLong("id"), imageUrls.url(i.getString("s3_key"))));
+    List<String> labels = new ArrayList<>();
+    for (DietLabel label : DietLabel.values())
+      if (rs.getBoolean(label.column())) labels.add(label.name());
     Category category =
         rs.getObject("cat_id") == null
             ? null
@@ -184,6 +203,7 @@ public class CatalogRepository {
         reviewed,
         nutrition,
         allergens,
-        images);
+        images,
+        List.copyOf(labels));
   }
 }
