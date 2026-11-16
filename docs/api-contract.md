@@ -73,10 +73,23 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
-| POST | /api/orders | USER | Đặt hàng từ giỏ trong **một transaction** (tạo đơn, trừ kho có điều kiện, xóa giỏ); thiếu hàng → `409 OUT_OF_STOCK` |
+| POST | /api/orders | USER | Đặt hàng từ giỏ trong **một transaction** (tạo đơn, trừ kho có điều kiện, xóa giỏ); thiếu hàng → `409 OUT_OF_STOCK`. Body có `payment_method`: `COD` (mặc định, đơn `PLACED`) hoặc `VNPAY` (đơn `AWAITING_PAYMENT`, giữ hàng 15 phút, `payment_expires_at`) |
 | GET | /api/orders | USER | Đơn của chính user |
 | GET | /api/orders/{id} | USER | Chỉ đơn của user; đơn của người khác → `404` |
-| POST | /api/orders/{id}/cancel | USER | Hủy khi `PLACED`; hoàn kho |
+| POST | /api/orders/{id}/cancel | USER | Hủy khi `PLACED` hoặc `AWAITING_PAYMENT`; hoàn kho. Đơn đã trả tiền → `payment_status = REFUND_NEEDED` |
+
+Đơn hàng trả thêm `payment_method`, `payment_status` (`UNPAID` / `PAID` / `REFUND_NEEDED`) và `payment_expires_at`.
+
+## Thanh toán VNPAY sandbox (D27)
+
+| Method | Path | Quyền | Mô tả |
+| --- | --- | --- | --- |
+| GET | /api/payments/methods | public | `["COD"]`, hoặc `["COD","VNPAY"]` khi đã cấu hình `VNPAY_TMN_CODE` và `VNPAY_HASH_SECRET` |
+| POST | /api/orders/{id}/payments/vnpay | USER (chủ đơn) | Tạo một lần thanh toán và trả `{payment_url}` (VNPAY 2.1.0, HMAC-SHA512, `vnp_ExpireDate` = hạn giữ hàng). Đơn không còn chờ thanh toán → `409 PAYMENT_NOT_ALLOWED`; chưa cấu hình → `409 PAYMENT_UNAVAILABLE`; đơn của người khác → `404` |
+| GET | /api/payments/vnpay/ipn | public (VNPAY gọi) | Nơi **duy nhất** cập nhật thanh toán. Kiểm theo thứ tự: chữ ký (`97`), giao dịch (`01`), số tiền so với DB (`04`), đã xử lý (`02`), rồi cập nhật và trả `00`. Trả `{RspCode, Message}`. Thành công: đơn `AWAITING_PAYMENT` → `PLACED`, `PAID`; tiền về khi đơn đã hết hạn / hủy → `REFUND_NEEDED` (admin hoàn tay) |
+| GET | /api/payments/vnpay/return | public | Trang VNPAY chuyển khách về gọi để hiển thị. Chỉ kiểm chữ ký và đọc DB: `{order_id, gateway_code, payment_status, order_status}`; không cập nhật gì, không trả thông tin cá nhân. Chữ ký sai → `400` |
+
+Đơn VNPAY quá hạn chưa trả: job chạy mỗi phút, sau thêm 5 phút đệm, chuyển `CANCELLED` và hoàn kho đúng một lần.
 
 ## Admin đơn hàng
 
@@ -84,7 +97,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 | --- | --- | --- | --- |
 | GET | /api/admin/orders | ADMIN | Danh sách, lọc theo `status`, phân trang |
 | GET | /api/admin/orders/{id} | ADMIN | Chi tiết |
-| PATCH | /api/admin/orders/{id}/status | ADMIN | Chuyển trạng thái hợp lệ (xem `db-schema.md`); không hợp lệ → `409` |
+| PATCH | /api/admin/orders/{id}/status | ADMIN | Chuyển trạng thái hợp lệ (xem `db-schema.md`); không hợp lệ → `409`. `AWAITING_PAYMENT` chỉ được hủy (xác nhận do IPN, không làm tay) |
 
 ## AI tra cứu
 

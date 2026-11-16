@@ -96,6 +96,14 @@ public class SecurityConfig {
                     // Read-only meal calculator over public catalog data (D26).
                     .requestMatchers(HttpMethod.POST, "/api/nutrition/analyze")
                     .permitAll()
+                    // VNPAY calls the IPN server to server; the return check and the method list
+                    // are read-only. All three are guarded by the VNPAY checksum where it matters.
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/payments/methods",
+                        "/api/payments/vnpay/ipn",
+                        "/api/payments/vnpay/return")
+                    .permitAll()
                     .requestMatchers("/api/admin/**")
                     .hasRole("ADMIN")
                     .requestMatchers("/api/**")

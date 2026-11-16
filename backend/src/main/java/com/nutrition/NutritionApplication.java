@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@org.springframework.scheduling.annotation.EnableScheduling
 public class NutritionApplication {
   public static void main(String[] args) {
     // Use a canonical database timezone instead of OS-specific legacy aliases.
