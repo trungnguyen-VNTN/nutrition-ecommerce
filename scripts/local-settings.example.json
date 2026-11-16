@@ -1,4 +1,6 @@
 {
   "cognitoUserPoolId": "ap-southeast-1_XXXXXXXXX",
-  "cognitoClientId": "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+  "cognitoClientId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "vnpayTmnCode": "XXXXXXXX",
+  "vnpayHashSecret": "from the VNPAY sandbox registration e-mail; never commit"
 }

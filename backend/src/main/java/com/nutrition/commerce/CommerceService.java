@@ -102,8 +102,18 @@ public class CommerceService {
     db.update("DELETE FROM cart_items WHERE cart_id=? AND product_id=?", lockCart(user), product);
   }
 
+  /** Minutes a VNPAY order holds its stock; VNPAY rejects payment after this (D27). */
+  static final int PAYMENT_HOLD_MINUTES = 15;
+
   @Transactional
   public long checkout(UUID user, UUID key, String name, String phone, String address) {
+    return checkout(user, key, name, phone, address, "COD");
+  }
+
+  @Transactional
+  public long checkout(
+      UUID user, UUID key, String name, String phone, String address, String paymentMethod) {
+    boolean online = "VNPAY".equals(paymentMethod);
     long cart = lockCart(user);
     var previous =
         db.queryForList(
@@ -133,17 +143,23 @@ public class CommerceService {
     long order =
         db.queryForObject(
             """
-        INSERT INTO orders(user_id,status,total,currency,shipping_name,phone,address,request_key)
-        VALUES (?,'PLACED',?,?,?,?,?,?) RETURNING id
+        INSERT INTO orders(user_id,status,total,currency,shipping_name,phone,address,request_key,
+                           payment_method,payment_expires_at)
+        VALUES (?,?,?,?,?,?,?,?,?,CASE WHEN ? THEN now() + make_interval(mins => ?) END)
+        RETURNING id
         """,
             Long.class,
             user,
+            online ? "AWAITING_PAYMENT" : "PLACED",
             total,
             currency,
             name,
             phone,
             address,
-            key);
+            key,
+            online ? "VNPAY" : "COD",
+            online,
+            PAYMENT_HOLD_MINUTES);
     for (var item : items)
       db.update(
           "INSERT INTO order_items(order_id,product_id,name_snapshot,unit_price,quantity) VALUES (?,?,?,?,?)",
@@ -158,7 +174,7 @@ public class CommerceService {
 
   public List<Map<String, Object>> orders(UUID user, int page, int size) {
     return db.queryForList(
-        "SELECT id,status,total,currency,created_at FROM orders WHERE user_id=? ORDER BY id DESC LIMIT ? OFFSET ?",
+        "SELECT id,status,total,currency,created_at,payment_method,payment_status FROM orders WHERE user_id=? ORDER BY id DESC LIMIT ? OFFSET ?",
         user,
         size,
         (long) page * size);
@@ -167,7 +183,7 @@ public class CommerceService {
   public Map<String, Object> order(UUID user, long id) {
     var rows =
         db.queryForList(
-            "SELECT id,status,total,currency,shipping_name,phone,address,created_at FROM orders WHERE user_id=? AND id=?",
+            "SELECT id,status,total,currency,shipping_name,phone,address,created_at,payment_method,payment_status,payment_expires_at FROM orders WHERE user_id=? AND id=?",
             user,
             id);
     if (rows.isEmpty()) throw new NoSuchElementException();
@@ -190,10 +206,9 @@ public class CommerceService {
             id);
     if (statuses.isEmpty()) throw new NoSuchElementException();
     if (statuses.getFirst().equals("CANCELLED")) return;
-    if (!statuses.getFirst().equals("PLACED"))
+    if (!statuses.getFirst().equals("PLACED") && !statuses.getFirst().equals("AWAITING_PAYMENT"))
       throw new BusinessException("INVALID_ORDER_STATUS", "Chỉ hủy được đơn vừa đặt.");
-    restoreStock(id);
-    db.update("UPDATE orders SET status='CANCELLED',updated_at=now() WHERE id=?", id);
+    cancelAndRestore(id);
   }
 
   public Map<String, Object> adminOrder(long id) {
@@ -204,7 +219,7 @@ public class CommerceService {
 
   public List<Map<String, Object>> adminOrders(int page, int size) {
     return db.queryForList(
-        "SELECT id,status,total,currency,created_at FROM orders ORDER BY id DESC LIMIT ? OFFSET ?",
+        "SELECT id,status,total,currency,created_at,payment_method,payment_status FROM orders ORDER BY id DESC LIMIT ? OFFSET ?",
         size,
         (long) page * size);
   }
@@ -218,6 +233,8 @@ public class CommerceService {
     if (current.equals(next)) return;
     boolean valid =
         switch (current) {
+          // An unpaid online order can only be cancelled; it is confirmed by the IPN, not by hand.
+          case "AWAITING_PAYMENT" -> next.equals("CANCELLED");
           case "PLACED" -> next.equals("CONFIRMED") || next.equals("CANCELLED");
           case "CONFIRMED" -> next.equals("SHIPPED") || next.equals("CANCELLED");
           case "SHIPPED" -> next.equals("DELIVERED");
@@ -225,8 +242,17 @@ public class CommerceService {
         };
     if (!valid)
       throw new BusinessException("INVALID_ORDER_STATUS", "Không thể chuyển trạng thái này.");
-    if (next.equals("CANCELLED")) restoreStock(id);
-    db.update("UPDATE orders SET status=?,updated_at=now() WHERE id=?", next, id);
+    if (next.equals("CANCELLED")) cancelAndRestore(id);
+    else db.update("UPDATE orders SET status=?,updated_at=now() WHERE id=?", next, id);
+  }
+
+  /** Returns stock once; a paid order is flagged for a manual refund (D27). */
+  private void cancelAndRestore(long id) {
+    restoreStock(id);
+    db.update(
+        "UPDATE orders SET status='CANCELLED',payment_status=CASE WHEN payment_status='PAID'"
+            + " THEN 'REFUND_NEEDED' ELSE payment_status END,updated_at=now() WHERE id=?",
+        id);
   }
 
   private void restoreStock(long id) {
