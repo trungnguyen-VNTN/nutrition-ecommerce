@@ -161,4 +161,11 @@ describe('mock catalog', () => {
     expect(requests.at(-1)).toContain('maxCalories=300');
     expect(await screen.findByText(messages.sortNutritionNote)).toBeVisible();
   });
+
+  it('links to the meal analyzer from the page header', async () => {
+    renderApp(<ProductsPage />);
+    expect(
+      await screen.findByRole('link', { name: /Phân tích bữa ăn/ }),
+    ).toHaveAttribute('href', '/meal-analyzer');
+  });
 });
