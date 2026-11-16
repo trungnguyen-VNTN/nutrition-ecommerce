@@ -1,8 +1,18 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-15_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-16_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Thanh toán VNPAY sandbox (2026-11-16, D27).** Người dùng duyệt kế hoạch 3 PR, xếp chồng sau #58:
+  - #59 P1 backend: V9, giữ hàng 15 phút, IPN theo đúng thứ tự VNPAY 2.1.0, trang quay về chỉ đọc, job hết hạn. Backend 59 test.
+  - #60 P2 frontend: chọn phương thức ở checkout, trạng thái thanh toán, trang `/payment/vnpay-return`. Frontend 121 test.
+  - P3 hạ tầng: secret `nutrition-dev/vnpay-sandbox` (khoảng $0,40/tháng) chỉ khi `-Vnpay`; ECS đọc khóa từ secret; tài liệu runbook §5, demo 3b, infra README.
+  - **Đang dở:**
+    - `terraform plan` cho P3 chưa chạy được vì SSO hết hạn; cần `aws sso login` rồi chạy lại.
+    - Chưa có khóa sandbox (người dùng đăng ký tại pay.vnpaytest.vn).
+    - Luồng IPN thật chỉ kiểm chứng được trên AWS.
+  - **Ảnh:** #58 có đủ 152/152 ảnh; 14 ảnh cuối là minh họa gần đúng theo yêu cầu người dùng.
 
 - **Mở rộng theo hướng Edamam (2026-11-15, D26).** Người dùng duyệt kế hoạch 3 PR, xếp chồng nên phải merge theo thứ tự A → B → C:
   - **A `feat/catalog-150-products`:** catalog 152 sản phẩm (thêm 111), 11 danh mục. Mã FDC tra trong bộ SR Legacy tải về và đối chiếu `expect`; importer chạy bằng DEMO_KEY theo lô 20 mã nên không cần key riêng. V8 thêm allergen `fish`, `plant_based`, `is_liquid`. 118 ảnh CC0 / Public domain; 34 sản phẩm giữ hình minh họa (danh sách ở `docs/image-credits.md`).
