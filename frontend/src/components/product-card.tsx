@@ -8,6 +8,7 @@ import { Pill } from '@/components/ui/pill';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tag } from '@/components/ui/tag';
 import { DataStatusBadge } from './data-status-badge';
+import { DietLabelTags } from '@/components/diet-label-tags';
 import { ProductArt } from './product-art';
 
 // Row with thumbnail below 640px, stacked card above. Skeleton shares this frame (no layout jump).
@@ -69,6 +70,7 @@ export function ProductCard({
             <DataStatusBadge kind="nutrition" />
           )}
         </div>
+        <DietLabelTags labels={product.diet_labels} max={2} />
         <div>
           {product.allergens_verified && product.allergens_reviewed ? (
             <span className="inline-flex items-center gap-1 text-xs text-ink-muted">

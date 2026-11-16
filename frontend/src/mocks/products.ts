@@ -95,6 +95,9 @@ export const products: Product[] = fixtures.map((p) => ({
     : null,
   allergens: p.allergens_verified ? [] : null,
   allergens_reviewed: p.allergens_verified && p.id === 'oats',
+  diet_labels: p.nutrition_complete
+    ? (['HIGH_PROTEIN', 'LOW_SODIUM'] as Product['diet_labels'])
+    : [],
 }));
 export const productPage: ProductPage = {
   items: products,
