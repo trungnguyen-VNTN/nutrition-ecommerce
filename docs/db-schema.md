@@ -98,9 +98,26 @@ Tối đa 5 ảnh mỗi sản phẩm (kiểm tra trong service, khóa dòng `pro
 | --- | --- | --- |
 | id | bigint | PK |
 | user_id | uuid | FK → app_users, NOT NULL |
-| status | text | NOT NULL, CHECK (status IN ('PLACED','CONFIRMED','SHIPPED','DELIVERED','CANCELLED')) |
+| status | text | NOT NULL, CHECK (status IN ('AWAITING_PAYMENT','PLACED','CONFIRMED','SHIPPED','DELIVERED','CANCELLED')) (AWAITING_PAYMENT từ V9) |
+| payment_method | text | NOT NULL DEFAULT 'COD', CHECK IN ('COD','VNPAY') (V9) |
+| payment_status | text | NOT NULL DEFAULT 'UNPAID', CHECK IN ('UNPAID','PAID','REFUND_NEEDED') (V9) |
+| payment_expires_at | timestamptz | Hạn giữ hàng của đơn VNPAY (V9) |
 | total | numeric(12,2) | NOT NULL, CHECK (total >= 0) |
 | shipping_name / phone / address | text | NOT NULL |
+| created_at / updated_at | timestamptz | NOT NULL |
+
+### payments (V9, D27)
+Mỗi lần thanh toán một dòng; không nhận và không lưu dữ liệu thẻ.
+
+| Cột | Kiểu | Ràng buộc |
+| --- | --- | --- |
+| id | bigint | PK |
+| order_id | bigint | FK → orders |
+| provider | text | 'VNPAY' |
+| txn_ref | text | UNIQUE (`vnp_TxnRef`) |
+| amount | numeric(12,2) | Số tiền lúc tạo, so với `vnp_Amount / 100` |
+| status | text | 'PENDING' / 'SUCCEEDED' / 'FAILED' |
+| response_code / transaction_no / bank_code | text | Từ IPN |
 | created_at / updated_at | timestamptz | NOT NULL |
 
 ### order_items

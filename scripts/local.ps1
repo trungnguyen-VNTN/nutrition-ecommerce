@@ -40,6 +40,16 @@ function Import-LocalSettings {
     $env:VITE_COGNITO_USER_POOL_ID = $poolId
     $env:VITE_COGNITO_CLIENT_ID = $clientId
     Write-Host 'Cognito sign-in enabled from scripts/local-settings.json.'
+    # VNPAY sandbox (D27), optional. The hash secret is only passed to the backend, never printed.
+    $tmn = "$($settings.vnpayTmnCode)".Trim()
+    $secret = "$($settings.vnpayHashSecret)".Trim()
+    if ($tmn -and $secret) {
+        $env:VNPAY_TMN_CODE = $tmn
+        $env:VNPAY_HASH_SECRET = $secret
+        Write-Host 'VNPAY sandbox enabled from scripts/local-settings.json.'
+    } else {
+        Write-Host 'No VNPAY sandbox keys: cash on delivery only.' -ForegroundColor Yellow
+    }
 }
 
 function Test-DatabaseReady {
