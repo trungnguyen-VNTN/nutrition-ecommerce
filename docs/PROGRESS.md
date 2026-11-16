@@ -1,8 +1,23 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-13_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-15_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Mở rộng theo hướng Edamam (2026-11-15, D26).** Người dùng duyệt kế hoạch 3 PR, xếp chồng nên phải merge theo thứ tự A → B → C:
+  - **A `feat/catalog-150-products`:** catalog 152 sản phẩm (thêm 111), 11 danh mục. Mã FDC tra trong bộ SR Legacy tải về và đối chiếu `expect`; importer chạy bằng DEMO_KEY theo lô 20 mã nên không cần key riêng. V8 thêm allergen `fish`, `plant_based`, `is_liquid`. 118 ảnh CC0 / Public domain; 34 sản phẩm giữ hình minh họa (danh sách ở `docs/image-credits.md`).
+  - **B `feat/diet-labels`:** nhãn tự động theo ngưỡng claim của EU kèm bộ lọc `label`. Mỗi nhãn là một điều kiện SQL dùng chung cho hiển thị và lọc.
+  - **C `feat/meal-analyzer`:** `POST /api/nutrition/analyze` và trang `/meal-analyzer`.
+  - **Kiểm chứng trên nhánh C (có đủ A, B):**
+    - Backend 50 test, frontend 113 test, build xanh.
+    - App thật với profile `usda` (DB `nutrition_usda`): seed 152 sản phẩm, gắn thêm 80 ảnh, số sản phẩm theo nhãn hợp lý (giàu protein 41, thuần thực vật 119). Bữa 150 g ức gà + 80 g gạo lứt cho 473,6 kcal kèm 4 nhãn, đã tính tay đối chiếu.
+    - Đã xem giao diện trên trình duyệt: chip bộ lọc nhãn, nhãn trên thẻ sản phẩm, trang phân tích bữa ăn.
+  - **Thay đổi so với kế hoạch:** bỏ "tóm tắt dinh dưỡng giỏ hàng" vì giỏ hàng tính theo gói, dữ liệu chưa có khối lượng gói nên không quy ra gram trung thực được. Thay bằng link "Phân tích trong bữa ăn" ở trang sản phẩm.
+  - **Lưu ý:** DB local `nutrition_usda` đã ở V8. App cũ đang chạy từ `START.bat` vẫn chạy, nhưng lần khởi động lại cần code mới.
+  - **Bước tiếp theo:**
+    1. Merge A → B → C.
+    2. Bật AWS để kiểm chứng: seed lên RDS, ảnh mới lên S3, nhãn, máy tính bữa ăn.
+    3. Admin chưa sửa được `plant_based` / `is_liquid` trên giao diện; nếu cần thì làm thêm.
 
 - **Rà soát giai đoạn 7 (2026-11-13, D25).** Người dùng duyệt làm cả 9 mục rà soát. Mỗi nhóm một PR:
   - #44 catalog: V7 `allergens_reviewed_at`, chỉ hiện "Allergen đã xác minh" khi admin xác nhận, còn lại "Allergen theo thành phần (dữ liệu mẫu)"; tìm không dấu bằng `unaccent`; `sort` theo danh sách trắng (thiếu dinh dưỡng xếp cuối).
