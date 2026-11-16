@@ -68,3 +68,15 @@ variable "restore_snapshot_identifier" {
   type        = string
   default     = null
 }
+
+variable "vnpay_enabled" {
+  description = "VNPAY sandbox payments (D27): creates one Secrets Manager secret (about 0.40 USD a month)."
+  type        = bool
+  default     = false
+}
+
+variable "vnpay_return_url" {
+  description = "https://<cloudfront>/payment/vnpay-return; demo-infra.ps1 fills it from the app_url output."
+  type        = string
+  default     = ""
+}

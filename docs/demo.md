@@ -32,6 +32,12 @@
    thứ tự, ảnh đại diện mới hiện ở trang khách.
 4. Khách không vào được trang admin (403); API không có token trả 401.
 
+## Kịch bản 3b: thanh toán VNPAY sandbox (khi đã bật `-Vnpay`, runbook §5)
+
+1. Đặt hàng, chọn **Thanh toán qua VNPAY (môi trường thử nghiệm)**: chuyển sang cổng VNPAY, trả bằng thẻ test sandbox.
+2. Quay về trang kết quả: "Thanh toán thành công". Đơn chuyển từ "Chờ thanh toán" sang "Đã đặt", có nhãn "Đã thanh toán VNPAY".
+3. Điểm nhấn: chỉ IPN có chữ ký HMAC-SHA512 đúng và số tiền khớp DB mới đổi trạng thái; trang quay về chỉ đọc. Đơn bỏ dở được giữ hàng 15 phút rồi tự hủy và trả kho đúng một lần. Không có tiền thật.
+
 ## Kịch bản 4: AI tra cứu (khi Bedrock đã được AWS mở)
 
 1. *"Gợi ý đồ ăn dưới 200 kcal, không có đậu phộng"*: AI chỉ chuyển câu hỏi thành bộ lọc, kết quả
