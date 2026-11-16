@@ -17,8 +17,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/toast-context';
 import { apiErrorMessage, requestJson } from '@/lib/api/client';
 import { formatMoney } from '@/lib/format';
-import { getOrder, getOrders } from './api';
-import { OrderStatus } from './order-status';
+import { getOrder, getOrders, startVnpayPayment } from './api';
+import { OrderStatus, PaymentStatus } from './order-status';
 
 const orderDate = (value: string) =>
   new Date(value).toLocaleDateString('vi-VN');
@@ -86,6 +86,12 @@ export function OrdersPage() {
                     </div>
                     <div className="flex flex-wrap items-center gap-4">
                       <OrderStatus status={order.status} />
+                      {order.payment_method === 'VNPAY' && (
+                        <PaymentStatus
+                          method={order.payment_method}
+                          status={order.payment_status}
+                        />
+                      )}
                       <p className="font-display text-xl font-extrabold tabular-nums">
                         {formatMoney(order.total, order.currency)}
                       </p>
@@ -164,7 +170,13 @@ export function OrderDetailPage({ admin = false }: { admin?: boolean }) {
       toast('Đã hủy đơn hàng.');
     },
   });
-  const justPlaced = (state as { justPlaced?: boolean } | null)?.justPlaced;
+  const pay = useMutation({
+    mutationFn: () => startVnpayPayment(Number(id)),
+    onSuccess: (url) => window.location.assign(url),
+  });
+  const { justPlaced, paymentStartFailed } =
+    (state as { justPlaced?: boolean; paymentStartFailed?: boolean } | null) ??
+    {};
   return (
     <section className="space-y-6">
       <header className="space-y-3">
@@ -245,29 +257,75 @@ export function OrderDetailPage({ admin = false }: { admin?: boolean }) {
               <p className="text-sm wrap-anywhere text-ink-muted">
                 {query.data.address}
               </p>
-              <p className="border-t border-line pt-3 text-xs text-ink-muted">
-                Đơn hàng này không có thanh toán trực tuyến.
-              </p>
+              <div className="space-y-2 border-t border-line pt-3">
+                <h3 className="text-sm font-bold">Thanh toán</h3>
+                <PaymentStatus
+                  method={query.data.payment_method}
+                  status={query.data.payment_status}
+                />
+                {query.data.payment_status === 'REFUND_NEEDED' && (
+                  <p className="text-xs text-ink-muted">
+                    Đơn đã hủy nhưng đã nhận tiền; cửa hàng sẽ hoàn tiền qua
+                    VNPAY.
+                  </p>
+                )}
+              </div>
             </Card>
           </div>
-          {!admin && query.data.status === 'PLACED' && (
-            <div className="border-t border-line pt-6">
+          {!admin && query.data.status === 'AWAITING_PAYMENT' && (
+            <Card className="space-y-3 border-warning bg-warning-tint">
+              <h2 className="text-lg font-bold">Đơn đang chờ thanh toán</h2>
+              <p className="text-sm">
+                {paymentStartFailed
+                  ? 'Chưa mở được cổng VNPAY. Bạn có thể thử lại. '
+                  : ''}
+                Hàng được giữ đến{' '}
+                <strong>
+                  {query.data.payment_expires_at
+                    ? new Date(
+                        query.data.payment_expires_at,
+                      ).toLocaleTimeString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : 'hết hạn giữ hàng'}
+                </strong>
+                ; sau đó đơn tự hủy nếu chưa thanh toán.
+              </p>
               <Button
-                variant="destructive"
-                loading={cancel.isPending}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      `Hủy đơn #${query.data.id}? Thao tác này không hoàn tác được.`,
-                    )
-                  )
-                    cancel.mutate();
-                }}
+                variant="sticker"
+                loading={pay.isPending}
+                onClick={() => pay.mutate()}
               >
-                Hủy đơn hàng
+                Thanh toán bằng VNPAY
               </Button>
-            </div>
+              {pay.isError && (
+                <p role="alert" className="text-sm text-danger">
+                  {apiErrorMessage(pay.error)}
+                </p>
+              )}
+            </Card>
           )}
+          {!admin &&
+            (query.data.status === 'PLACED' ||
+              query.data.status === 'AWAITING_PAYMENT') && (
+              <div className="border-t border-line pt-6">
+                <Button
+                  variant="destructive"
+                  loading={cancel.isPending}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Hủy đơn #${query.data.id}? Thao tác này không hoàn tác được.`,
+                      )
+                    )
+                      cancel.mutate();
+                  }}
+                >
+                  Hủy đơn hàng
+                </Button>
+              </div>
+            )}
         </>
       )}
       {cancel.isError && (

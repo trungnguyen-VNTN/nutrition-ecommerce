@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from 'react';
-import { ArrowLeft, Money } from '@phosphor-icons/react';
+import { ArrowLeft, CreditCard, Money } from '@phosphor-icons/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,12 @@ import { apiErrorMessage, requestJson } from '@/lib/api/client';
 import { formatMoney } from '@/lib/format';
 import { useSession } from '@/features/auth/session';
 import { SignInRequired } from '@/features/auth/auth-page';
-import { getCart, orderSchema } from './api';
+import {
+  getCart,
+  getPaymentMethods,
+  orderSchema,
+  startVnpayPayment,
+} from './api';
 
 function Step({
   number,
@@ -62,8 +67,26 @@ export function CheckoutPage() {
     onSuccess: async (order) => {
       await cache.invalidateQueries({ queryKey: ['cart'] });
       await cache.invalidateQueries({ queryKey: ['orders'] });
+      if (order.payment_method === 'VNPAY') {
+        try {
+          // Leave for the VNPAY sandbox; the order page offers a retry if this fails.
+          window.location.assign(await startVnpayPayment(order.id));
+          return;
+        } catch {
+          navigate(`/orders/${order.id}`, {
+            state: { paymentStartFailed: true },
+          });
+          return;
+        }
+      }
       navigate(`/orders/${order.id}`, { state: { justPlaced: true } });
     },
+  });
+  const methods = useQuery({
+    queryKey: ['payment-methods'],
+    queryFn: getPaymentMethods,
+    retry: false,
+    staleTime: 60_000,
   });
   return (
     <section className="space-y-6">
@@ -150,13 +173,44 @@ export function CheckoutPage() {
               </div>
             </Step>
             <Step number="2" title="Thanh toán">
-              <p className="flex items-start gap-3 rounded-control border border-line bg-sunken p-3 text-sm">
-                <Money className="icon mt-0.5 text-xl" />
-                <span>
-                  <strong className="block">Thanh toán khi nhận hàng</strong>
-                  Cửa hàng chưa có thanh toán trực tuyến.
-                </span>
-              </p>
+              <fieldset className="space-y-3">
+                <legend className="sr-only">Phương thức thanh toán</legend>
+                {(methods.data ?? ['COD']).map((method) => (
+                  <label
+                    key={method}
+                    className="control-transition flex min-h-touch cursor-pointer items-start gap-3 rounded-control border border-line-strong p-3 text-sm has-checked:border-ink has-checked:bg-lime-soft"
+                  >
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value={method}
+                      defaultChecked={method === 'COD'}
+                      className="mt-1"
+                    />
+                    {method === 'COD' ? (
+                      <Money
+                        aria-hidden="true"
+                        className="icon mt-0.5 text-xl"
+                      />
+                    ) : (
+                      <CreditCard
+                        aria-hidden="true"
+                        className="icon mt-0.5 text-xl"
+                      />
+                    )}
+                    <span>
+                      <strong className="block">
+                        {method === 'COD'
+                          ? 'Thanh toán khi nhận hàng'
+                          : 'Thanh toán qua VNPAY (môi trường thử nghiệm)'}
+                      </strong>
+                      {method === 'COD'
+                        ? 'Trả tiền mặt khi nhận hàng.'
+                        : 'Thẻ ATM, QR hoặc ví qua cổng VNPAY sandbox; không trừ tiền thật. Đơn được giữ 15 phút để bạn thanh toán.'}
+                    </span>
+                  </label>
+                ))}
+              </fieldset>
             </Step>
           </div>
           <Card as="aside" className="space-y-4 md:sticky md:top-32">
