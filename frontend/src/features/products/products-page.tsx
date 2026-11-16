@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CaretUp, Funnel, X } from '@phosphor-icons/react';
+import {
+  ArrowRight,
+  Calculator,
+  CaretUp,
+  Funnel,
+  X,
+} from '@phosphor-icons/react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Field, Select } from '@/components/ui/field';
@@ -194,18 +200,21 @@ export function ProductsPage() {
           : value;
   return (
     <div className="space-y-6 md:space-y-8">
-      <header className="max-w-copy space-y-3">
-        <p className="eyebrow">{messages.eyebrow}</p>
-        <h1 className="text-3xl font-extrabold md:text-4xl">
-          {messages.products}
-        </h1>
-        <p className="text-ink-muted">{messages.productsDescription}</p>
-        <Link
-          className="inline-flex min-h-touch items-center font-semibold text-brand underline underline-offset-4"
-          to="/meal-analyzer"
-        >
-          Phân tích dinh dưỡng một bữa ăn
-        </Link>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="max-w-copy space-y-3">
+          <p className="eyebrow">{messages.eyebrow}</p>
+          <h1 className="text-3xl font-extrabold md:text-4xl">
+            {messages.products}
+          </h1>
+          <p className="text-ink-muted">{messages.productsDescription}</p>
+        </div>
+        <Button asChild variant="outline">
+          <Link to="/meal-analyzer">
+            <Calculator aria-hidden="true" />
+            Phân tích bữa ăn
+            <ArrowRight aria-hidden="true" />
+          </Link>
+        </Button>
       </header>
       <div className="grid items-start gap-6 md:grid-cols-[var(--filter-width)_minmax(0,1fr)] md:gap-8">
         <aside aria-label="Bộ lọc sản phẩm">
