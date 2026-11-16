@@ -28,6 +28,7 @@ Biến `app_running` (mặc định `false`) quyết định phần tốn tiền
 | ALB, ECS service | **không tồn tại** | được tạo, chạy `api_desired_count` task (mặc định 1) |
 | CloudFront | chỉ phục vụ frontend; `/api/*` không có origin | `/api/*` chuyển về ALB |
 | VPC, ECR, Cognito, S3, IAM | giữ nguyên | giữ nguyên |
+| Secret VNPAY (chỉ khi chạy với `-Vnpay`, D27) | giữ nguyên | giữ nguyên, task ECS đọc `VNPAY_TMN_CODE` / `VNPAY_HASH_SECRET` |
 
 Người dùng tự chạy (Terraform hiện plan và hỏi `yes`):
 
@@ -123,7 +124,7 @@ Khi chưa có `AWS_DEPLOY_ROLE_ARN`, hai job được bỏ qua (không làm đ�
 | **Bật** (`up`), cộng thêm | RDS db.t4g.micro (~$0,026/giờ), ALB (~$0,03/giờ), 1 task Fargate ARM64 0,5 vCPU / 1 GiB kèm IPv4 (~$0,03/giờ) | **khoảng $0,09 / giờ**: buổi demo 4 giờ ~$0,35; quên tắt cả ngày ~$2,1 |
 | Để bật 24/7 (so sánh) | | khoảng $60–67 / tháng |
 
-Chưa tính Bedrock (tính theo token).
+Chưa tính Bedrock (tính theo token). Bật thanh toán VNPAY sandbox (`-Vnpay`, D27) thêm 1 secret Secrets Manager, **khoảng $0,40 / tháng**.
 
 Số liệu ước tính theo giá công bố mà tôi biết, chưa đối chiếu AWS Pricing Calculator.
 Muốn giảm tiền khi không dùng: dừng RDS tạm thời (tự bật lại sau 7 ngày) hoặc destroy dev.
