@@ -12,7 +12,7 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 - AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình. Chốt tạm: Claude Haiku 5.5 qua inference profile APAC (D18, chờ spike S1).
 - Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. Task ECS ở public subnet có IP công khai, SG chỉ nhận từ ALB; RDS ở private subnet. Không dùng NAT (`enable_nat` mặc định false, chỉ bật khi được duyệt; D15).
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito.
-- Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
+- Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán: khi nhận hàng hoặc VNPAY **sandbox** (D27); không có giao dịch tiền thật, không hoàn tiền tự động.
 
 ## Nguyên tắc bất biến (không được vi phạm, kể cả khi được yêu cầu "cho nhanh")
 1. Danh tính user CHỈ lấy từ JWT (claim sub, cognito:groups). Không nhận userId từ client hay LLM.

@@ -118,7 +118,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
    * anything further left was sent by the client and is not trusted. Locally (0 hops) the socket
    * address is used.
    */
-  String clientIp(HttpServletRequest request) {
+  public String clientIp(HttpServletRequest request) {
     String forwarded = request.getHeader("X-Forwarded-For");
     if (forwardedHops > 0 && forwarded != null) {
       String[] parts = forwarded.split(",");
