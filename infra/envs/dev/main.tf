@@ -91,6 +91,9 @@ module "service" {
   bedrock_guardrail_version    = module.guardrail.guardrail_version
   bedrock_guardrail_arn        = module.guardrail.guardrail_arn
 
+  vnpay_enabled    = var.vnpay_enabled
+  vnpay_return_url = var.vnpay_return_url
+
   # Ties the ECS service to the RDS state so tasks start after the DB is available.
   db_state = module.rds.state
 }
