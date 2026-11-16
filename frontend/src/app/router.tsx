@@ -36,6 +36,11 @@ const OrderDetailPage = lazy(() =>
     default: m.OrderDetailPage,
   })),
 );
+const VnpayReturnPage = lazy(() =>
+  import('@/features/commerce/vnpay-return-page').then((m) => ({
+    default: m.VnpayReturnPage,
+  })),
+);
 const MealPage = lazy(() =>
   import('@/features/meal/meal-page').then((m) => ({ default: m.MealPage })),
 );
@@ -69,6 +74,7 @@ export function AppRoutes() {
         <Route path="admin/products/:id" element={<ProductDataPage />} />
         <Route path="register" element={<AuthPage register />} />
         <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="payment/vnpay-return" element={<VnpayReturnPage />} />
         <Route path="admin/orders/:id" element={<OrderDetailPage admin />} />
         <Route path="orders/:id" element={<OrderDetailPage />} />
         <Route path="products" element={<ProductsPage />} />
