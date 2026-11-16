@@ -10,7 +10,7 @@
 
 ## Kịch bản 1: tra cứu dinh dưỡng minh bạch
 
-1. Trang **Sản phẩm**: 41 sản phẩm, ảnh thật, mỗi thẻ có kcal / protein và trạng thái allergen.
+1. Trang **Sản phẩm**: 152 sản phẩm trong 11 danh mục (rau củ, trái cây, thịt cá, đồ uống…), 118 sản phẩm có ảnh thật, mỗi thẻ có kcal / protein và trạng thái allergen.
 2. Lọc **Calo tối đa 200** và **Protein tối thiểu 10**: chỉ còn sản phẩm có đủ dữ liệu đáp ứng.
 3. Mở **Bơ sáp**: nhãn dinh dưỡng, nguồn **USDA FoodData Central** và mã FDC trong mô tả.
 4. Điểm nhấn: số liệu lấy từ DB và ghi nguồn; giá, tồn kho là dữ liệu mẫu (có ghi rõ).
@@ -20,7 +20,7 @@
 1. Không lọc: **Yến mạch** hiện nhãn *Chưa xác minh allergen*.
 2. Lọc **loại trừ Gluten**: Yến mạch, Sô cô la đen, Bột ca cao **biến mất** dù có thể không chứa
    gluten, vì allergen chưa xác minh. Bột mì (chứa gluten) cũng bị loại.
-3. Lọc **loại trừ Các loại hạt cây**: còn 30 sản phẩm; Hạnh nhân, Óc chó, Bơ đậu phộng (*có thể
+3. Lọc **loại trừ Các loại hạt cây**: còn 137 sản phẩm; Hạnh nhân, Óc chó, Bơ đậu phộng (*có thể
    chứa*)… bị loại.
 4. Điểm nhấn: hệ thống không đoán khi thiếu dữ liệu (nguyên tắc bất biến 3).
 

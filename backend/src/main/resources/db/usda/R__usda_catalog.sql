@@ -3,13 +3,16 @@
 -- Price and stock are samples. Allergens are demo data for single-ingredient foods (D23);
 -- they are only written to products that are still unverified and have no allergen rows.
 INSERT INTO categories(name,slug) VALUES ('Ngũ cốc','ngu-coc') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Rau củ','rau-cu') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Trái cây tươi','trai-cay-tuoi') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Thịt, cá & hải sản','thit-ca-hai-san') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Sữa, trứng & đậu hũ','sua-trung-dau-hu') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Đồ uống','do-uong') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Các loại đậu','cac-loai-dau') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
 INSERT INTO categories(name,slug) VALUES ('Các loại hạt','cac-loai-hat') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
 INSERT INTO categories(name,slug) VALUES ('Hạt dinh dưỡng','hat-dinh-duong') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
-INSERT INTO categories(name,slug) VALUES ('Các loại đậu','cac-loai-dau') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
 INSERT INTO categories(name,slug) VALUES ('Trái cây sấy','trai-cay-say') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
-INSERT INTO categories(name,slug) VALUES ('Rau củ & trái cây','rau-cu-trai-cay') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
-INSERT INTO categories(name,slug) VALUES ('Sữa, trứng & đậu hũ','sua-trung-dau-hu') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
-INSERT INTO categories(name,slug) VALUES ('Dầu, bơ hạt & đồ ngọt','thuc-pham-khac') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
+INSERT INTO categories(name,slug) VALUES ('Dầu, gia vị & đồ ngọt','thuc-pham-khac') ON CONFLICT (slug) DO UPDATE SET name=EXCLUDED.name;
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Yến mạch','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169705: Oats (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',69000,40,100,'g',true,false
 FROM categories c WHERE c.slug='ngu-coc'
@@ -18,6 +21,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,389,16.9,66.3,6.9,NULL,10.6,2,'USDA FoodData Central, SR Legacy, FDC ID 169705'
 FROM products p WHERE p.name='Yến mạch'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Yến mạch';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Yến mạch'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Gạo lứt hạt dài','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169703: Rice, brown, long-grain, raw (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',58000,60,100,'g',true,false
 FROM categories c WHERE c.slug='ngu-coc'
@@ -26,6 +34,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,367,7.54,76.2,3.2,0.66,3.6,5,'USDA FoodData Central, SR Legacy, FDC ID 169703'
 FROM products p WHERE p.name='Gạo lứt hạt dài'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Gạo lứt hạt dài';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Gạo lứt hạt dài'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Gạo lứt hạt dài' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -44,6 +57,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,368,14.1,64.2,6.07,NULL,7,5,'USDA FoodData Central, SR Legacy, FDC ID 168874'
 FROM products p WHERE p.name='Hạt diêm mạch'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt diêm mạch';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Hạt diêm mạch'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Hạt diêm mạch' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -62,6 +80,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,346,11.7,75,2.71,NULL,10.3,11,'USDA FoodData Central, SR Legacy, FDC ID 170685'
 FROM products p WHERE p.name='Kiều mạch rang'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Kiều mạch rang';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Kiều mạch rang'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Kiều mạch rang' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -80,6 +103,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,364,10.3,76.3,0.98,0.27,2.7,2,'USDA FoodData Central, SR Legacy, FDC ID 169761'
 FROM products p WHERE p.name='Bột mì trắng đa dụng'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bột mì trắng đa dụng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Bột mì trắng đa dụng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Bột mì trắng đa dụng' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -91,13 +119,225 @@ WITH target AS (
 )
 UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Gạo trắng hạt dài','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169756: Rice, white, long-grain, regular, raw, unenriched), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,90,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Gạo trắng hạt dài');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,365,7.13,80,0.66,0.12,1.3,5,'USDA FoodData Central, SR Legacy, FDC ID 169756'
+FROM products p WHERE p.name='Gạo trắng hạt dài'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Gạo trắng hạt dài';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Gạo trắng hạt dài'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Gạo trắng hạt dài' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Gạo nếp','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168883: Rice, white, glutinous, unenriched, uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',35000,60,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Gạo nếp');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,370,6.81,81.7,0.55,NULL,2.8,7,'USDA FoodData Central, SR Legacy, FDC ID 168883'
+FROM products p WHERE p.name='Gạo nếp'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Gạo nếp';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Gạo nếp'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Gạo nếp' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bánh mì nguyên cám','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172688: Bread, whole-wheat, commercially prepared), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,30,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bánh mì nguyên cám');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,252,12.4,42.7,3.5,4.34,6,455,'USDA FoodData Central, SR Legacy, FDC ID 172688'
+FROM products p WHERE p.name='Bánh mì nguyên cám'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,NULL),is_liquid=is_liquid OR false
+WHERE name='Bánh mì nguyên cám';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Bánh mì nguyên cám'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bánh mì nguyên cám' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('gluten','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mì ống khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168927: Pasta, dry, unenriched), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',39000,50,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mì ống khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,371,13,74.7,1.51,2.67,3.2,6,'USDA FoodData Central, SR Legacy, FDC ID 168927'
+FROM products p WHERE p.name='Mì ống khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mì ống khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Mì ống khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mì ống khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('gluten','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bún gạo khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169742: Rice noodles, dry), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,60,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bún gạo khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,364,5.95,80.2,0.56,0.12,1.6,182,'USDA FoodData Central, SR Legacy, FDC ID 169742'
+FROM products p WHERE p.name='Bún gạo khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bún gạo khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Bún gạo khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bún gạo khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt kê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169702: Millet, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',60000,30,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt kê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,378,11,72.8,4.22,NULL,8.5,5,'USDA FoodData Central, SR Legacy, FDC ID 169702'
+FROM products p WHERE p.name='Hạt kê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt kê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Hạt kê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt kê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Lúa mạch trân châu','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170284: Barley, pearled, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,30,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Lúa mạch trân châu');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,352,9.91,77.7,1.16,0.8,15.6,9,'USDA FoodData Central, SR Legacy, FDC ID 170284'
+FROM products p WHERE p.name='Lúa mạch trân châu'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Lúa mạch trân châu';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Lúa mạch trân châu'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Lúa mạch trân châu' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('gluten','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bột bắp nguyên hạt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169697: Cornmeal, whole-grain, yellow), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',35000,40,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bột bắp nguyên hạt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,362,8.12,76.9,3.59,0.64,7.3,35,'USDA FoodData Central, SR Legacy, FDC ID 169697'
+FROM products p WHERE p.name='Bột bắp nguyên hạt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bột bắp nguyên hạt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Bột bắp nguyên hạt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bột bắp nguyên hạt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bánh gạo lứt không muối','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170250: Snacks, rice cakes, brown rice, plain, unsalted), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,40,100,'g',true,false
+FROM categories c WHERE c.slug='ngu-coc'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bánh gạo lứt không muối');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,387,8.2,81.5,2.8,0.88,4.2,26,'USDA FoodData Central, SR Legacy, FDC ID 170250'
+FROM products p WHERE p.name='Bánh gạo lứt không muối'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bánh gạo lứt không muối';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='ngu-coc' AND p.name='Bánh gạo lứt không muối'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bánh gạo lứt không muối' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Khoai lang','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168482: Sweet potato, raw, unprepared (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',29000,70,100,'g',true,false
-FROM categories c WHERE c.slug='rau-cu-trai-cay'
+FROM categories c WHERE c.slug='rau-cu'
 AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Khoai lang');
 INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
 SELECT p.id,86,1.57,20.1,0.05,4.18,3,55,'USDA FoodData Central, SR Legacy, FDC ID 168482'
 FROM products p WHERE p.name='Khoai lang'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Khoai lang';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Khoai lang'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Khoai lang' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -109,445 +349,18 @@ WITH target AS (
 )
 UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạnh nhân','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170567: Nuts, almonds), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',125000,30,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạnh nhân');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,579,21.2,21.6,49.9,4.35,12.5,1,'USDA FoodData Central, SR Legacy, FDC ID 170567'
-FROM products p WHERE p.name='Hạnh nhân'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạnh nhân' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt điều sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170162: Nuts, cashew nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',145000,22,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt điều sống');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,553,18.2,30.2,43.8,5.91,3.3,12,'USDA FoodData Central, SR Legacy, FDC ID 170162'
-FROM products p WHERE p.name='Hạt điều sống'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt điều sống' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt mắc ca sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170178: Nuts, macadamia nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',215000,0,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt mắc ca sống');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,718,7.91,13.8,75.8,4.57,8.6,5,'USDA FoodData Central, SR Legacy, FDC ID 170178'
-FROM products p WHERE p.name='Hạt mắc ca sống'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt mắc ca sống' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Óc chó','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170187: Nuts, walnuts, english), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',189000,18,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Óc chó');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,654,15.2,13.7,65.2,2.61,6.7,2,'USDA FoodData Central, SR Legacy, FDC ID 170187'
-FROM products p WHERE p.name='Óc chó'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Óc chó' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hồ đào','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170182: Nuts, pecans), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',239000,12,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hồ đào');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,691,9.17,13.9,72,3.97,9.6,0,'USDA FoodData Central, SR Legacy, FDC ID 170182'
-FROM products p WHERE p.name='Hồ đào'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hồ đào' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt dẻ cười','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170184: Nuts, pistachio nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',259000,15,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-hat'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt dẻ cười');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,560,20.2,27.2,45.3,7.66,10.6,1,'USDA FoodData Central, SR Legacy, FDC ID 170184'
-FROM products p WHERE p.name='Hạt dẻ cười'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt dẻ cười' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt chia','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170554: Seeds, chia seeds, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',89000,35,100,'g',true,false
-FROM categories c WHERE c.slug='hat-dinh-duong'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt chia');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,486,16.5,42.1,30.7,NULL,34.4,16,'USDA FoodData Central, SR Legacy, FDC ID 170554'
-FROM products p WHERE p.name='Hạt chia'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt chia' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt lanh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169414: Seeds, flaxseed), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',72000,28,100,'g',true,false
-FROM categories c WHERE c.slug='hat-dinh-duong'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt lanh');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,534,18.3,28.9,42.2,1.55,27.3,30,'USDA FoodData Central, SR Legacy, FDC ID 169414'
-FROM products p WHERE p.name='Hạt lanh'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt lanh' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt bí rang không muối','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170188: Seeds, pumpkin and squash seeds, whole, roasted, without salt), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',96000,24,100,'g',true,false
-FROM categories c WHERE c.slug='hat-dinh-duong'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt bí rang không muối');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,446,18.6,53.8,19.4,NULL,18.4,18,'USDA FoodData Central, SR Legacy, FDC ID 170188'
-FROM products p WHERE p.name='Hạt bí rang không muối'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt bí rang không muối' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Nhân hạt hướng dương','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170562: Seeds, sunflower seed kernels, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',64000,32,100,'g',true,false
-FROM categories c WHERE c.slug='hat-dinh-duong'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nhân hạt hướng dương');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,584,20.8,20,51.5,2.62,8.6,9,'USDA FoodData Central, SR Legacy, FDC ID 170562'
-FROM products p WHERE p.name='Nhân hạt hướng dương'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Nhân hạt hướng dương' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Hạt mè','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170150: Seeds, sesame seeds, whole, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',54000,40,100,'g',true,false
-FROM categories c WHERE c.slug='hat-dinh-duong'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt mè');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,573,17.7,23.4,49.7,0.3,11.8,11,'USDA FoodData Central, SR Legacy, FDC ID 170150'
-FROM products p WHERE p.name='Hạt mè'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Hạt mè' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('sesame','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu đen','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173734: Beans, black, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,45,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu đen');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,341,21.6,62.4,1.42,2.12,15.5,5,'USDA FoodData Central, SR Legacy, FDC ID 173734'
-FROM products p WHERE p.name='Đậu đen'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu đen' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu gà','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173756: Chickpeas (garbanzo beans, bengal gram), mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',75000,26,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu gà');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,378,20.5,63,6.04,10.7,12.2,24,'USDA FoodData Central, SR Legacy, FDC ID 173756'
-FROM products p WHERE p.name='Đậu gà'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu gà' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu lăng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172420: Lentils, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',74000,30,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu lăng');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,352,24.6,63.4,1.06,2.03,10.7,6,'USDA FoodData Central, SR Legacy, FDC ID 172420'
-FROM products p WHERE p.name='Đậu lăng'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu lăng' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu xanh nguyên hạt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174256: Mung beans, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',39000,50,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu xanh nguyên hạt');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,347,23.9,62.6,1.15,6.6,16.3,15,'USDA FoodData Central, SR Legacy, FDC ID 174256'
-FROM products p WHERE p.name='Đậu xanh nguyên hạt'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu xanh nguyên hạt' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173744: Beans, kidney, red, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,36,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu đỏ');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,337,22.5,61.3,1.06,2.1,15.2,12,'USDA FoodData Central, SR Legacy, FDC ID 173744'
-FROM products p WHERE p.name='Đậu đỏ'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu đỏ' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu phộng sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172430: Peanuts, all types, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',38000,55,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu phộng sống');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,567,25.8,16.1,49.2,4.72,8.5,18,'USDA FoodData Central, SR Legacy, FDC ID 172430'
-FROM products p WHERE p.name='Đậu phộng sống'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu phộng sống' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('peanut','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Đậu nành','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174270: Soybeans, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',36000,48,100,'g',true,false
-FROM categories c WHERE c.slug='cac-loai-dau'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu nành');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,446,36.5,30.2,19.9,7.33,9.3,2,'USDA FoodData Central, SR Legacy, FDC ID 174270'
-FROM products p WHERE p.name='Đậu nành'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Đậu nành' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains')) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Nho khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168165: Raisins, dark, seedless (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',68000,34,100,'g',true,false
-FROM categories c WHERE c.slug='trai-cay-say'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nho khô');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,299,3.3,79.3,0.25,65.2,4.5,26,'USDA FoodData Central, SR Legacy, FDC ID 168165'
-FROM products p WHERE p.name='Nho khô'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Nho khô' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Chà là Medjool','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168191: Dates, medjool), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',165000,20,100,'g',true,false
-FROM categories c WHERE c.slug='trai-cay-say'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chà là Medjool');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,277,1.81,75,0.15,66.5,6.7,1,'USDA FoodData Central, SR Legacy, FDC ID 168191'
-FROM products p WHERE p.name='Chà là Medjool'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Chà là Medjool' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Mơ sấy','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173941: Apricots, dried, sulfured, uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',128000,16,100,'g',true,false
-FROM categories c WHERE c.slug='trai-cay-say'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mơ sấy');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,241,3.39,62.6,0.51,53.4,7.3,10,'USDA FoodData Central, SR Legacy, FDC ID 173941'
-FROM products p WHERE p.name='Mơ sấy'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Mơ sấy' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Nam việt quất sấy','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171723: Cranberries, dried, sweetened (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',118000,0,100,'g',true,false
-FROM categories c WHERE c.slug='trai-cay-say'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nam việt quất sấy');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,308,0.17,82.8,1.09,72.6,5.3,5,'USDA FoodData Central, SR Legacy, FDC ID 171723'
-FROM products p WHERE p.name='Nam việt quất sấy'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Nam việt quất sấy' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Bơ sáp','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171705: Avocados, raw, all commercial varieties), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,25,100,'g',true,false
-FROM categories c WHERE c.slug='rau-cu-trai-cay'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bơ sáp');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,160,2,8.53,14.7,0.66,6.7,7,'USDA FoodData Central, SR Legacy, FDC ID 171705'
-FROM products p WHERE p.name='Bơ sáp'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Bơ sáp' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
-SELECT c.id,'Chuối già','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173944: Bananas, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,60,100,'g',true,false
-FROM categories c WHERE c.slug='rau-cu-trai-cay'
-AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chuối già');
-INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
-SELECT p.id,89,1.09,22.8,0.33,12.2,2.6,1,'USDA FoodData Central, SR Legacy, FDC ID 173944'
-FROM products p WHERE p.name='Chuối già'
-ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
-WITH target AS (
-  SELECT p.id FROM products p WHERE p.name='Chuối già' AND NOT p.allergens_verified
-  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
-), added AS (
-  INSERT INTO product_allergens(product_id,allergen_id,kind)
-  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
-  JOIN allergens a ON a.code=v.code
-  ON CONFLICT DO NOTHING RETURNING product_id
-)
-UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
-INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Bông cải xanh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170379: Broccoli, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,30,100,'g',true,false
-FROM categories c WHERE c.slug='rau-cu-trai-cay'
+FROM categories c WHERE c.slug='rau-cu'
 AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bông cải xanh');
 INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
 SELECT p.id,34,2.82,6.64,0.37,1.7,2.6,33,'USDA FoodData Central, SR Legacy, FDC ID 170379'
 FROM products p WHERE p.name='Bông cải xanh'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bông cải xanh';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Bông cải xanh'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Bông cải xanh' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -560,18 +373,1495 @@ WITH target AS (
 UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Cải bó xôi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168462: Spinach, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',35000,28,100,'g',true,false
-FROM categories c WHERE c.slug='rau-cu-trai-cay'
+FROM categories c WHERE c.slug='rau-cu'
 AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cải bó xôi');
 INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
 SELECT p.id,23,2.86,3.63,0.39,0.42,2.2,79,'USDA FoodData Central, SR Legacy, FDC ID 168462'
 FROM products p WHERE p.name='Cải bó xôi'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cải bó xôi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Cải bó xôi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Cải bó xôi' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
 ), added AS (
   INSERT INTO product_allergens(product_id,allergen_id,kind)
   SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cà rốt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170393: Carrots, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,80,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cà rốt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,41,0.93,9.58,0.24,4.74,2.8,69,'USDA FoodData Central, SR Legacy, FDC ID 170393'
+FROM products p WHERE p.name='Cà rốt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cà rốt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Cà rốt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cà rốt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cà chua','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170457: Tomatoes, red, ripe, raw, year round average), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',28000,90,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cà chua');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,18,0.88,3.89,0.2,2.63,1.2,5,'USDA FoodData Central, SR Legacy, FDC ID 170457'
+FROM products p WHERE p.name='Cà chua'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cà chua';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Cà chua'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cà chua' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dưa leo','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168409: Cucumber, with peel, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',22000,90,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dưa leo');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,15,0.65,3.63,0.11,1.67,0.5,2,'USDA FoodData Central, SR Legacy, FDC ID 168409'
+FROM products p WHERE p.name='Dưa leo'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dưa leo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Dưa leo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dưa leo' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bắp cải','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169975: Cabbage, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',19000,60,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bắp cải');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,25,1.28,5.8,0.1,3.2,2.5,18,'USDA FoodData Central, SR Legacy, FDC ID 169975'
+FROM products p WHERE p.name='Bắp cải'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bắp cải';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Bắp cải'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bắp cải' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Súp lơ trắng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169986: Cauliflower, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,40,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Súp lơ trắng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,25,1.92,4.97,0.28,1.91,2,30,'USDA FoodData Central, SR Legacy, FDC ID 169986'
+FROM products p WHERE p.name='Súp lơ trắng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Súp lơ trắng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Súp lơ trắng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Súp lơ trắng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Ớt chuông đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170108: Peppers, sweet, red, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',65000,35,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Ớt chuông đỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,26,0.99,6.03,0.3,4.2,2.1,4,'USDA FoodData Central, SR Legacy, FDC ID 170108'
+FROM products p WHERE p.name='Ớt chuông đỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Ớt chuông đỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Ớt chuông đỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Ớt chuông đỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hành tây','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170000: Onions, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',24000,90,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hành tây');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,40,1.1,9.34,0.1,4.24,1.7,4,'USDA FoodData Central, SR Legacy, FDC ID 170000'
+FROM products p WHERE p.name='Hành tây'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hành tây';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Hành tây'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hành tây' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Tỏi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169230: Garlic, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,70,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Tỏi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,149,6.36,33.1,0.5,1,2.1,17,'USDA FoodData Central, SR Legacy, FDC ID 169230'
+FROM products p WHERE p.name='Tỏi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Tỏi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Tỏi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Tỏi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Khoai tây','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170026: Potatoes, flesh and skin, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,90,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Khoai tây');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,77,2.05,17.5,0.09,0.82,2.1,6,'USDA FoodData Central, SR Legacy, FDC ID 170026'
+FROM products p WHERE p.name='Khoai tây'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Khoai tây';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Khoai tây'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Khoai tây' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bí đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168448: Pumpkin, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',26000,40,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bí đỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,26,1,6.5,0.1,2.76,0.5,1,'USDA FoodData Central, SR Legacy, FDC ID 168448'
+FROM products p WHERE p.name='Bí đỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bí đỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Bí đỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bí đỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cải xoăn kale','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168421: Kale, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,30,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cải xoăn kale');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,35,2.92,4.42,1.49,0.99,4.1,53,'USDA FoodData Central, SR Legacy, FDC ID 168421'
+FROM products p WHERE p.name='Cải xoăn kale'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cải xoăn kale';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Cải xoăn kale'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cải xoăn kale' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Măng tây','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168389: Asparagus, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',95000,25,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Măng tây');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,20,2.2,3.88,0.12,1.88,2.1,2,'USDA FoodData Central, SR Legacy, FDC ID 168389'
+FROM products p WHERE p.name='Măng tây'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Măng tây';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Măng tây'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Măng tây' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nấm mỡ trắng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169251: Mushrooms, white, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',48000,35,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nấm mỡ trắng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,22,3.09,3.26,0.34,1.98,1,5,'USDA FoodData Central, SR Legacy, FDC ID 169251'
+FROM products p WHERE p.name='Nấm mỡ trắng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nấm mỡ trắng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Nấm mỡ trắng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nấm mỡ trắng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nấm hương khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168436: Mushrooms, shiitake, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',120000,30,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nấm hương khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,296,9.58,75.4,0.99,2.21,11.5,13,'USDA FoodData Central, SR Legacy, FDC ID 168436'
+FROM products p WHERE p.name='Nấm hương khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nấm hương khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Nấm hương khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nấm hương khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu Hà Lan','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170419: Peas, green, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',52000,40,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu Hà Lan');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,81,5.42,14.4,0.4,5.67,5.7,5,'USDA FoodData Central, SR Legacy, FDC ID 170419'
+FROM products p WHERE p.name='Đậu Hà Lan'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu Hà Lan';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Đậu Hà Lan'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu Hà Lan' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bắp ngọt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169998: Corn, sweet, yellow, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',15000,70,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bắp ngọt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,86,3.27,18.7,1.35,6.26,2,15,'USDA FoodData Central, SR Legacy, FDC ID 169998'
+FROM products p WHERE p.name='Bắp ngọt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bắp ngọt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Bắp ngọt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bắp ngọt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Củ dền','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169145: Beets, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',35000,40,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Củ dền');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,43,1.61,9.56,0.17,6.76,2.8,78,'USDA FoodData Central, SR Legacy, FDC ID 169145'
+FROM products p WHERE p.name='Củ dền'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Củ dền';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Củ dền'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Củ dền' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Gừng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169231: Ginger root, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',38000,50,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Gừng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,80,1.82,17.8,0.75,1.7,2,13,'USDA FoodData Central, SR Legacy, FDC ID 169231'
+FROM products p WHERE p.name='Gừng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Gừng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Gừng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Gừng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu bắp','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169260: Okra, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',28000,45,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu bắp');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,33,1.93,7.45,0.19,1.48,3.2,7,'USDA FoodData Central, SR Legacy, FDC ID 169260'
+FROM products p WHERE p.name='Đậu bắp'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu bắp';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Đậu bắp'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu bắp' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cải thìa','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170390: Cabbage, chinese (pak-choi), raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',20000,60,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cải thìa');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,13,1.5,2.18,0.2,1.18,1,65,'USDA FoodData Central, SR Legacy, FDC ID 170390'
+FROM products p WHERE p.name='Cải thìa'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cải thìa';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Cải thìa'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cải thìa' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Khổ qua','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168393: Balsam-pear (bitter gourd), pods, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,40,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Khổ qua');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,17,1,3.7,0.17,NULL,2.8,5,'USDA FoodData Central, SR Legacy, FDC ID 168393'
+FROM products p WHERE p.name='Khổ qua'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Khổ qua';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Khổ qua'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Khổ qua' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bí ngòi xanh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169291: Squash, summer, zucchini, includes skin, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',40000,35,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bí ngòi xanh');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,17,1.21,3.11,0.32,2.5,1,8,'USDA FoodData Central, SR Legacy, FDC ID 169291'
+FROM products p WHERE p.name='Bí ngòi xanh'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bí ngòi xanh';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Bí ngòi xanh'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bí ngòi xanh' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Giá đỗ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169957: Mung beans, mature seeds, sprouted, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',12000,50,100,'g',true,false
+FROM categories c WHERE c.slug='rau-cu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Giá đỗ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,30,3.04,5.94,0.18,4.13,1.8,6,'USDA FoodData Central, SR Legacy, FDC ID 169957'
+FROM products p WHERE p.name='Giá đỗ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Giá đỗ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='rau-cu' AND p.name='Giá đỗ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Giá đỗ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bơ sáp','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171705: Avocados, raw, all commercial varieties), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bơ sáp');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,160,2,8.53,14.7,0.66,6.7,7,'USDA FoodData Central, SR Legacy, FDC ID 171705'
+FROM products p WHERE p.name='Bơ sáp'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bơ sáp';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Bơ sáp'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bơ sáp' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Chuối già','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173944: Bananas, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,60,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chuối già');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,89,1.09,22.8,0.33,12.2,2.6,1,'USDA FoodData Central, SR Legacy, FDC ID 173944'
+FROM products p WHERE p.name='Chuối già'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Chuối già';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Chuối già'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Chuối già' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Táo đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171688: Apples, raw, with skin (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',69000,70,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Táo đỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,52,0.26,13.8,0.17,10.4,2.4,1,'USDA FoodData Central, SR Legacy, FDC ID 171688'
+FROM products p WHERE p.name='Táo đỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Táo đỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Táo đỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Táo đỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cam','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169097: Oranges, raw, all commercial varieties), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,80,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cam');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,47,0.94,11.8,0.12,9.35,2.4,0,'USDA FoodData Central, SR Legacy, FDC ID 169097'
+FROM products p WHERE p.name='Cam'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Cam';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Cam'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cam' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Xoài','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169910: Mangos, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,60,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Xoài');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,60,0.82,15,0.38,13.7,1.6,1,'USDA FoodData Central, SR Legacy, FDC ID 169910'
+FROM products p WHERE p.name='Xoài'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Xoài';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Xoài'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Xoài' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đu đủ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169926: Papayas, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đu đủ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,43,0.47,10.8,0.26,7.82,1.7,8,'USDA FoodData Central, SR Legacy, FDC ID 169926'
+FROM products p WHERE p.name='Đu đủ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đu đủ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Đu đủ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đu đủ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Thơm (dứa)','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169124: Pineapple, raw, all varieties), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',28000,50,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Thơm (dứa)');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,50,0.54,13.1,0.12,9.85,1.4,1,'USDA FoodData Central, SR Legacy, FDC ID 169124'
+FROM products p WHERE p.name='Thơm (dứa)'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Thơm (dứa)';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Thơm (dứa)'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Thơm (dứa)' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dưa hấu','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 167765: Watermelon, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',22000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dưa hấu');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,30,0.61,7.55,0.15,6.2,0.4,1,'USDA FoodData Central, SR Legacy, FDC ID 167765'
+FROM products p WHERE p.name='Dưa hấu'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dưa hấu';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Dưa hấu'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dưa hấu' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nho xanh không hạt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174683: Grapes, red or green (European type, such as Thompson seedless), raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',110000,35,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nho xanh không hạt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,69,0.72,18.1,0.16,15.5,0.9,2,'USDA FoodData Central, SR Legacy, FDC ID 174683'
+FROM products p WHERE p.name='Nho xanh không hạt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nho xanh không hạt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Nho xanh không hạt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nho xanh không hạt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dâu tây','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 167762: Strawberries, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',130000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dâu tây');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,32,0.67,7.68,0.3,4.89,2,1,'USDA FoodData Central, SR Legacy, FDC ID 167762'
+FROM products p WHERE p.name='Dâu tây'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dâu tây';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Dâu tây'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dâu tây' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Việt quất tươi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171711: Blueberries, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',150000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Việt quất tươi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,57,0.74,14.5,0.33,9.96,2.4,1,'USDA FoodData Central, SR Legacy, FDC ID 171711'
+FROM products p WHERE p.name='Việt quất tươi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Việt quất tươi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Việt quất tươi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Việt quất tươi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Kiwi xanh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168153: Kiwifruit, green, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',95000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Kiwi xanh');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,61,1.14,14.7,0.52,8.99,3,3,'USDA FoodData Central, SR Legacy, FDC ID 168153'
+FROM products p WHERE p.name='Kiwi xanh'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Kiwi xanh';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Kiwi xanh'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Kiwi xanh' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Ổi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173044: Guavas, common, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,50,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Ổi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,68,2.55,14.3,0.95,8.92,5.4,2,'USDA FoodData Central, SR Legacy, FDC ID 173044'
+FROM products p WHERE p.name='Ổi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Ổi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Ổi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Ổi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Chanh dây','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169108: Passion-fruit, (granadilla), purple, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',40000,45,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chanh dây');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,97,2.2,23.4,0.7,11.2,10.4,28,'USDA FoodData Central, SR Legacy, FDC ID 169108'
+FROM products p WHERE p.name='Chanh dây'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Chanh dây';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Chanh dây'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Chanh dây' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bưởi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 167754: Pummelo, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',60000,35,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bưởi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,38,0.76,9.62,0.04,NULL,1,1,'USDA FoodData Central, SR Legacy, FDC ID 167754'
+FROM products p WHERE p.name='Bưởi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bưởi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Bưởi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bưởi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sầu riêng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168192: Durian, raw or frozen), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',180000,15,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sầu riêng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,147,1.47,27.1,5.33,NULL,3.8,2,'USDA FoodData Central, SR Legacy, FDC ID 168192'
+FROM products p WHERE p.name='Sầu riêng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Sầu riêng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Sầu riêng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sầu riêng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nhãn','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169089: Longans, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',50000,30,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nhãn');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,60,1.31,15.1,0.1,NULL,1.1,0,'USDA FoodData Central, SR Legacy, FDC ID 169089'
+FROM products p WHERE p.name='Nhãn'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nhãn';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Nhãn'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nhãn' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Vải thiều','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169086: Litchis, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',65000,30,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Vải thiều');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,66,0.83,16.5,0.44,15.2,1.3,1,'USDA FoodData Central, SR Legacy, FDC ID 169086'
+FROM products p WHERE p.name='Vải thiều'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Vải thiều';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Vải thiều'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Vải thiều' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mít','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174687: Jackfruit, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mít');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,95,1.72,23.2,0.64,19.1,1.5,2,'USDA FoodData Central, SR Legacy, FDC ID 174687'
+FROM products p WHERE p.name='Mít'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mít';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Mít'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mít' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Lê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169118: Pears, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',75000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Lê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,57,0.36,15.2,0.14,9.75,3.1,1,'USDA FoodData Central, SR Legacy, FDC ID 169118'
+FROM products p WHERE p.name='Lê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Lê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Lê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Lê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Chanh vàng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 167746: Lemons, raw, without peel), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',60000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chanh vàng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,29,1.1,9.32,0.3,2.5,2.8,2,'USDA FoodData Central, SR Legacy, FDC ID 167746'
+FROM products p WHERE p.name='Chanh vàng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Chanh vàng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Chanh vàng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Chanh vàng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mãng cầu ta','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168175: Sugar-apples, (sweetsop), raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',70000,20,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mãng cầu ta');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,94,2.06,23.6,0.29,NULL,4.4,9,'USDA FoodData Central, SR Legacy, FDC ID 168175'
+FROM products p WHERE p.name='Mãng cầu ta'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mãng cầu ta';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Mãng cầu ta'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mãng cầu ta' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mận','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169949: Plums, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',80000,30,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mận');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,46,0.7,11.4,0.28,9.92,1.4,0,'USDA FoodData Central, SR Legacy, FDC ID 169949'
+FROM products p WHERE p.name='Mận'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mận';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Mận'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mận' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hồng giòn','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169941: Persimmons, japanese, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',90000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-tuoi'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hồng giòn');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,70,0.58,18.6,0.19,12.5,3.6,1,'USDA FoodData Central, SR Legacy, FDC ID 169941'
+FROM products p WHERE p.name='Hồng giòn'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hồng giòn';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-tuoi' AND p.name='Hồng giòn'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hồng giòn' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Ức gà phi lê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171077: Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',89000,40,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Ức gà phi lê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,120,22.5,0,2.62,0,0,45,'USDA FoodData Central, SR Legacy, FDC ID 171077'
+FROM products p WHERE p.name='Ức gà phi lê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Ức gà phi lê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Ức gà phi lê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Ức gà phi lê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đùi gà rút xương','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173627: Chicken, broilers or fryers, dark meat, thigh, meat only, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',79000,40,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đùi gà rút xương');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,121,19.7,0,4.12,0,0,95,'USDA FoodData Central, SR Legacy, FDC ID 173627'
+FROM products p WHERE p.name='Đùi gà rút xương'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Đùi gà rút xương';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Đùi gà rút xương'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đùi gà rút xương' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Thịt bò xay 90% nạc','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174030: Beef, ground, 90% lean meat / 10% fat, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',185000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Thịt bò xay 90% nạc');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,176,20,0,10,0,0,66,'USDA FoodData Central, SR Legacy, FDC ID 174030'
+FROM products p WHERE p.name='Thịt bò xay 90% nạc'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Thịt bò xay 90% nạc';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Thịt bò xay 90% nạc'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Thịt bò xay 90% nạc' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Thăn bò (sirloin)','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171804: Beef, top sirloin, steak, separable lean only, trimmed to 1/8" fat, select, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',320000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Thăn bò (sirloin)');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,127,22.3,0,3.54,0,0,56,'USDA FoodData Central, SR Legacy, FDC ID 171804'
+FROM products p WHERE p.name='Thăn bò (sirloin)'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Thăn bò (sirloin)';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Thăn bò (sirloin)'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Thăn bò (sirloin)' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Thăn heo','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168249: Pork, fresh, loin, tenderloin, separable lean only, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',135000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Thăn heo');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,109,21,0,2.17,0,0,53,'USDA FoodData Central, SR Legacy, FDC ID 168249'
+FROM products p WHERE p.name='Thăn heo'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Thăn heo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Thăn heo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Thăn heo' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Thịt vịt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172410: Duck, domesticated, meat only, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',110000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Thịt vịt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,135,18.3,0.94,5.95,0,0,74,'USDA FoodData Central, SR Legacy, FDC ID 172410'
+FROM products p WHERE p.name='Thịt vịt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Thịt vịt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Thịt vịt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Thịt vịt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá hồi phi lê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175167: Fish, salmon, Atlantic, farmed, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',390000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá hồi phi lê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,208,20.4,0,13.4,0,0,59,'USDA FoodData Central, SR Legacy, FDC ID 175167'
+FROM products p WHERE p.name='Cá hồi phi lê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá hồi phi lê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá hồi phi lê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá hồi phi lê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá ngừ vây vàng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175159: Fish, tuna, fresh, yellowfin, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',280000,15,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá ngừ vây vàng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,109,24.4,0,0.49,0,0,45,'USDA FoodData Central, SR Legacy, FDC ID 175159'
+FROM products p WHERE p.name='Cá ngừ vây vàng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá ngừ vây vàng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá ngừ vây vàng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá ngừ vây vàng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá thu','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175119: Fish, mackerel, Atlantic, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',160000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá thu');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,205,18.6,0,13.9,0,0,90,'USDA FoodData Central, SR Legacy, FDC ID 175119'
+FROM products p WHERE p.name='Cá thu'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá thu';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá thu'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá thu' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá rô phi phi lê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175176: Fish, tilapia, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',95000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá rô phi phi lê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,96,20.1,0,1.7,0,0,52,'USDA FoodData Central, SR Legacy, FDC ID 175176'
+FROM products p WHERE p.name='Cá rô phi phi lê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá rô phi phi lê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá rô phi phi lê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá rô phi phi lê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá trê phi lê','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175165: Fish, catfish, channel, farmed, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',85000,25,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá trê phi lê');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,119,15.2,0,5.94,0,0,98,'USDA FoodData Central, SR Legacy, FDC ID 175165'
+FROM products p WHERE p.name='Cá trê phi lê'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá trê phi lê';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá trê phi lê'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá trê phi lê' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Tôm tươi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175179: Crustaceans, shrimp, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',250000,25,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Tôm tươi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,85,20.1,0,0.51,NULL,NULL,119,'USDA FoodData Central, SR Legacy, FDC ID 175179'
+FROM products p WHERE p.name='Tôm tươi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Tôm tươi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Tôm tươi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Tôm tươi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('shellfish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cua biển','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174204: Crustaceans, crab, blue, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',350000,10,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cua biển');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,87,18.1,0.04,1.08,NULL,0,293,'USDA FoodData Central, SR Legacy, FDC ID 174204'
+FROM products p WHERE p.name='Cua biển'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cua biển';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cua biển'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cua biển' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('shellfish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mực ống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174223: Mollusks, squid, mixed species, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',220000,15,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mực ống');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,92,15.6,3.08,1.38,0,0,44,'USDA FoodData Central, SR Legacy, FDC ID 174223'
+FROM products p WHERE p.name='Mực ống'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Mực ống';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Mực ống'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mực ống' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('shellfish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nghêu','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174214: Mollusks, clam, mixed species, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',60000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nghêu');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,86,14.7,3.57,0.96,0,0,601,'USDA FoodData Central, SR Legacy, FDC ID 174214'
+FROM products p WHERE p.name='Nghêu'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Nghêu';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Nghêu'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nghêu' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('shellfish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá ngừ ngâm nước (hộp)','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173709: Fish, tuna, light, canned in water, drained solids (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,60,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá ngừ ngâm nước (hộp)');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,86,19.4,0,0.96,0,0,247,'USDA FoodData Central, SR Legacy, FDC ID 173709'
+FROM products p WHERE p.name='Cá ngừ ngâm nước (hộp)'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá ngừ ngâm nước (hộp)';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá ngừ ngâm nước (hộp)'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá ngừ ngâm nước (hộp)' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cá mòi ngâm dầu (hộp)','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175139: Fish, sardine, Atlantic, canned in oil, drained solids with bone), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',38000,60,100,'g',true,false
+FROM categories c WHERE c.slug='thit-ca-hai-san'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cá mòi ngâm dầu (hộp)');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,208,24.6,0,11.4,0,0,307,'USDA FoodData Central, SR Legacy, FDC ID 175139'
+FROM products p WHERE p.name='Cá mòi ngâm dầu (hộp)'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Cá mòi ngâm dầu (hộp)';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thit-ca-hai-san' AND p.name='Cá mòi ngâm dầu (hộp)'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cá mòi ngâm dầu (hộp)' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
   JOIN allergens a ON a.code=v.code
   ON CONFLICT DO NOTHING RETURNING product_id
 )
@@ -584,6 +1874,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,73,9.95,3.94,1.92,3.56,0,34,'USDA FoodData Central, SR Legacy, FDC ID 170903'
 FROM products p WHERE p.name='Sữa chua Hy Lạp ít béo'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Sữa chua Hy Lạp ít béo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa chua Hy Lạp ít béo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Sữa chua Hy Lạp ít béo' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -602,6 +1897,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,144,17.3,2.78,8.72,NULL,2.3,14,'USDA FoodData Central, SR Legacy, FDC ID 172475'
 FROM products p WHERE p.name='Đậu hũ cứng'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu hũ cứng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Đậu hũ cứng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Đậu hũ cứng' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -620,6 +1920,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,143,12.6,0.72,9.51,0.37,0,142,'USDA FoodData Central, SR Legacy, FDC ID 171287'
 FROM products p WHERE p.name='Trứng gà'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Trứng gà';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Trứng gà'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Trứng gà' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -638,12 +1943,1236 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,15,0.4,1.31,0.96,0.81,0.2,72,'USDA FoodData Central, SR Legacy, FDC ID 174832'
 FROM products p WHERE p.name='Sữa hạnh nhân không đường'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Sữa hạnh nhân không đường';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa hạnh nhân không đường'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Sữa hạnh nhân không đường' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
 ), added AS (
   INSERT INTO product_allergens(product_id,allergen_id,kind)
   SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains'),('soy','may_contain')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sữa tươi nguyên kem','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171265: Milk, whole, 3.25% milkfat, with added vitamin D), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',38000,60,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sữa tươi nguyên kem');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,61,3.15,4.8,3.25,5.05,0,43,'USDA FoodData Central, SR Legacy, FDC ID 171265'
+FROM products p WHERE p.name='Sữa tươi nguyên kem'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR true
+WHERE name='Sữa tươi nguyên kem';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa tươi nguyên kem'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sữa tươi nguyên kem' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sữa tách béo','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171269: Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',36000,50,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sữa tách béo');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,34,3.37,4.96,0.08,5.09,0,42,'USDA FoodData Central, SR Legacy, FDC ID 171269'
+FROM products p WHERE p.name='Sữa tách béo'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR true
+WHERE name='Sữa tách béo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa tách béo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sữa tách béo' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sữa chua không đường','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171284: Yogurt, plain, whole milk), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',32000,60,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sữa chua không đường');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,61,3.47,4.66,3.25,4.66,0,46,'USDA FoodData Central, SR Legacy, FDC ID 171284'
+FROM products p WHERE p.name='Sữa chua không đường'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Sữa chua không đường';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa chua không đường'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sữa chua không đường' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Phô mai cheddar','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173414: Cheese, cheddar (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',120000,30,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Phô mai cheddar');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,403,22.9,3.37,33.3,0.48,0,653,'USDA FoodData Central, SR Legacy, FDC ID 173414'
+FROM products p WHERE p.name='Phô mai cheddar'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Phô mai cheddar';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Phô mai cheddar'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Phô mai cheddar' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Phô mai mozzarella','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170847: Cheese, mozzarella, part skim milk), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',110000,30,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Phô mai mozzarella');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,254,24.3,2.77,15.9,1.13,0,619,'USDA FoodData Central, SR Legacy, FDC ID 170847'
+FROM products p WHERE p.name='Phô mai mozzarella'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Phô mai mozzarella';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Phô mai mozzarella'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Phô mai mozzarella' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Phô mai tươi cottage','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172182: Cheese, cottage, lowfat, 2% milkfat), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',95000,25,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Phô mai tươi cottage');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,81,10.4,4.76,2.27,4,0,308,'USDA FoodData Central, SR Legacy, FDC ID 172182'
+FROM products p WHERE p.name='Phô mai tươi cottage'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Phô mai tươi cottage';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Phô mai tươi cottage'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Phô mai tươi cottage' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bơ lạt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173430: Butter, without salt), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',85000,40,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bơ lạt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,717,0.85,0.06,81.1,0.06,0,11,'USDA FoodData Central, SR Legacy, FDC ID 173430'
+FROM products p WHERE p.name='Bơ lạt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Bơ lạt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Bơ lạt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bơ lạt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Trứng vịt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172189: Egg, duck, whole, fresh, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,60,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Trứng vịt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,185,12.8,1.45,13.8,0.93,0,146,'USDA FoodData Central, SR Legacy, FDC ID 172189'
+FROM products p WHERE p.name='Trứng vịt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Trứng vịt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Trứng vịt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Trứng vịt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('egg','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Trứng cút','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172191: Egg, quail, whole, fresh, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',30000,60,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Trứng cút');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,158,13,0.41,11.1,0.4,0,141,'USDA FoodData Central, SR Legacy, FDC ID 172191'
+FROM products p WHERE p.name='Trứng cút'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Trứng cút';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Trứng cút'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Trứng cút' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('egg','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sữa đậu nành','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172446: Soymilk, original and vanilla, unfortified), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',28000,60,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sữa đậu nành');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,54,3.27,6.28,1.75,3.99,0.6,51,'USDA FoodData Central, SR Legacy, FDC ID 172446'
+FROM products p WHERE p.name='Sữa đậu nành'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Sữa đậu nành';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Sữa đậu nành'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sữa đậu nành' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Tempeh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174272: Tempeh), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',65000,25,100,'g',true,false
+FROM categories c WHERE c.slug='sua-trung-dau-hu'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Tempeh');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,192,20.3,7.64,10.8,NULL,NULL,9,'USDA FoodData Central, SR Legacy, FDC ID 174272'
+FROM products p WHERE p.name='Tempeh'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Tempeh';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='sua-trung-dau-hu' AND p.name='Tempeh'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Tempeh' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước cam tươi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169098: Orange juice, raw (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,40,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước cam tươi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,45,0.7,10.4,0.2,8.4,0.2,1,'USDA FoodData Central, SR Legacy, FDC ID 169098'
+FROM products p WHERE p.name='Nước cam tươi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Nước cam tươi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Nước cam tươi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước cam tươi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước dừa tươi','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170174: Nuts, coconut water (liquid from coconuts)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,50,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước dừa tươi');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,19,0.72,3.71,0.2,2.61,1.1,105,'USDA FoodData Central, SR Legacy, FDC ID 170174'
+FROM products p WHERE p.name='Nước dừa tươi'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Nước dừa tươi';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Nước dừa tươi'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước dừa tươi' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Trà xanh pha sẵn','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171917: Beverages, tea, green, brewed, regular), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',20000,50,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Trà xanh pha sẵn');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,1,0.22,0,0,0,0,1,'USDA FoodData Central, SR Legacy, FDC ID 171917'
+FROM products p WHERE p.name='Trà xanh pha sẵn'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Trà xanh pha sẵn';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Trà xanh pha sẵn'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Trà xanh pha sẵn' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hồng trà pha sẵn','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173227: Beverages, tea, black, brewed, prepared with tap water), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',20000,50,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hồng trà pha sẵn');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,1,0,0.3,0,0,0,3,'USDA FoodData Central, SR Legacy, FDC ID 173227'
+FROM products p WHERE p.name='Hồng trà pha sẵn'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Hồng trà pha sẵn';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Hồng trà pha sẵn'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hồng trà pha sẵn' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Cà phê đen pha phin','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171890: Beverages, coffee, brewed, prepared with tap water), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',25000,50,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Cà phê đen pha phin');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,1,0.12,0,0.02,0,0,2,'USDA FoodData Central, SR Legacy, FDC ID 171890'
+FROM products p WHERE p.name='Cà phê đen pha phin'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Cà phê đen pha phin';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Cà phê đen pha phin'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Cà phê đen pha phin' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước ép táo không đường','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173933: Apple juice, canned or bottled, unsweetened, without added ascorbic acid), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',48000,40,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước ép táo không đường');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,46,0.1,11.3,0.13,9.62,0.2,4,'USDA FoodData Central, SR Legacy, FDC ID 173933'
+FROM products p WHERE p.name='Nước ép táo không đường'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Nước ép táo không đường';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Nước ép táo không đường'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước ép táo không đường' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước ép cà chua không muối','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170545: Tomato juice, canned, without salt added), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,30,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước ép cà chua không muối');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,17,0.85,3.53,0.29,2.58,0.4,10,'USDA FoodData Central, SR Legacy, FDC ID 170545'
+FROM products p WHERE p.name='Nước ép cà chua không muối'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Nước ép cà chua không muối';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Nước ép cà chua không muối'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước ép cà chua không muối' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Kefir ít béo','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170904: Kefir, lowfat, plain, LIFEWAY), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',68000,25,100,'g',true,false
+FROM categories c WHERE c.slug='do-uong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Kefir ít béo');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,43,3.79,4.77,1.02,4.61,0,40,'USDA FoodData Central, SR Legacy, FDC ID 170904'
+FROM products p WHERE p.name='Kefir ít béo'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR true
+WHERE name='Kefir ít béo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='do-uong' AND p.name='Kefir ít béo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Kefir ít béo' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('milk','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu đen','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173734: Beans, black, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',42000,45,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu đen');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,341,21.6,62.4,1.42,2.12,15.5,5,'USDA FoodData Central, SR Legacy, FDC ID 173734'
+FROM products p WHERE p.name='Đậu đen'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu đen';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu đen'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu đen' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu gà','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173756: Chickpeas (garbanzo beans, bengal gram), mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',75000,26,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu gà');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,378,20.5,63,6.04,10.7,12.2,24,'USDA FoodData Central, SR Legacy, FDC ID 173756'
+FROM products p WHERE p.name='Đậu gà'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu gà';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu gà'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu gà' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu lăng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172420: Lentils, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',74000,30,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu lăng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,352,24.6,63.4,1.06,2.03,10.7,6,'USDA FoodData Central, SR Legacy, FDC ID 172420'
+FROM products p WHERE p.name='Đậu lăng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu lăng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu lăng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu lăng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu xanh nguyên hạt','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174256: Mung beans, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',39000,50,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu xanh nguyên hạt');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,347,23.9,62.6,1.15,6.6,16.3,15,'USDA FoodData Central, SR Legacy, FDC ID 174256'
+FROM products p WHERE p.name='Đậu xanh nguyên hạt'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu xanh nguyên hạt';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu xanh nguyên hạt'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu xanh nguyên hạt' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173744: Beans, kidney, red, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,36,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu đỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,337,22.5,61.3,1.06,2.1,15.2,12,'USDA FoodData Central, SR Legacy, FDC ID 173744'
+FROM products p WHERE p.name='Đậu đỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu đỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu đỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu đỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu phộng sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172430: Peanuts, all types, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',38000,55,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu phộng sống');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,567,25.8,16.1,49.2,4.72,8.5,18,'USDA FoodData Central, SR Legacy, FDC ID 172430'
+FROM products p WHERE p.name='Đậu phộng sống'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu phộng sống';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu phộng sống'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu phộng sống' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('peanut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu nành','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174270: Soybeans, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',36000,48,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu nành');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,446,36.5,30.2,19.9,7.33,9.3,2,'USDA FoodData Central, SR Legacy, FDC ID 174270'
+FROM products p WHERE p.name='Đậu nành'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu nành';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu nành'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu nành' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu trắng','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175202: Beans, white, mature seeds, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',48000,40,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu trắng');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,333,23.4,60.3,0.85,2.11,15.2,16,'USDA FoodData Central, SR Legacy, FDC ID 175202'
+FROM products p WHERE p.name='Đậu trắng'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu trắng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu trắng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu trắng' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu pinto','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 175199: Beans, pinto, mature seeds, raw (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',52000,35,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu pinto');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,347,21.4,62.6,1.23,2.11,15.5,12,'USDA FoodData Central, SR Legacy, FDC ID 175199'
+FROM products p WHERE p.name='Đậu pinto'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu pinto';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu pinto'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu pinto' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu lăng đỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174284: Lentils, pink or red, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',58000,35,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu lăng đỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,358,23.9,63.1,2.17,NULL,10.8,7,'USDA FoodData Central, SR Legacy, FDC ID 174284'
+FROM products p WHERE p.name='Đậu lăng đỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu lăng đỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu lăng đỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu lăng đỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Đậu nành Nhật (edamame)','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168410: Edamame, frozen, unprepared), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,40,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-dau'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Đậu nành Nhật (edamame)');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,109,11.2,7.61,4.73,2.48,4.8,6,'USDA FoodData Central, SR Legacy, FDC ID 168410'
+FROM products p WHERE p.name='Đậu nành Nhật (edamame)'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Đậu nành Nhật (edamame)';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-dau' AND p.name='Đậu nành Nhật (edamame)'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Đậu nành Nhật (edamame)' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạnh nhân','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170567: Nuts, almonds), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',125000,30,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạnh nhân');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,579,21.2,21.6,49.9,4.35,12.5,1,'USDA FoodData Central, SR Legacy, FDC ID 170567'
+FROM products p WHERE p.name='Hạnh nhân'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạnh nhân';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạnh nhân'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạnh nhân' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt điều sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170162: Nuts, cashew nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',145000,22,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt điều sống');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,553,18.2,30.2,43.8,5.91,3.3,12,'USDA FoodData Central, SR Legacy, FDC ID 170162'
+FROM products p WHERE p.name='Hạt điều sống'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt điều sống';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt điều sống'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt điều sống' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt mắc ca sống','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170178: Nuts, macadamia nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',215000,0,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt mắc ca sống');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,718,7.91,13.8,75.8,4.57,8.6,5,'USDA FoodData Central, SR Legacy, FDC ID 170178'
+FROM products p WHERE p.name='Hạt mắc ca sống'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt mắc ca sống';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt mắc ca sống'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt mắc ca sống' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Óc chó','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170187: Nuts, walnuts, english), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',189000,18,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Óc chó');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,654,15.2,13.7,65.2,2.61,6.7,2,'USDA FoodData Central, SR Legacy, FDC ID 170187'
+FROM products p WHERE p.name='Óc chó'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Óc chó';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Óc chó'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Óc chó' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hồ đào','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170182: Nuts, pecans), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',239000,12,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hồ đào');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,691,9.17,13.9,72,3.97,9.6,0,'USDA FoodData Central, SR Legacy, FDC ID 170182'
+FROM products p WHERE p.name='Hồ đào'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hồ đào';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hồ đào'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hồ đào' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt dẻ cười','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170184: Nuts, pistachio nuts, raw), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',259000,15,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt dẻ cười');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,560,20.2,27.2,45.3,7.66,10.6,1,'USDA FoodData Central, SR Legacy, FDC ID 170184'
+FROM products p WHERE p.name='Hạt dẻ cười'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt dẻ cười';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt dẻ cười'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt dẻ cười' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt phỉ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170581: Nuts, hazelnuts or filberts), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',190000,20,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt phỉ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,628,15,16.7,60.8,4.34,9.7,0,'USDA FoodData Central, SR Legacy, FDC ID 170581'
+FROM products p WHERE p.name='Hạt phỉ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt phỉ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt phỉ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt phỉ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt Brazil','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170569: Nuts, brazilnuts, dried, unblanched), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',210000,15,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt Brazil');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,659,14.3,11.7,67.1,2.33,7.5,3,'USDA FoodData Central, SR Legacy, FDC ID 170569'
+FROM products p WHERE p.name='Hạt Brazil'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt Brazil';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt Brazil'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt Brazil' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt thông','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170591: Nuts, pine nuts, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',260000,15,100,'g',true,false
+FROM categories c WHERE c.slug='cac-loai-hat'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt thông');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,673,13.7,13.1,68.4,3.59,3.7,2,'USDA FoodData Central, SR Legacy, FDC ID 170591'
+FROM products p WHERE p.name='Hạt thông'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt thông';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='cac-loai-hat' AND p.name='Hạt thông'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt thông' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt chia','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170554: Seeds, chia seeds, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',89000,35,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt chia');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,486,16.5,42.1,30.7,NULL,34.4,16,'USDA FoodData Central, SR Legacy, FDC ID 170554'
+FROM products p WHERE p.name='Hạt chia'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt chia';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Hạt chia'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt chia' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt lanh','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169414: Seeds, flaxseed), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',72000,28,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt lanh');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,534,18.3,28.9,42.2,1.55,27.3,30,'USDA FoodData Central, SR Legacy, FDC ID 169414'
+FROM products p WHERE p.name='Hạt lanh'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt lanh';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Hạt lanh'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt lanh' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt bí rang không muối','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170188: Seeds, pumpkin and squash seeds, whole, roasted, without salt), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',96000,24,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt bí rang không muối');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,446,18.6,53.8,19.4,NULL,18.4,18,'USDA FoodData Central, SR Legacy, FDC ID 170188'
+FROM products p WHERE p.name='Hạt bí rang không muối'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt bí rang không muối';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Hạt bí rang không muối'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt bí rang không muối' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nhân hạt hướng dương','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170562: Seeds, sunflower seed kernels, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',64000,32,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nhân hạt hướng dương');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,584,20.8,20,51.5,2.62,8.6,9,'USDA FoodData Central, SR Legacy, FDC ID 170562'
+FROM products p WHERE p.name='Nhân hạt hướng dương'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nhân hạt hướng dương';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Nhân hạt hướng dương'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nhân hạt hướng dương' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt mè','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170150: Seeds, sesame seeds, whole, dried), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',54000,40,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt mè');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,573,17.7,23.4,49.7,0.3,11.8,11,'USDA FoodData Central, SR Legacy, FDC ID 170150'
+FROM products p WHERE p.name='Hạt mè'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt mè';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Hạt mè'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt mè' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('sesame','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Hạt gai dầu tách vỏ','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170148: Seeds, hemp seed, hulled), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',180000,20,100,'g',true,false
+FROM categories c WHERE c.slug='hat-dinh-duong'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Hạt gai dầu tách vỏ');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,553,31.6,8.67,48.8,1.5,4,5,'USDA FoodData Central, SR Legacy, FDC ID 170148'
+FROM products p WHERE p.name='Hạt gai dầu tách vỏ'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Hạt gai dầu tách vỏ';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='hat-dinh-duong' AND p.name='Hạt gai dầu tách vỏ'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Hạt gai dầu tách vỏ' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nho khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168165: Raisins, dark, seedless (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',68000,34,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nho khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,299,3.3,79.3,0.25,65.2,4.5,26,'USDA FoodData Central, SR Legacy, FDC ID 168165'
+FROM products p WHERE p.name='Nho khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nho khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Nho khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nho khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Chà là Medjool','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168191: Dates, medjool), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',165000,20,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chà là Medjool');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,277,1.81,75,0.15,66.5,6.7,1,'USDA FoodData Central, SR Legacy, FDC ID 168191'
+FROM products p WHERE p.name='Chà là Medjool'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Chà là Medjool';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Chà là Medjool'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Chà là Medjool' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mơ sấy','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173941: Apricots, dried, sulfured, uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',128000,16,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mơ sấy');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,241,3.39,62.6,0.51,53.4,7.3,10,'USDA FoodData Central, SR Legacy, FDC ID 173941'
+FROM products p WHERE p.name='Mơ sấy'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mơ sấy';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Mơ sấy'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mơ sấy' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nam việt quất sấy','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171723: Cranberries, dried, sweetened (Includes foods for USDA''s Food Distribution Program)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',118000,0,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nam việt quất sấy');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,308,0.17,82.8,1.09,72.6,5.3,5,'USDA FoodData Central, SR Legacy, FDC ID 171723'
+FROM products p WHERE p.name='Nam việt quất sấy'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Nam việt quất sấy';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Nam việt quất sấy'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nam việt quất sấy' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Mận khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168162: Plums, dried (prunes), uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',95000,30,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Mận khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,240,2.18,63.9,0.38,38.1,7.1,2,'USDA FoodData Central, SR Legacy, FDC ID 168162'
+FROM products p WHERE p.name='Mận khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Mận khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Mận khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Mận khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sung khô','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174665: Figs, dried, uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',140000,25,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sung khô');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,249,3.3,63.9,0.93,47.9,9.8,10,'USDA FoodData Central, SR Legacy, FDC ID 174665'
+FROM products p WHERE p.name='Sung khô'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Sung khô';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Sung khô'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sung khô' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Táo sấy','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171691: Apples, dried, sulfured, uncooked), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',85000,30,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Táo sấy');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,243,0.93,65.9,0.32,57.2,8.7,87,'USDA FoodData Central, SR Legacy, FDC ID 171691'
+FROM products p WHERE p.name='Táo sấy'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Táo sấy';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Táo sấy'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Táo sấy' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Chuối sấy giòn','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168849: Snacks, banana chips), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',45000,40,100,'g',true,false
+FROM categories c WHERE c.slug='trai-cay-say'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Chuối sấy giòn');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,519,2.3,58.4,33.6,35.3,7.7,6,'USDA FoodData Central, SR Legacy, FDC ID 168849'
+FROM products p WHERE p.name='Chuối sấy giòn'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Chuối sấy giòn';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='trai-cay-say' AND p.name='Chuối sấy giòn'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Chuối sấy giòn' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
   JOIN allergens a ON a.code=v.code
   ON CONFLICT DO NOTHING RETURNING product_id
 )
@@ -656,6 +3185,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,598,22.2,22.3,51.4,10.5,5,17,'USDA FoodData Central, SR Legacy, FDC ID 172470'
 FROM products p WHERE p.name='Bơ đậu phộng'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bơ đậu phộng';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Bơ đậu phộng'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Bơ đậu phộng' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -674,6 +3208,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,884,0,0,100,0,0,2,'USDA FoodData Central, SR Legacy, FDC ID 171413'
 FROM products p WHERE p.name='Dầu ô liu nguyên chất'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dầu ô liu nguyên chất';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Dầu ô liu nguyên chất'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Dầu ô liu nguyên chất' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -692,6 +3231,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,304,0.3,82.4,0,82.1,0.2,4,'USDA FoodData Central, SR Legacy, FDC ID 169640'
 FROM products p WHERE p.name='Mật ong'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR false
+WHERE name='Mật ong';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Mật ong'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 WITH target AS (
   SELECT p.id FROM products p WHERE p.name='Mật ong' AND NOT p.allergens_verified
   AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
@@ -710,6 +3254,11 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,228,19.6,57.9,13.7,1.75,37,21,'USDA FoodData Central, SR Legacy, FDC ID 169593'
 FROM products p WHERE p.name='Bột ca cao không đường'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bột ca cao không đường';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Bột ca cao không đường'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
 INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
 SELECT c.id,'Sô cô la đen 70–85%','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170273: Chocolate, dark, 70-85% cacao solids), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',89000,0,100,'g',true,false
 FROM categories c WHERE c.slug='thuc-pham-khac'
@@ -718,3 +3267,217 @@ INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_
 SELECT p.id,598,7.79,45.9,42.6,24,10.9,20,'USDA FoodData Central, SR Legacy, FDC ID 170273'
 FROM products p WHERE p.name='Sô cô la đen 70–85%'
 ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,NULL),is_liquid=is_liquid OR false
+WHERE name='Sô cô la đen 70–85%';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Sô cô la đen 70–85%'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dầu dừa','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171412: Oil, coconut), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',120000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dầu dừa');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,892,0,0,99.1,0,0,0,'USDA FoodData Central, SR Legacy, FDC ID 171412'
+FROM products p WHERE p.name='Dầu dừa'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dầu dừa';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Dầu dừa'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dầu dừa' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dầu hạt cải','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 172336: Oil, canola), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',75000,40,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dầu hạt cải');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,884,0,0,100,0,0,0,'USDA FoodData Central, SR Legacy, FDC ID 172336'
+FROM products p WHERE p.name='Dầu hạt cải'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dầu hạt cải';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Dầu hạt cải'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dầu hạt cải' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Dầu mè','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 171016: Oil, sesame, salad or cooking), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',90000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Dầu mè');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,884,0,0,100,0,0,0,'USDA FoodData Central, SR Legacy, FDC ID 171016'
+FROM products p WHERE p.name='Dầu mè'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Dầu mè';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Dầu mè'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Dầu mè' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('sesame','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Giấm táo','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 173469: Vinegar, cider), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',65000,30,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Giấm táo');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,21,0,0.93,0,0.4,0,5,'USDA FoodData Central, SR Legacy, FDC ID 173469'
+FROM products p WHERE p.name='Giấm táo'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Giấm táo';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Giấm táo'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Giấm táo' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước tương','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174277: Soy sauce made from soy and wheat (shoyu)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',35000,50,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước tương');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,53,8.14,4.93,0.57,0.4,0.8,5490,'USDA FoodData Central, SR Legacy, FDC ID 174277'
+FROM products p WHERE p.name='Nước tương'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Nước tương';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Nước tương'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước tương' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('soy','contains'),('gluten','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Nước mắm','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 174531: Sauce, fish, ready-to-serve), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',55000,50,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Nước mắm');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,35,5.06,3.64,0.01,3.64,0,7850,'USDA FoodData Central, SR Legacy, FDC ID 174531'
+FROM products p WHERE p.name='Nước mắm'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,false),is_liquid=is_liquid OR true
+WHERE name='Nước mắm';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Nước mắm'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Nước mắm' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('fish','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Siro lá phong','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 169661: Syrups, maple), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',210000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Siro lá phong');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,260,0.04,67,0.06,60.5,0,12,'USDA FoodData Central, SR Legacy, FDC ID 169661'
+FROM products p WHERE p.name='Siro lá phong'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR true
+WHERE name='Siro lá phong';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Siro lá phong'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Siro lá phong' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (SELECT NULL::text,NULL::text WHERE false) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Bơ hạnh nhân không muối','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 168588: Nuts, almond butter, plain, without salt added), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',175000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Bơ hạnh nhân không muối');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,614,21,18.8,55.5,4.43,10.3,7,'USDA FoodData Central, SR Legacy, FDC ID 168588'
+FROM products p WHERE p.name='Bơ hạnh nhân không muối'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Bơ hạnh nhân không muối';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Bơ hạnh nhân không muối'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Bơ hạnh nhân không muối' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('tree_nut','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+INSERT INTO products(category_id,name,description,price,stock,serving_size,serving_unit,nutrition_complete,allergens_verified)
+SELECT c.id,'Sốt mè tahini','Dinh dưỡng theo USDA FoodData Central (SR Legacy, FDC 170189: Seeds, sesame butter, tahini, from roasted and toasted kernels (most common type)), tính trên 100 g thực phẩm chung, không phải nhãn của thương hiệu. Giá và tồn kho là dữ liệu mẫu.',130000,20,100,'g',true,false
+FROM categories c WHERE c.slug='thuc-pham-khac'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.name='Sốt mè tahini');
+INSERT INTO product_nutrition(product_id,calories,protein_g,carbs_g,fat_g,sugar_g,fiber_g,sodium_mg,source)
+SELECT p.id,595,17,21.2,53.8,0.49,9.3,115,'USDA FoodData Central, SR Legacy, FDC ID 170189'
+FROM products p WHERE p.name='Sốt mè tahini'
+ON CONFLICT (product_id) DO UPDATE SET calories=EXCLUDED.calories,protein_g=EXCLUDED.protein_g,carbs_g=EXCLUDED.carbs_g,fat_g=EXCLUDED.fat_g,sugar_g=EXCLUDED.sugar_g,fiber_g=EXCLUDED.fiber_g,sodium_mg=EXCLUDED.sodium_mg,source=EXCLUDED.source;
+UPDATE products SET plant_based=coalesce(plant_based,true),is_liquid=is_liquid OR false
+WHERE name='Sốt mè tahini';
+UPDATE products p SET category_id=c.id FROM categories c
+WHERE c.slug='thuc-pham-khac' AND p.name='Sốt mè tahini'
+AND p.category_id=(SELECT id FROM categories WHERE slug='rau-cu-trai-cay');
+WITH target AS (
+  SELECT p.id FROM products p WHERE p.name='Sốt mè tahini' AND NOT p.allergens_verified
+  AND NOT EXISTS (SELECT 1 FROM product_allergens x WHERE x.product_id=p.id)
+), added AS (
+  INSERT INTO product_allergens(product_id,allergen_id,kind)
+  SELECT t.id,a.id,v.kind FROM target t CROSS JOIN (VALUES ('sesame','contains')) AS v(code,kind)
+  JOIN allergens a ON a.code=v.code
+  ON CONFLICT DO NOTHING RETURNING product_id
+)
+UPDATE products SET allergens_verified=true WHERE id IN (SELECT id FROM target);
+DELETE FROM categories c WHERE c.slug='rau-cu-trai-cay'
+AND NOT EXISTS (SELECT 1 FROM products p WHERE p.category_id=c.id);

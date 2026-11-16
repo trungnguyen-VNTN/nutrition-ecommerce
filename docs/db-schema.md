@@ -34,6 +34,8 @@
 | serving_unit | text | vd. 'g', 'ml' |
 | nutrition_complete | boolean | NOT NULL DEFAULT false |
 | allergens_verified | boolean | NOT NULL DEFAULT false (danh sách đủ để lọc) |
+| plant_based | boolean | NULL = chưa biết (không bao giờ suy ra nhãn "thuần thực vật"); V8 |
+| is_liquid | boolean | NOT NULL DEFAULT false; đồ uống dùng ngưỡng claim theo 100 ml (V8) |
 | allergens_reviewed_at | timestamptz | NULL; admin xác nhận allergen lúc nào (V7). Dữ liệu mẫu luôn NULL |
 | created_at / updated_at | timestamptz | NOT NULL |
 
@@ -60,7 +62,7 @@ Quy tắc: `products.nutrition_complete = true` chỉ khi các trường bắt b
 | Cột | Kiểu | Ràng buộc |
 | --- | --- | --- |
 | id | smallint | PK |
-| code | text | NOT NULL, UNIQUE (vd. 'peanut', 'milk', 'egg', 'soy', 'gluten', 'shellfish') |
+| code | text | NOT NULL, UNIQUE: 'peanut', 'milk', 'egg', 'soy', 'gluten', 'shellfish' (V1), 'tree_nut', 'sesame' (V6), 'fish' (V8) |
 | name | text | NOT NULL |
 
 ### product_allergens

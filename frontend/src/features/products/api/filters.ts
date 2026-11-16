@@ -9,6 +9,7 @@ export const allergenOptions = [
   { code: 'soy', label: 'Đậu nành' },
   { code: 'gluten', label: 'Gluten' },
   { code: 'shellfish', label: 'Hải sản có vỏ' },
+  { code: 'fish', label: 'Cá' },
 ] as const;
 export const sortValues = [
   'default',
