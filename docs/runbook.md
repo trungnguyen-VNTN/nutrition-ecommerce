@@ -63,7 +63,23 @@ Mục tiêu: chứng minh hạ tầng dựng lại được hoàn toàn từ Ter
 
 Bucket state (`infra/bootstrap`) có `prevent_destroy`, không nằm trong bài diễn tập.
 
-## 5. Khi có sự cố
+## 5. Thanh toán VNPAY sandbox (D27)
+
+Chỉ dùng môi trường **sandbox**: không có tiền thật. Không có khóa thì web chỉ có thanh toán khi nhận hàng.
+
+1. **Đăng ký** tại https://pay.vnpaytest.vn/dev-registration. Địa chỉ website: `https://<cloudfront>`; URL IPN (nếu form hỏi): `https://<cloudfront>/api/payments/vnpay/ipn`. VNPAY gửi email có `TmnCode`, `HashSecret` và thông tin thẻ test.
+2. **Chạy local:** thêm `vnpayTmnCode`, `vnpayHashSecret` vào `scripts/local-settings.json` (git bỏ qua) rồi chạy `START.bat`. Local thanh toán được trên cổng sandbox, nhưng **VNPAY không gọi được IPN về localhost**: đơn vẫn ở "Chờ thanh toán" và tự hủy sau khi hết hạn. Luồng đầy đủ kiểm chứng trên AWS.
+3. **Bật trên AWS:**
+   - Chạy `.scriptsdemo-infra.ps1 up -Vnpay`. Lần đầu sẽ tạo secret `nutrition-dev/vnpay-sandbox` với giá trị rỗng; script tự điền URL quay về từ `app_url`.
+   - Vào Secrets Manager (ap-southeast-1), mở secret đó, sửa giá trị thành `{"tmn_code":"...","hash_secret":"..."}`. Terraform không ghi đè giá trị này.
+   - Khởi động lại task để nhận khóa: chạy lại workflow deploy, hoặc ECS → Update service → Force new deployment.
+   - Mỗi lần `up` / `down` sau đó **vẫn thêm `-Vnpay`**. Bỏ `-Vnpay` là xóa secret.
+4. **Kiểm tra:** `GET https://<cloudfront>/api/payments/methods` phải trả `["COD","VNPAY"]`. Đặt một đơn VNPAY, trả bằng thẻ test, rồi xem đơn chuyển "Đã đặt" kèm "Đã thanh toán VNPAY".
+5. **Hoàn tiền:** đơn có nhãn "Cần hoàn tiền" (tiền về khi đơn đã hết hạn, hoặc hủy đơn đã trả) thì admin hoàn tay trên cổng quản trị merchant của VNPAY; ứng dụng không có API hoàn tiền tự động.
+
+Không bao giờ log hay commit `HashSecret`. Lộ khóa thì đổi khóa trên cổng VNPAY và cập nhật secret.
+
+## 6. Khi có sự cố
 
 | Dấu hiệu | Kiểm tra |
 | --- | --- |

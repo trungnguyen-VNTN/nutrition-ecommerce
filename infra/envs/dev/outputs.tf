@@ -87,3 +87,8 @@ output "alerts_topic_arn" {
   description = "SNS topic for CloudWatch alarms (phase 7)."
   value       = module.alarms.topic_arn
 }
+
+output "vnpay_secret_name" {
+  description = "Secrets Manager secret to fill with the VNPAY sandbox tmn_code and hash_secret (D27)."
+  value       = var.vnpay_enabled ? "${local.name_prefix}/vnpay-sandbox" : null
+}

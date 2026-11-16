@@ -4,13 +4,17 @@
 
     .\scripts\demo-infra.ps1 up     # start RDS, create ALB + ECS service (~10-15 min)
     .\scripts\demo-infra.ps1 down   # remove ALB + ECS service, stop RDS (~5-10 min)
+    .\scripts\demo-infra.ps1 up -Vnpay   # also enable VNPAY sandbox payments (D27)
 
   While down, only storage and small fixed items are billed. AWS restarts a stopped RDS
   instance after 7 days; run "down" again if the app stays off longer than that.
 #>
 param(
   [Parameter(Mandatory = $true)][ValidateSet('up', 'down')][string]$Mode,
-  [string]$Owner = 'trungnguyen-VNTN'
+  [string]$Owner = 'trungnguyen-VNTN',
+  # VNPAY sandbox (D27): keeps one Secrets Manager secret (about 0.40 USD a month). Pass it on
+  # every run while payments should stay on; leaving it out removes the secret.
+  [switch]$Vnpay
 )
 
 $ErrorActionPreference = 'Stop'
@@ -44,6 +48,15 @@ if ($LASTEXITCODE -ne 0) {
 
 & $terraform "-chdir=$dev" init -input=false "-backend-config=backend.hcl" | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'terraform init failed.' }
+
+$env:TF_VAR_vnpay_enabled = if ($Vnpay) { 'true' } else { 'false' }
+if ($Vnpay) {
+  # The CloudFront domain already exists in state; the return page lives on it.
+  $appUrl = & $terraform "-chdir=$dev" output -raw app_url
+  if ($LASTEXITCODE -ne 0 -or -not $appUrl) { throw 'Could not read app_url for the VNPAY return URL.' }
+  $env:TF_VAR_vnpay_return_url = "$appUrl/payment/vnpay-return"
+  Write-Host "VNPAY return URL: $env:TF_VAR_vnpay_return_url" -ForegroundColor Cyan
+}
 
 if ($Mode -eq 'up') {
   # aws_rds_instance_state waits for "available" before it acts, so it can stop the database

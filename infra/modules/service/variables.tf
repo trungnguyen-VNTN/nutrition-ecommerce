@@ -177,3 +177,20 @@ variable "ecr_repository_arn" {
   description = "Backend ECR repository; the execution role may pull from it only."
   type        = string
 }
+
+variable "vnpay_enabled" {
+  description = "Create the VNPAY sandbox secret and pass it to the API (D27). Off = cash on delivery only."
+  type        = bool
+  default     = false
+}
+
+variable "vnpay_return_url" {
+  description = "Public page VNPAY sends shoppers back to, e.g. https://<cloudfront>/payment/vnpay-return."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = var.vnpay_return_url == "" || startswith(var.vnpay_return_url, "https://")
+    error_message = "vnpay_return_url must be an https URL."
+  }
+}
