@@ -102,6 +102,6 @@ export const products: Product[] = fixtures.map((p) => ({
 export const productPage: ProductPage = {
   items: products,
   page: 0,
-  size: 8,
+  size: 9,
   total: products.length,
 };

@@ -34,7 +34,7 @@ public class CatalogController {
   @GetMapping("/products")
   public ProductPage products(
       @RequestParam(defaultValue = "0") @Min(0) int page,
-      @RequestParam(defaultValue = "8") @Min(1) @Max(50) int size,
+      @RequestParam(defaultValue = "9") @Min(1) @Max(50) int size,
       @RequestParam(required = false) @Positive Long categoryId,
       @RequestParam(required = false) @DecimalMin("0") BigDecimal maxCalories,
       @RequestParam(required = false) @DecimalMin("0") BigDecimal minProtein,

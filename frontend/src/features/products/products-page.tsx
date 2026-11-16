@@ -14,6 +14,7 @@ import {
   type ProductFilters,
   type ProductSort,
   allergenOptions,
+  productPageSize,
   sortValues,
 } from './api/filters';
 import { messages } from '@/app/messages.vi';
@@ -94,7 +95,7 @@ function ProductList({
           {sortControl}
         </div>
         <div className={grid}>
-          {Array.from({ length: 8 }, (_, index) => (
+          {Array.from({ length: productPageSize }, (_, index) => (
             <ProductCardSkeleton key={index} />
           ))}
         </div>
