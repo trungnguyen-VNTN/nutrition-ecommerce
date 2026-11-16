@@ -138,6 +138,17 @@ data "aws_iam_policy_document" "execution" {
     actions   = ["secretsmanager:GetSecretValue"]
     resources = [var.db_secret_arn]
   }
+
+  # Only the one VNPAY sandbox secret, and only when online payment is enabled (D27).
+  dynamic "statement" {
+    for_each = var.vnpay_enabled ? [local.vnpay_secret_arn] : []
+
+    content {
+      sid       = "ReadVnpaySecret"
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = [statement.value]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "execution" {
@@ -254,13 +265,14 @@ resource "aws_ecs_task_definition" "api" {
         { name = "BEDROCK_GUARDRAIL_VERSION", value = local.use_bedrock ? var.bedrock_guardrail_version : "" },
         { name = "IMAGES_BUCKET", value = var.images_bucket_name },
         { name = "NUTRITION_IMAGES_SEED_DEMO", value = tostring(var.seed_demo_images) },
+        { name = "VNPAY_RETURN_URL", value = var.vnpay_return_url },
       ]
 
       # RDS-managed secret is JSON with "username" and "password" keys.
-      secrets = [
+      secrets = concat([
         { name = "DB_USERNAME", valueFrom = "${var.db_secret_arn}:username::" },
         { name = "DB_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" },
-      ]
+      ], local.vnpay_secrets)
 
       logConfiguration = {
         logDriver = "awslogs"
