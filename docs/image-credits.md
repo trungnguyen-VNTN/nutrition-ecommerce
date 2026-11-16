@@ -4,7 +4,7 @@
 
 Ảnh được chọn bằng mắt từ tối đa 6 ứng viên mỗi sản phẩm. Loại bỏ: ảnh món đã nấu khi sản phẩm là nguyên liệu sống, tranh vẽ thực vật, ảnh sai món, và ảnh chụp sản phẩm có nhãn hiệu thương mại.
 
-138 / 152 sản phẩm có ảnh. 14 sản phẩm chưa tìm được ảnh tự do phù hợp sau bốn lượt tìm (Commons hai lượt, Openverse hai lượt) nên giữ hình minh họa; admin có thể tải ảnh riêng ở trang quản trị: Gạo nếp, Bún gạo khô, Đùi gà rút xương, Thịt vịt, Cá trê phi lê, Hồng trà pha sẵn, Kefir ít béo, Đậu nành, Hạt gai dầu tách vỏ, Dầu hạt cải, Dầu mè, Nước tương, Siro lá phong, Bơ hạnh nhân không muối.
+152 / 152 sản phẩm có ảnh. 14 sản phẩm cuối dùng **ảnh minh họa gần đúng** theo yêu cầu của người dùng (vẫn CC0 / Public domain, không có bao bì nhãn hiệu): món đã nấu, cây trồng hoặc nguyên liệu liên quan thay cho đúng sản phẩm, ví dụ cây đậu nành đang phơi cho Đậu nành, hoa cải dầu cho Dầu hạt cải, thùng ủ cho Nước tương, sữa chua rưới siro cho Siro lá phong. Danh sách: Bơ hạnh nhân không muối, Bún gạo khô, Cá trê phi lê, Dầu hạt cải, Dầu mè, Đậu nành, Đùi gà rút xương, Gạo nếp, Hạt gai dầu tách vỏ, Hồng trà pha sẵn, Kefir ít béo, Nước tương, Siro lá phong, Thịt vịt. Admin có thể thay bằng ảnh thật ở trang quản trị.
 
 | Sản phẩm | File gốc | Tác giả | Giấy phép |
 | --- | --- | --- | --- |
@@ -149,3 +149,17 @@ Edited Version by: Arad | Public domain |
 | Thăn bò (sirloin) | [Raw beef steaks](https://www.rawpixel.com/image/447741/free-photo-image-meat-steak-beef) | Jakub Kapusnak | CC0 |
 | Trà xanh pha sẵn | [Free hot green tea cup](https://www.rawpixel.com/image/5915419/image-public-domain-leaf-green) | Không ghi | CC0 |
 | Bột bắp nguyên hạt | [Maize flour or Maize flour](https://commons.wikimedia.org/w/index.php?curid=170416935) | Sman099 | CC0 |
+| Bơ hạnh nhân không muối (gần đúng) | [Free eggs peanut butter image](https://www.rawpixel.com/image/5918041/image-public-domain-food-free) | Không ghi | CC0 |
+| Bún gạo khô (gần đúng) | [Rice vermicelli for Bun Cha](https://www.rawpixel.com/image/447704/free-photo-image-rice-dish-appetite) | Jakub Kapusnak | CC0 |
+| Cá trê phi lê (gần đúng) | [Blue catfish tenn aquarium](https://commons.wikimedia.org/w/index.php?curid=17909557) | Thomsonmg2000 | CC0 |
+| Dầu hạt cải (gần đúng) | [Oilseed Rape, Canola, Biodiesel Crop](https://www.rawpixel.com/image/5965001/photo-image-background-flower-public-domain) | Không ghi | CC0 |
+| Dầu mè (gần đúng) | [Sesame oil with matsutake mushrooms.jpg](https://commons.wikimedia.org/wiki/File:Sesame_oil_with_matsutake_mushrooms.jpg) | Fumikas Sagisavas | CC0 |
+| Đậu nành (gần đúng) | [Drying soybeans in the open air (20241002) P3](https://commons.wikimedia.org/w/index.php?curid=153489130) | Fumikas Sagisavas | CC0 |
+| Đùi gà rút xương (gần đúng) | [Free raw chicken be cooked](https://www.rawpixel.com/image/5925270/photo-image-public-domain-food-branch) | Không ghi | CC0 |
+| Gạo nếp (gần đúng) | [Kauk Nyin Sticky Rice.jpg](https://commons.wikimedia.org/wiki/File:Kauk_Nyin_Sticky_Rice.jpg) | စာကလေး SarKaLay | CC0 |
+| Hạt gai dầu tách vỏ (gần đúng) | [Hemp milk with hemp seeds 2](https://commons.wikimedia.org/w/index.php?curid=92369340) | Mx. Granger | CC0 |
+| Hồng trà pha sẵn (gần đúng) | [A cup of tea in Odakyu Romancecar.jpg](https://commons.wikimedia.org/wiki/File:A_cup_of_tea_in_Odakyu_Romancecar.jpg) | Cassiopeia sweet | Public domain |
+| Kefir ít béo (gần đúng) | [Кефир.jpg](https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B5%D1%84%D0%B8%D1%80.jpg) | BarbariSka88 | CC0 |
+| Nước tương (gần đúng) | [Soy sauce brewing](https://www.flickr.com/photos/157671312@N06/31213681477) | felix_wilson | CC0 |
+| Siro lá phong (gần đúng) | [Yogurt (homemade) with Vermont maple syrup - Massachusetts.jpg](https://commons.wikimedia.org/wiki/File:Yogurt_(homemade)_with_Vermont_maple_syrup_-_Massachusetts.jpg) | Daderot | CC0 |
+| Thịt vịt (gần đúng) | [0451Duck meat in the Philippines 04.jpg](https://commons.wikimedia.org/wiki/File:0451Duck_meat_in_the_Philippines_04.jpg) | Judgefloro | CC0 |
