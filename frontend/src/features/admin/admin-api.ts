@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { requestJson } from '@/lib/api/client';
+import { orderStatuses, paymentFields } from '@/features/commerce/api';
 
 export const adminProductSchema = z.object({
   id: z.number(),
@@ -13,9 +14,10 @@ export const adminProductSchema = z.object({
 });
 export const adminOrderSchema = z.object({
   id: z.number(),
-  status: z.enum(['PLACED', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED']),
+  status: z.enum(orderStatuses),
   total: z.number(),
   currency: z.string(),
+  ...paymentFields,
 });
 export type AdminProduct = z.infer<typeof adminProductSchema>;
 
