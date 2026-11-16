@@ -40,7 +40,8 @@ public class CommerceController {
   public record Shipping(
       @NotBlank @Size(max = 120) String shippingName,
       @NotBlank @Size(max = 30) String phone,
-      @NotBlank @Size(max = 500) String address) {}
+      @NotBlank @Size(max = 500) String address,
+      @jakarta.validation.constraints.Pattern(regexp = "COD|VNPAY") String paymentMethod) {}
 
   private UUID user(Jwt jwt) {
     return UUID.fromString(jwt.getSubject());
@@ -87,7 +88,13 @@ public class CommerceController {
       @RequestHeader("Idempotency-Key") UUID key,
       @Valid @RequestBody Shipping shipping) {
     long id =
-        service.checkout(user(jwt), key, shipping.shippingName, shipping.phone, shipping.address);
+        service.checkout(
+            user(jwt),
+            key,
+            shipping.shippingName,
+            shipping.phone,
+            shipping.address,
+            shipping.paymentMethod == null ? "COD" : shipping.paymentMethod);
     return service.order(user(jwt), id);
   }
 

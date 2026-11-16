@@ -52,7 +52,8 @@ public class AdminStatsController {
   @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
   public Stats stats() {
     Map<String, Long> byStatus = new LinkedHashMap<>();
-    for (String status : List.of("PLACED", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"))
+    for (String status :
+        List.of("AWAITING_PAYMENT", "PLACED", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"))
       byStatus.put(status, 0L);
     db.query(
         "SELECT status, count(*) AS n FROM orders GROUP BY status",
@@ -63,7 +64,7 @@ public class AdminStatsController {
     // Revenue of orders that were not cancelled (no payment in the MVP, D6).
     BigDecimal revenue =
         db.queryForObject(
-            "SELECT coalesce(sum(total),0) FROM orders WHERE status <> 'CANCELLED'",
+            "SELECT coalesce(sum(total),0) FROM orders WHERE status NOT IN ('CANCELLED','AWAITING_PAYMENT')",
             BigDecimal.class);
 
     List<Day> days =
