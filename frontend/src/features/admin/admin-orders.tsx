@@ -11,10 +11,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage, requestJson } from '@/lib/api/client';
 import { formatMoney } from '@/lib/format';
 import { statusText } from '@/features/commerce/api';
-import { OrderStatus } from '@/features/commerce/order-status';
+import { OrderStatus, PaymentStatus } from '@/features/commerce/order-status';
 import { adminOrderSchema, adminPageSize } from './admin-api';
 
 const nextStatus = {
+  // Payment is confirmed by VNPAY's IPN, never by hand; an unpaid order can only be cancelled.
+  AWAITING_PAYMENT: ['CANCELLED'],
   PLACED: ['CONFIRMED', 'CANCELLED'],
   CONFIRMED: ['SHIPPED', 'CANCELLED'],
   SHIPPED: ['DELIVERED'],
@@ -103,7 +105,13 @@ export function AdminOrders() {
                       </Link>
                     </td>
                     <td className="p-3">
-                      <OrderStatus status={order.status} />
+                      <div className="flex flex-wrap gap-1.5">
+                        <OrderStatus status={order.status} />
+                        <PaymentStatus
+                          method={order.payment_method}
+                          status={order.payment_status}
+                        />
+                      </div>
                     </td>
                     <td className="p-3 font-semibold whitespace-nowrap tabular-nums">
                       {formatMoney(order.total, order.currency)}
