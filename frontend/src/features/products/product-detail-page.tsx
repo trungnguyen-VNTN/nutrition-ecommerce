@@ -146,6 +146,14 @@ function ProductDetail({ product }: { product: Product }) {
             )}
           </div>
           <AddToCart id={product.id} stock={product.stock} />
+          {product.nutrition_complete && (
+            <Link
+              className="inline-flex min-h-touch items-center gap-1 text-sm font-semibold text-brand underline underline-offset-4"
+              to={`/meal-analyzer?items=${product.id}:100`}
+            >
+              Phân tích trong bữa ăn
+            </Link>
+          )}
         </header>
       </div>
       <div>

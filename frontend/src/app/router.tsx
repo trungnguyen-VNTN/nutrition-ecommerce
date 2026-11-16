@@ -36,6 +36,9 @@ const OrderDetailPage = lazy(() =>
     default: m.OrderDetailPage,
   })),
 );
+const MealPage = lazy(() =>
+  import('@/features/meal/meal-page').then((m) => ({ default: m.MealPage })),
+);
 const ForgotPasswordPage = lazy(() =>
   import('@/features/auth/forgot-password-page').then((m) => ({
     default: m.ForgotPasswordPage,
@@ -71,6 +74,7 @@ export function AppRoutes() {
         <Route path="products" element={<ProductsPage />} />
         <Route path="products/:id" element={<ProductDetailPage />} />
         <Route path="cart" element={<CartPage />} />
+        <Route path="meal-analyzer" element={<MealPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="login" element={<AuthPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />

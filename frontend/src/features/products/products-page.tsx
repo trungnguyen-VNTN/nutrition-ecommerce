@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CaretUp, Funnel, X } from '@phosphor-icons/react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Field, Select } from '@/components/ui/field';
 import { Note } from '@/components/ui/note';
@@ -199,6 +199,12 @@ export function ProductsPage() {
           {messages.products}
         </h1>
         <p className="text-ink-muted">{messages.productsDescription}</p>
+        <Link
+          className="inline-flex min-h-touch items-center font-semibold text-brand underline underline-offset-4"
+          to="/meal-analyzer"
+        >
+          Phân tích dinh dưỡng một bữa ăn
+        </Link>
       </header>
       <div className="grid items-start gap-6 md:grid-cols-[var(--filter-width)_minmax(0,1fr)] md:gap-8">
         <aside aria-label="Bộ lọc sản phẩm">
