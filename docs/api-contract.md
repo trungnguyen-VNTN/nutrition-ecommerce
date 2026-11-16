@@ -25,10 +25,12 @@ Mọi đường dẫn `/api/**` (trừ `/actuator/health`) bị giới hạn the
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
 | GET | /api/categories | public | Danh sách category |
-| GET | /api/products | public | Tìm / lọc: `q` (không phân biệt hoa thường và dấu tiếng Việt, `unaccent`), `categoryId`, `maxCalories`, `minProtein`, `excludeAllergen` (nhiều giá trị), phân trang `page`/`size` (≤ 50). Sắp xếp `sort`: `default`, `price_asc`, `price_desc`, `protein_desc`, `calories_asc` (giá trị khác → 400). Sắp xếp theo dinh dưỡng chỉ xếp hạng sản phẩm có dữ liệu đầy đủ; sản phẩm thiếu dữ liệu nằm cuối, không coi là 0 |
+| GET | /api/products | public | Tìm / lọc: `q` (không phân biệt hoa thường và dấu tiếng Việt, `unaccent`), `categoryId`, `maxCalories`, `minProtein`, `excludeAllergen` (nhiều giá trị), phân trang `page`/`size` (≤ 50). Nhãn `label` (nhiều giá trị, AND, tối đa 6): `HIGH_PROTEIN`, `LOW_SUGAR`, `LOW_FAT`, `LOW_SODIUM`, `HIGH_FIBER`, `PLANT_BASED` (giá trị khác → 400). Sắp xếp `sort`: `default`, `price_asc`, `price_desc`, `protein_desc`, `calories_asc` (giá trị khác → 400). Sắp xếp theo dinh dưỡng chỉ xếp hạng sản phẩm có dữ liệu đầy đủ; sản phẩm thiếu dữ liệu nằm cuối, không coi là 0 |
 | GET | /api/products/{id} | public | Chi tiết kèm dinh dưỡng, allergen và `images: [{id, url}]` theo thứ tự (danh sách sản phẩm cũng có `images`; giỏ hàng có `image_url` là ảnh đại diện). URL ảnh: `/images/...` qua CloudFront trên AWS, `/api/local-images/...` khi chạy local |
 
 Quy tắc lọc: khi có `maxCalories`, `minProtein` hoặc `excludeAllergen`, chỉ trả sản phẩm có `nutrition_complete = true` (và `allergens_verified = true` với `excludeAllergen`).
+
+Nhãn dinh dưỡng `diet_labels` (D26) do backend tính từ số liệu trong DB, theo ngưỡng claim của EU (Quy định 1924/2006) trên 100 g, hoặc 100 ml khi `is_liquid`: giàu protein (protein ≥ 20% năng lượng và ≥ 5 g/100 g), ít đường (≤ 5 g; đồ uống ≤ 2,5 g), ít chất béo (≤ 3 g; đồ uống ≤ 1,5 g), ít natri (≤ 120 mg), nhiều chất xơ (≥ 6 g/100 g hoặc ≥ 3 g/100 kcal), thuần thực vật (`plant_based = true`). Cần dinh dưỡng đầy đủ và khẩu phần tính bằng g hoặc ml; thiếu dữ liệu thì không có nhãn. Mỗi nhãn là một điều kiện SQL dùng chung cho cả hiển thị lẫn bộ lọc `label`.
 
 Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đủ để lọc (fail-closed); `allergens_reviewed` = admin đã xác nhận theo nhãn bao bì. Giao diện chỉ ghi "Allergen đã xác minh" khi cả hai đều `true`; `verified` mà chưa `reviewed` hiển thị "Allergen theo thành phần (dữ liệu mẫu)". Chỉ `PUT /api/admin/products/{id}/allergens` với `verified = true` đặt `reviewed`.
 

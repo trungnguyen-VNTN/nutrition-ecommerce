@@ -39,7 +39,9 @@ public final class CatalogModels {
       boolean allergensReviewed,
       Nutrition nutrition,
       List<Allergen> allergens,
-      List<Image> images) {}
+      List<Image> images,
+      /** DietLabel names derived from the nutrition data (D26); empty when data is missing. */
+      List<String> dietLabels) {}
 
   public record ProductPage(List<Product> items, int page, int size, long total) {}
 }

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { Product, ProductPage } from '@/lib/api/catalog.types';
 import { getJson } from '@/lib/api/client';
 import { productQuery, type ProductQuery } from './filters';
+import { isDietLabel } from '@/lib/diet-labels';
 const nonnegative = z.number().finite().nonnegative();
 const categorySchema = z.object({
   id: z.number().int().positive(),
@@ -21,6 +22,11 @@ export const productSchema = z
     allergens_verified: z.boolean(),
     // True only when an admin confirmed the list; seed and demo data are never "verified".
     allergens_reviewed: z.boolean().default(false),
+    // Unknown future labels are dropped rather than shown with a raw code.
+    diet_labels: z
+      .array(z.string())
+      .default([])
+      .transform((labels) => labels.filter(isDietLabel)),
     description: z.string().nullable(),
     category: categorySchema.nullable(),
     serving_size: nonnegative.nullable(),

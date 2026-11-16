@@ -1,3 +1,5 @@
+import type { DietLabelCode } from '@/lib/diet-labels';
+
 // Catalog response implemented by the local PostgreSQL API.
 export interface Category {
   id: number;
@@ -34,6 +36,8 @@ export interface Product {
   allergens_verified: boolean;
   /** An admin confirmed the allergen list (otherwise it is sample data derived from ingredients). */
   allergens_reviewed: boolean;
+  /** Labels derived from nutrition data (D26); empty when data is missing. */
+  diet_labels: DietLabelCode[];
   description: string | null;
   category: Category | null;
   serving_size: number | null;
