@@ -63,7 +63,13 @@ function RouteEffects() {
     const main = document.getElementById('main');
     const title = main?.querySelector('h1')?.textContent ?? messages.brand;
     document.title = `${title} · Nutrition`;
-    if (previousPath.current !== pathname) main?.focus();
+    if (previousPath.current !== pathname) {
+      // A new page starts at the top. Focus moves to main for screen readers,
+      // without the browser scrolling it into view: that scroll used to tuck
+      // the promo strip under the sticky header.
+      window.scrollTo(0, 0);
+      main?.focus({ preventScroll: true });
+    }
     previousPath.current = pathname;
   }, [pathname]);
   return null;
