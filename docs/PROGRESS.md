@@ -1,8 +1,15 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-17_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-18_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **AI gọi Bedrock ở Tokyo (2026-11-18, D18, nhánh `feat/ai-bedrock-tokyo`).** Kiểm tra chỉ đọc: ở Singapore cả 531 quota Bedrock bằng 0; case hỗ trợ ngày 2026-11-13 (loại Account, General question) vẫn "Unassigned". Tokyo có quota (Haiku 5.5 cross-region 10 triệu token/phút) và profile `jp.anthropic.claude-haiku-5-5` (Tokyo + Osaka). Người dùng chọn chuyển sang Tokyo.
+  - Backend: region Bedrock lấy từ `BEDROCK_REGION` (mặc định ap-southeast-1, tên sai thì dừng khởi động); bỏ `temperature(0F)` mà Haiku 5.5 không nhận; test mới.
+  - Terraform: biến `bedrock_region = "ap-northeast-1"`, guardrail dùng tham số `region` của provider 6.x, IAM của task trỏ profile ở Tokyo, task nhận `BEDROCK_REGION`. Plan (`nutrition-plan`, `-lock=false` vì profile chỉ đọc không ghi được khóa): **3 tạo, 1 sửa, 3 xóa**: thay guardrail + version (Singapore → Tokyo), thay task definition, sửa policy `invoke-bedrock`. Plan dừng ở lỗi có sẵn: `nutrition-plan` không đọc được giá trị secret VNPAY (đúng ý đồ), nên chưa lưu được `tfplan`.
+  - Policy: `docs/aws-setup/*.json` mở thêm Bedrock ở Tokyo / Osaka (gọi model, guardrail); mọi dịch vụ khác vẫn chỉ Singapore.
+  - **Người dùng cần làm:** (1) Bedrock console Tokyo → Playground → gọi thử Haiku 5.5 để chấp nhận điều khoản (`agreementAvailability` đang NOT_AVAILABLE); (2) dán 2 JSON policy mới; (3) merge PR; (4) `demo-infra.ps1 up -Vnpay`.
+  - **Sau đó:** chạy `-Pbedrock-eval` với `BEDROCK_REGION=ap-northeast-1`; kiểm tra trên CloudFront câu hợp lệ, câu y tế bị từ chối, 429, độ trễ câu nặng nhất. Chưa kiểm chứng: profile `jp.` có cần quyền ở Osaka không.
 
 - **Giao diện "Nutrition Lab" (2026-11-17, D28).** Người dùng duyệt mockup canvas (trang chủ, sản phẩm, chi tiết, mobile, design system, banner & hiệu ứng) rồi bảo "làm đi". Ba PR xếp chồng, merge theo thứ tự:
   - #63 nền tảng: token màu mới, Be Vietnam Pro + JetBrains Mono, dải chữ chạy dưới header (có nút tạm dừng), nhãn "LAB".
