@@ -163,3 +163,19 @@ Edited Version by: Arad | Public domain |
 | Nước tương (gần đúng) | [Soy sauce brewing](https://www.flickr.com/photos/157671312@N06/31213681477) | felix_wilson | CC0 |
 | Siro lá phong (gần đúng) | [Yogurt (homemade) with Vermont maple syrup - Massachusetts.jpg](https://commons.wikimedia.org/wiki/File:Yogurt_(homemade)_with_Vermont_maple_syrup_-_Massachusetts.jpg) | Daderot | CC0 |
 | Thịt vịt (gần đúng) | [0451Duck meat in the Philippines 04.jpg](https://commons.wikimedia.org/wiki/File:0451Duck_meat_in_the_Philippines_04.jpg) | Judgefloro | CC0 |
+
+## Ảnh banner và bộ sưu tập trang chủ (tạo bằng AI, D28)
+
+Các ảnh trong `frontend/src/assets/banners/` **không phải ảnh sản phẩm**: chủ dự án tạo bằng công cụ tạo ảnh AI (2026-11-17) theo prompt "professional food photography, natural soft light, no text, no logos, no packaging, no hands", rồi nén sang WebP 2 kích thước. Chỉ dùng cho banner, ô bộ sưu tập và banner đăng ký; thẻ và trang sản phẩm vẫn dùng ảnh thật ở trên.
+
+| File | Nội dung |
+| --- | --- |
+| `banner-protein-*.webp` | ức gà nướng, cá hồi, trứng trên đá phiến |
+| `banner-hat-dau-*.webp` | bát đậu gà và hạnh nhân |
+| `banner-thanh-toan-*.webp` | túi rau củ, điện thoại màn hình trống |
+| `banner-tai-khoan-*.webp` | bát cơm gà, bơ, rau (cắt từ ảnh ghép, độ phân giải thấp) |
+| `tile-omega3-*.webp` | cá hồi, cá thu, cá mòi trên đá |
+| `tile-dau-tay-*.webp` | bát dâu tây |
+| `tile-bo-*.webp` | hai nửa quả bơ |
+| `tile-rau-xanh-*.webp` | cải xoăn, rau bina, bông cải (cắt từ ảnh ghép) |
+| `tile-ngu-coc-*.webp` | gạo lứt, yến mạch, bông lúa (cắt từ ảnh ghép) |
