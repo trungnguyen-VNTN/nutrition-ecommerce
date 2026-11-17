@@ -1,12 +1,16 @@
 /* Self-hosted fonts, latin + vietnamese subsets only (D11). */
-@import '@fontsource/plus-jakarta-sans/latin-400.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-400.css';
-@import '@fontsource/plus-jakarta-sans/latin-500.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-500.css';
-@import '@fontsource/plus-jakarta-sans/latin-600.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-600.css';
-@import '@fontsource/plus-jakarta-sans/latin-700.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-700.css';
+@import '@fontsource/be-vietnam-pro/latin-400.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-400.css';
+@import '@fontsource/be-vietnam-pro/latin-500.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-500.css';
+@import '@fontsource/be-vietnam-pro/latin-600.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-600.css';
+@import '@fontsource/be-vietnam-pro/latin-700.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/vietnamese-400.css';
+@import '@fontsource/jetbrains-mono/latin-600.css';
+@import '@fontsource/jetbrains-mono/vietnamese-600.css';
 @import '@fontsource/bricolage-grotesque/latin-600.css';
 @import '@fontsource/bricolage-grotesque/vietnamese-600.css';
 @import '@fontsource/bricolage-grotesque/latin-700.css';
@@ -53,6 +57,7 @@
   --color-info: var(--info);
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
+  --font-mono: var(--font-numeric);
   --text-*: initial;
   --text-xs: var(--font-size-xs);
   --text-xs--line-height: var(--line-xs);
@@ -209,7 +214,7 @@
     width: 36px;
     height: 36px;
     border-radius: var(--corner-control);
-    background: var(--brand);
+    background: var(--ink);
     color: var(--lime);
   }
   .header-field {
@@ -566,5 +571,78 @@
       box-shadow: none;
       animation: none;
     }
+  }
+}
+
+/* Nutrition Lab (D28): promo ticker, spec-sheet numbers, banner carousel, bento tiles. */
+@layer components {
+  .lab-tag {
+    padding: 1px 6px;
+    border: var(--border-width) solid currentColor;
+    border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .promo-strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: var(--border-width) solid var(--ink);
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .promo-strip-track {
+    display: flex;
+    flex: none;
+    width: max-content;
+    animation: promo-scroll 40s linear infinite;
+  }
+  .promo-strip:hover .promo-strip-track,
+  .promo-strip:focus-within .promo-strip-track,
+  .promo-strip[data-paused='true'] .promo-strip-track {
+    animation-play-state: paused;
+  }
+  .promo-strip-row {
+    display: flex;
+    gap: var(--space-8);
+    margin: 0;
+    padding: var(--space-2) var(--space-8) var(--space-2) var(--space-4);
+    list-style: none;
+    white-space: nowrap;
+  }
+  .promo-strip-row li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .promo-strip-toggle {
+    position: absolute;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: var(--touch-target);
+    height: 100%;
+    min-height: 32px;
+    border: 0;
+    border-left: var(--border-width) solid var(--ink);
+    background: var(--lime);
+    color: var(--ink);
+  }
+  @keyframes promo-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .spec-num {
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums;
   }
 }
