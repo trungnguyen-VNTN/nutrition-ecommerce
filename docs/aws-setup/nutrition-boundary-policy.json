@@ -39,7 +39,7 @@
       }
     },
     {
-      "Sid": "ModelInvokeSingaporeOrGlobal",
+      "Sid": "ModelInvokeSingaporeJapanOrGlobal",
       "Effect": "Allow",
       "Action": [
         "bedrock:InvokeModel",
@@ -48,7 +48,23 @@
       "Resource": "*",
       "Condition": {
         "StringEquals": {
-          "aws:RequestedRegion": ["ap-southeast-1", "unspecified"]
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "unspecified"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ChatGuardrailInTokyo",
+      "Effect": "Allow",
+      "Action": "bedrock:ApplyGuardrail",
+      "Resource": "arn:aws:bedrock:ap-northeast-1:*:guardrail/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "ap-northeast-1"
         }
       }
     },
@@ -61,7 +77,10 @@
         "s3:DeleteObject",
         "s3:ListBucket"
       ],
-      "Resource": ["arn:aws:s3:::nutrition-*", "arn:aws:s3:::nutrition-*/*"]
+      "Resource": [
+        "arn:aws:s3:::nutrition-*",
+        "arn:aws:s3:::nutrition-*/*"
+      ]
     },
     {
       "Sid": "FrontendDeployInvalidation",
