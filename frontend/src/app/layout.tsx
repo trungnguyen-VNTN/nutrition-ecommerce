@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Outlet, useLocation } from 'react-router-dom';
 import { AdminShell } from '@/components/layout/admin-shell';
 import { MainNav } from '@/components/layout/main-nav';
+import { PromoStrip } from '@/components/layout/promo-strip';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,6 +41,7 @@ export function Layout() {
       <SiteHeader
         nav={<MainNav admin={!!identity?.admin} cartCount={count} />}
       />
+      {!pathname.startsWith('/admin') && <PromoStrip />}
       <CartAnnouncer count={count} />
       <main
         id="main"
