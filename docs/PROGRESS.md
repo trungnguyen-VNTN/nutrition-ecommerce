@@ -1,8 +1,16 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-16_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-17_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Giao diện "Nutrition Lab" (2026-11-17, D28).** Người dùng duyệt mockup canvas (trang chủ, sản phẩm, chi tiết, mobile, design system, banner & hiệu ứng) rồi bảo "làm đi". Ba PR xếp chồng, merge theo thứ tự:
+  - #63 nền tảng: token màu mới, Be Vietnam Pro + JetBrains Mono, dải chữ chạy dưới header (có nút tạm dừng), nhãn "LAB".
+  - #64 trang chủ: banner tự chuyển 3 slide theo mẫu WAI, lưới bộ sưu tập 9 ô, banner đăng ký cho khách. 9 ảnh AI do chủ dự án tạo (WebP, ghi nguồn).
+  - PR 3 sản phẩm: thẻ sản phẩm kiểu phiếu thông số (kcal / protein / carb / béo, ô lime khi đạt "Giàu protein"), banner nhỏ "Phân tích bữa ăn" ở trang sản phẩm, trang chi tiết thêm "Theo khẩu phần" (30 / 50 / 100 g + khẩu phần nhãn) và "Nguồn số liệu" (link bản ghi USDA FDC) dưới ảnh.
+  - Đã kiểm tra: format, lint, typecheck, test, build xanh ở cả 3 nhánh; xem tay bằng dữ liệu mock ở 1440 px và 390 px.
+  - **Chưa làm:** E2E / axe / ảnh chụp Playwright (máy chưa cài Chromium: `npx playwright install chromium`); chưa xem với dữ liệu USDA thật (cần `START.bat`); chưa deploy.
+  - **Ngoài phạm vi, ghi lại:** banner trong mockup có "giảm 15%", "giảm 30.000 ₫", "miễn phí giao từ 300.000 ₫" nhưng cửa hàng chưa có khuyến mãi hay phí giao hàng, nên bản code chỉ ghi điều có thật. Muốn có thì cần một tính năng khuyến mãi riêng (bảng, API, admin). Ảnh rau xanh, ngũ cốc và banner đăng ký là bản cắt từ ảnh ghép, độ phân giải thấp; thay khi có bản gốc.
 
 - **Thanh toán VNPAY sandbox (2026-11-16, D27).** Người dùng duyệt kế hoạch 3 PR, xếp chồng sau #58:
   - #59 P1 backend: V9, giữ hàng 15 phút, IPN theo đúng thứ tự VNPAY 2.1.0, trang quay về chỉ đọc, job hết hạn. Backend 59 test.
