@@ -108,6 +108,8 @@ docker-compose.yml      PostgreSQL và volume dữ liệu
 
 ## Chạy local
 
+Người mới: xem [hướng dẫn mở project](docs/huong-dan-mo-project.md) từng bước.
+
 Cần Java 21, Node.js >=22.12.0, npm và Docker Desktop/Engine đang hoạt động.
 Trên Windows, sau khi đã cài dependency frontend, có thể nhấp đúp `START.bat`;
 `STOP.bat` dừng các tiến trình do launcher tạo và PostgreSQL, giữ nguyên dữ liệu.
@@ -169,7 +171,7 @@ frontend/backend; AI cần model hoặc inference profile Bedrock và quyền ru
 Không có cơ chế bỏ qua xác thực khi thiếu cấu hình. Không commit file `.env` thật.
 
 Để `START.bat` bật đăng nhập bằng Cognito dev: chép `scripts/local-settings.example.json` thành
-`scripts/local-settings.json` (git bỏ qua) và điền `cognito_user_pool_id`, `cognito_app_client_id`
+`scripts/local-settings.json` (git bỏ qua) và điền `cognitoUserPoolId`, `cognitoClientId`
 lấy từ `terraform -chdir=infra/envs/dev output`. Launcher đặt các biến `COGNITO_*` cho backend và
 `VITE_COGNITO_*` cho frontend từ file này.
 
