@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.document.Document;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
 import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseOutput;
@@ -111,7 +112,9 @@ class BedrockLlmClientTest {
     String schema =
         plain.toolConfig().tools().getFirst().toolSpec().inputSchema().json().toString();
     assertThat(schema).contains("tree_nut", "sesame", "additionalProperties");
-    assertThat(plain.inferenceConfig().temperature()).isZero();
+    // Newer Claude models on Bedrock reject temperature, so the request must not send it.
+    assertThat(plain.inferenceConfig().temperature()).isNull();
+    assertThat(plain.inferenceConfig().maxTokens()).isEqualTo(400);
 
     client(
             reply(StopReason.TOOL_USE, tool("searchProducts", input("medicalAdvice", false))),
@@ -188,6 +191,16 @@ class BedrockLlmClientTest {
     for (var response : bad)
       assertThatThrownBy(() -> client(response, "").search("query"))
           .isInstanceOf(AiUnavailableException.class);
+  }
+
+  @Test
+  void bedrockRegionComesFromConfigurationAndDefaultsToSingapore() {
+    assertThat(BedrockLlmClient.regionOf(null)).isEqualTo(Region.AP_SOUTHEAST_1);
+    assertThat(BedrockLlmClient.regionOf(" ")).isEqualTo(Region.AP_SOUTHEAST_1);
+    assertThat(BedrockLlmClient.regionOf(" ap-northeast-1 ")).isEqualTo(Region.AP_NORTHEAST_1);
+    assertThatThrownBy(() -> BedrockLlmClient.regionOf("tokyo"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("BEDROCK_REGION");
   }
 
   @Test
