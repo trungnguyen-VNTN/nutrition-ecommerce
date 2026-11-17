@@ -18,24 +18,24 @@
 ### Màu
 | Token | Giá trị | Dùng cho | Tương phản |
 | --- | --- | --- | --- |
-| `--cream` | `#FAF9F3` | nền trang | |
+| `--cream` | `#FBFAF7` | nền trang | |
 | `--surface` | `#FFFFFF` | thẻ, ô nhập | |
-| `--ink` | `#19392E` | chữ chính, viền sticker | 11.9:1 trên kem |
-| `--ink-muted` | `#566A5C` | chữ phụ | 5.5:1 trên kem |
-| `--brand` / `--brand-strong` | `#194734` / `#0F3324` | nút chính, footer, liên kết | 10:1 trên kem |
-| `--lime` / `--lime-strong` | `#D8ED9D` / `#C3E277` | nhấn duy nhất: nền CTA sticker, huy hiệu, mục đang chọn (chữ `--ink` trên nền này 9.9:1) | |
-| `--line` | `#DDE5D8` | đường kẻ trang trí | |
+| `--ink` | `#0F1F18` | chữ chính, viền sticker, khối tối | 16.4:1 trên kem |
+| `--ink-muted` | `#5B665F` | chữ phụ | 5.7:1 trên kem |
+| `--brand` / `--brand-strong` | `#174A35` / `#0F1F18` | nút chính, footer, liên kết | 9.7:1 trên kem |
+| `--lime` / `--lime-strong` | `#D6EE8F` / `#C3E277` | nhấn duy nhất: nền CTA sticker, huy hiệu, mục đang chọn, dải chữ chạy, ô số khớp bộ lọc (chữ `--ink` trên nền này 13.4:1) | |
+| `--line` | `#E4E2DA` | đường kẻ trang trí | |
 | `--line-strong` | `#75897A` | viền ô nhập, checkbox (≥ 3:1) | |
-| `--macro-protein` / `-tint` | `#D9572B` / `#FBE3D8` | protein | 3.9:1 trên trắng (đồ họa) |
-| `--macro-carb` / `-tint` | `#A87C06` / `#F8ECC4` | carbohydrate | 3.8:1 |
-| `--macro-fat` / `-tint` | `#7B5CC9` / `#EBE4F8` | chất béo | 5.0:1 |
-| `--macro-fiber` / `-tint` | `#2F8A4C` / `#DCEFDF` | chất xơ | 4.3:1 |
+| `--macro-protein` / `-tint` | `#C9542A` / `#FBE3D8` | protein | 4.4:1 trên trắng (đồ họa) |
+| `--macro-carb` / `-tint` | `#9A7410` / `#F8ECC4` | carbohydrate | 4.3:1 |
+| `--macro-fat` / `-tint` | `#6E55B8` / `#EBE4F8` | chất béo | 5.7:1 |
+| `--macro-fiber` / `-tint` | `#2B7D45` / `#DCEFDF` | chất xơ | 5.1:1 |
 | `--success` / `-tint` | `#276E2B` / `#E3F1E1` | còn hàng, thành công | 5.9:1 trên kem, 5.4:1 trên tint |
 | `--warning` / `-tint` | `#8A4F00` / `#FFF1DC` | dữ liệu thiếu / chưa xác minh, allergen | 5.9:1 |
 | `--danger` / `-tint` | `#B3261E` / `#FCE8E6` | lỗi, hết hàng, hủy | 5.6:1 |
 
 ### Typography
-- Tiêu đề: **Bricolage Grotesque** (600, 700, 800). Thân bài và số liệu: **Plus Jakarta Sans** (400, 500, 600, 700). Tự host bằng `@fontsource/*`, chỉ nạp subset `latin` + `vietnamese`, `font-display: swap`.
+- Tiêu đề: **Bricolage Grotesque** (600, 700, 800). Thân bài: **Be Vietnam Pro** (400, 500, 600, 700). Số liệu, đơn vị, giá và nhãn nhỏ: **JetBrains Mono** (400, 600), class `font-mono` / `spec-num` (D28). Tự host bằng `@fontsource/*`, chỉ nạp subset `latin` + `vietnamese`, `font-display: swap`.
 - Thang cỡ chữ (px / line-height): 12/16, 14/20, 16/24 (thân bài), 18/28, 20/28, 24/32, 32/38, 44/50, 64/68 (hero desktop). Tiêu đề dùng `letter-spacing` âm nhẹ (-0.02em), `text-wrap: balance`.
 - Số liệu, giá: `font-variant-numeric: tabular-nums`. Thân bài tối thiểu 16px trên mobile.
 

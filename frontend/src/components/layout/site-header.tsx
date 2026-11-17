@@ -33,6 +33,9 @@ export function SiteHeader({ nav }: { nav: ReactNode }) {
             {messages.brand}
             <span className="text-brand">.</span>
           </span>
+          <span aria-hidden="true" className="lab-tag">
+            LAB
+          </span>
         </Link>
         <form
           className="header-field order-last w-full md:order-none md:max-w-copy md:flex-1"
