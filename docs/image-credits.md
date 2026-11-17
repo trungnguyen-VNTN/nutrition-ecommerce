@@ -179,3 +179,7 @@ Các ảnh trong `frontend/src/assets/banners/` **không phải ảnh sản ph�
 | `tile-bo-*.webp` | hai nửa quả bơ |
 | `tile-rau-xanh-*.webp` | cải xoăn, rau bina, bông cải (cắt từ ảnh ghép) |
 | `tile-ngu-coc-*.webp` | gạo lứt, yến mạch, bông lúa (cắt từ ảnh ghép) |
+| `tile-protein-*.webp` | ức gà, trứng luộc, sữa chua Hy Lạp, đậu nành Nhật, đậu lăng (2026-11-18) |
+| `tile-sua-thuc-vat-*.webp` | sữa yến mạch, sữa hạnh nhân, sữa đậu nành (2026-11-18) |
+| `tile-it-duong-*.webp` | sữa chua không đường, óc chó, dưa leo, cà phê đen, cà chua bi (2026-11-18) |
+| `tile-di-ung-*.webp` | 9 bát ứng với 9 nhóm chất gây dị ứng của bộ lọc (2026-11-18) |
