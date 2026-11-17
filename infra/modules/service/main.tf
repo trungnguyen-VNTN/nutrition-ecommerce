@@ -14,6 +14,8 @@ locals {
   account_id   = data.aws_caller_identity.current.account_id
   service_name = "${var.name_prefix}-backend"
   use_bedrock  = var.bedrock_inference_profile_id != "" && var.bedrock_model_id != ""
+  # Bedrock may run outside the service region when this one has no model quota (D18).
+  bedrock_region = var.bedrock_region != "" ? var.bedrock_region : local.region
 }
 
 # ---------------------------------------------------------------- ALB
@@ -178,8 +180,8 @@ resource "aws_iam_role_policy" "task_images" {
   policy = data.aws_iam_policy_document.task_images.json
 }
 
-# Converse through an inference profile needs the profile in this region and the
-# foundation model in every region the profile may route to.
+# Converse through an inference profile needs the profile in the Bedrock region and the
+# foundation model in every region the profile may route to (jp.* routes to Tokyo and Osaka).
 data "aws_iam_policy_document" "task_bedrock" {
   count = local.use_bedrock ? 1 : 0
 
@@ -187,7 +189,7 @@ data "aws_iam_policy_document" "task_bedrock" {
     sid     = "InvokeConfiguredModel"
     actions = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
     resources = [
-      "arn:aws:bedrock:${local.region}:${local.account_id}:inference-profile/${var.bedrock_inference_profile_id}",
+      "arn:aws:bedrock:${local.bedrock_region}:${local.account_id}:inference-profile/${var.bedrock_inference_profile_id}",
       "arn:aws:bedrock:*::foundation-model/${var.bedrock_model_id}",
       # Global profiles route to the region-less foundation model ARN.
       "arn:aws:bedrock:::foundation-model/${var.bedrock_model_id}",
@@ -261,6 +263,7 @@ resource "aws_ecs_task_definition" "api" {
         { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id },
         { name = "BEDROCK_MODEL_ID", value = var.bedrock_model_id },
         { name = "BEDROCK_INFERENCE_PROFILE_ID", value = var.bedrock_inference_profile_id },
+        { name = "BEDROCK_REGION", value = local.use_bedrock ? local.bedrock_region : "" },
         { name = "BEDROCK_GUARDRAIL_ID", value = local.use_bedrock ? var.bedrock_guardrail_id : "" },
         { name = "BEDROCK_GUARDRAIL_VERSION", value = local.use_bedrock ? var.bedrock_guardrail_version : "" },
         { name = "IMAGES_BUCKET", value = var.images_bucket_name },

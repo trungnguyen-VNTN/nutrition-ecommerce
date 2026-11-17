@@ -39,9 +39,20 @@ variable "bedrock_model_id" {
 }
 
 variable "bedrock_inference_profile_id" {
-  description = "Global inference profile ID (D18: Haiku 5.5 has no APAC profile in Singapore). Empty disables AI permissions."
+  description = "Inference profile ID in bedrock_region (D18: jp.* stays in Tokyo and Osaka). Empty disables AI permissions."
   type        = string
-  default     = "global.anthropic.claude-haiku-5-5"
+  default     = "jp.anthropic.claude-haiku-5-5"
+}
+
+variable "bedrock_region" {
+  description = "Region the backend calls Bedrock in, with the guardrail there too (D18: Singapore has zero Bedrock quota for this account)."
+  type        = string
+  default     = "ap-northeast-1"
+
+  validation {
+    condition     = can(regex("^[a-z]{2}(-[a-z]+)+-[0-9]$", var.bedrock_region))
+    error_message = "bedrock_region must be a region name such as ap-northeast-1."
+  }
 }
 
 variable "load_demo_catalog" {
