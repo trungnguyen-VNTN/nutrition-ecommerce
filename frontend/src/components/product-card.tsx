@@ -3,13 +3,13 @@ import { ArrowUpRight, CheckCircle, Info } from '@phosphor-icons/react';
 import { messages } from '@/app/messages.vi';
 import type { Product } from '@/lib/api/catalog.types';
 import { formatMoney } from '@/lib/format';
-import { formatAmount, readyNutrition } from '@/lib/nutrition';
-import { Pill } from '@/components/ui/pill';
+import { readyNutrition } from '@/lib/nutrition';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tag } from '@/components/ui/tag';
 import { DataStatusBadge } from './data-status-badge';
 import { DietLabelTags } from '@/components/diet-label-tags';
 import { ProductArt } from './product-art';
+import { SpecRow } from './spec-row';
 
 // Row with thumbnail below 640px, stacked card above. Skeleton shares this frame (no layout jump).
 const frame =
@@ -39,7 +39,7 @@ export function ProductCard({
         className={art}
       />
       <div className={body}>
-        <p className="text-xs text-ink-muted">
+        <p className="font-mono text-xs text-ink-muted uppercase">
           {[
             product.category?.name,
             ready && messages.serving(ready.servingSize, ready.servingUnit),
@@ -56,20 +56,20 @@ export function ProductCard({
             <ArrowUpRight className="icon mt-1 text-brand" />
           </Link>
         </Heading>
-        <div className="flex flex-wrap gap-1.5">
-          {ready ? (
-            <>
-              <Pill macro="energy">
-                {formatAmount(ready.nutrition.calories)} kcal
-              </Pill>
-              <Pill macro="protein">
-                {formatAmount(ready.nutrition.protein_g)}g protein
-              </Pill>
-            </>
-          ) : (
+        {ready ? (
+          <SpecRow
+            ready={ready}
+            highlight={
+              product.diet_labels.includes('HIGH_PROTEIN')
+                ? 'protein'
+                : undefined
+            }
+          />
+        ) : (
+          <div>
             <DataStatusBadge kind="nutrition" />
-          )}
-        </div>
+          </div>
+        )}
         <DietLabelTags labels={product.diet_labels} max={2} />
         <div>
           {product.allergens_verified && product.allergens_reviewed ? (
@@ -87,7 +87,7 @@ export function ProductCard({
           )}
         </div>
         <div className="mt-auto flex items-end justify-between gap-2 border-t border-line pt-3">
-          <p className="font-display text-lg font-extrabold tabular-nums sm:text-xl">
+          <p className="spec-num text-lg font-semibold sm:text-xl">
             {formatMoney(product.price, product.currency)}
           </p>
           {product.stock > 0 ? (
