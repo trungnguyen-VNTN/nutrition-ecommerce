@@ -108,8 +108,14 @@ describe('fail-closed nutrition', () => {
 
   it('product card shows energy and protein when complete', () => {
     renderApp(<ProductCard product={complete} index={0} />);
-    expect(screen.getByText('389 kcal')).toBeVisible();
-    expect(screen.getByText('17g protein')).toBeVisible();
+    // Spec row: each value sits under its term (dt kcal, dd 389).
+    const terms = screen.getAllByRole('term').map((term) => term.textContent);
+    expect(terms).toEqual(['kcal', 'protein (gam)', 'carb (gam)', 'béo (gam)']);
+    const values = screen
+      .getAllByRole('definition')
+      .map((value) => value.textContent);
+    expect(values[0]).toBe('389');
+    expect(values[1]).toBe('17');
     expect(screen.getByText(messages.allergensVerified)).toBeVisible();
   });
 });

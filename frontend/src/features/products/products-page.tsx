@@ -24,6 +24,8 @@ import {
   sortValues,
 } from './api/filters';
 import { messages } from '@/app/messages.vi';
+import mealPromo800 from '@/assets/banners/banner-protein-800.webp';
+import mealPromo1600 from '@/assets/banners/banner-protein-1600.webp';
 import { dietLabels, isDietLabel } from '@/lib/diet-labels';
 import { EmptyState } from '@/components/empty-state';
 import { ErrorState } from '@/components/error-state';
@@ -208,13 +210,28 @@ export function ProductsPage() {
           </h1>
           <p className="text-ink-muted">{messages.productsDescription}</p>
         </div>
-        <Button asChild variant="outline">
-          <Link to="/meal-analyzer">
-            <Calculator aria-hidden="true" />
-            Phân tích bữa ăn
-            <ArrowRight aria-hidden="true" />
-          </Link>
-        </Button>
+        <Link to="/meal-analyzer" className="meal-promo">
+          <img
+            src={mealPromo800}
+            srcSet={`${mealPromo800} 800w, ${mealPromo1600} 1600w`}
+            sizes="(min-width: 940px) 460px, 100vw"
+            alt=""
+            className="meal-promo-image"
+          />
+          <span className="meal-promo-copy">
+            <span className="banner-tag">Công cụ miễn phí</span>
+            <span className="font-display text-2xl leading-tight font-extrabold">
+              Cộng cả bữa ăn
+              <br />
+              <span className="text-lime">theo từng gam.</span>
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold">
+              <Calculator aria-hidden="true" />
+              Phân tích bữa ăn
+              <ArrowRight aria-hidden="true" />
+            </span>
+          </span>
+        </Link>
       </header>
       <div className="grid items-start gap-6 md:grid-cols-[var(--filter-width)_minmax(0,1fr)] md:gap-8">
         <aside aria-label="Bộ lọc sản phẩm">

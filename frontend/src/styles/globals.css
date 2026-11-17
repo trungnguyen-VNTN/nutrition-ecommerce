@@ -1058,3 +1058,127 @@
     background: var(--ink);
   }
 }
+
+/* Spec-sheet numbers on product cards and the portion card (D28). */
+@layer components {
+  .spec-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: var(--border-width) solid var(--line);
+  }
+  .spec-cell {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    min-width: 0;
+    padding-block: var(--space-2);
+  }
+  .spec-cell dt {
+    color: var(--ink-muted);
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    line-height: var(--line-xs);
+  }
+  .spec-cell dd {
+    margin: 0;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    line-height: var(--line-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .spec-mark {
+    padding-inline: 2px;
+    background: var(--lime);
+  }
+  .portion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+  }
+  .portion-cell {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: var(--space-3);
+    border-top: 3px solid var(--macro, var(--ink));
+    border-radius: var(--corner-control);
+    background: var(--cream);
+  }
+  .portion-cell[data-tone='energy'] {
+    border-top-color: var(--ink);
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .portion-cell dt {
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    color: inherit;
+    opacity: 0.8;
+  }
+  .portion-cell dd {
+    margin: 0;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-2xl);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .portion-cell[data-tone='energy'] dd {
+    color: var(--lime);
+  }
+}
+
+/* Meal analyzer promo beside the products heading. */
+@layer components {
+  .meal-promo {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 150px;
+    overflow: hidden;
+    border-radius: var(--corner-card);
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .meal-promo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--ink) 35%,
+      color-mix(in srgb, var(--ink) 40%, transparent) 70%,
+      transparent
+    );
+  }
+  .meal-promo-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    transition: transform 500ms var(--motion-ease);
+  }
+  .meal-promo:hover .meal-promo-image {
+    transform: scale(1.05);
+  }
+  .meal-promo-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+  }
+  @media (width >= 940px) {
+    .meal-promo {
+      width: 460px;
+    }
+  }
+}
