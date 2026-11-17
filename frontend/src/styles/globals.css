@@ -1032,15 +1032,6 @@
     transform: translateY(-4px);
     box-shadow: var(--elevation-float);
   }
-  .collection-link[data-tone='dark'] {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: var(--cream);
-  }
-  .collection-link[data-tone='lime'] {
-    border-color: var(--lime);
-    background: var(--lime);
-  }
   .collection-link[data-tone^='photo'] {
     border-color: transparent;
     color: var(--cream);
@@ -1086,7 +1077,6 @@
     text-transform: uppercase;
     opacity: 0.85;
   }
-  .collection-link[data-tone='dark'] .collection-kicker,
   .collection-link[data-tone^='photo'] .collection-kicker {
     color: var(--lime);
     opacity: 1;
