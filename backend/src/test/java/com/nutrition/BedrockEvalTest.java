@@ -52,6 +52,7 @@ class BedrockEvalTest {
     var client =
         new BedrockLlmClient(
             profile.isBlank() ? env("BEDROCK_MODEL_ID") : profile,
+            BedrockLlmClient.regionOf(env("BEDROCK_REGION")),
             env("BEDROCK_GUARDRAIL_ID"),
             env("BEDROCK_GUARDRAIL_VERSION"),
             new ObjectMapper(),
