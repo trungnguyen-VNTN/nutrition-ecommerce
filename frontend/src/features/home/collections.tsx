@@ -13,6 +13,14 @@ import greens400 from '@/assets/banners/tile-rau-xanh-400.webp';
 import greens800 from '@/assets/banners/tile-rau-xanh-800.webp';
 import grains400 from '@/assets/banners/tile-ngu-coc-400.webp';
 import grains800 from '@/assets/banners/tile-ngu-coc-800.webp';
+import protein320 from '@/assets/banners/tile-protein-320.webp';
+import protein640 from '@/assets/banners/tile-protein-640.webp';
+import plantMilk320 from '@/assets/banners/tile-sua-thuc-vat-320.webp';
+import plantMilk640 from '@/assets/banners/tile-sua-thuc-vat-640.webp';
+import lowSugar400 from '@/assets/banners/tile-it-duong-400.webp';
+import lowSugar800 from '@/assets/banners/tile-it-duong-800.webp';
+import allergens400 from '@/assets/banners/tile-di-ung-400.webp';
+import allergens800 from '@/assets/banners/tile-di-ung-800.webp';
 
 type Tile = {
   title: string;
@@ -20,9 +28,9 @@ type Tile = {
   /** Category slug (resolved to the live id) or a ready filter URL. */
   category?: string;
   to?: string;
-  image?: readonly [string, string, number];
   className: string;
-  tone: 'photo' | 'photo-wide' | 'dark' | 'lime' | 'paper';
+  image: readonly [string, string, number];
+  tone: 'photo' | 'photo-wide';
 };
 
 // AI-generated mood photos (docs/image-credits.md); every tile opens a real catalog view.
@@ -39,8 +47,9 @@ const tiles: Tile[] = [
     title: 'Giàu protein',
     kicker: '≥ 20% năng lượng',
     to: '/products?label=HIGH_PROTEIN',
+    image: [protein320, protein640, 320],
     className: '',
-    tone: 'dark',
+    tone: 'photo',
   },
   {
     title: 'Trái cây tươi',
@@ -62,8 +71,9 @@ const tiles: Tile[] = [
     title: 'Hỏi AI: “món nào không có sữa?”',
     kicker: 'Tra cứu AI',
     to: '/chat',
+    image: [plantMilk320, plantMilk640, 320],
     className: '',
-    tone: 'lime',
+    tone: 'photo',
   },
   {
     title: 'Rau củ',
@@ -85,15 +95,17 @@ const tiles: Tile[] = [
     title: 'Ít đường',
     kicker: '≤ 5 g / 100 g',
     to: '/products?label=LOW_SUGAR',
+    image: [lowSugar400, lowSugar800, 400],
     className: 'col-span-2',
-    tone: 'paper',
+    tone: 'photo-wide',
   },
   {
     title: `Loại trừ ${allergenOptions.length} chất gây dị ứng`,
     kicker: 'Bộ lọc',
     to: '/products',
+    image: [allergens400, allergens800, 400],
     className: 'col-span-2',
-    tone: 'dark',
+    tone: 'photo-wide',
   },
 ];
 
@@ -116,17 +128,15 @@ export function Collections({ categories }: { categories?: Category[] }) {
             className="collection-link"
             data-tone={tile.tone}
           >
-            {tile.image && (
-              <img
-                src={tile.image[0]}
-                srcSet={`${tile.image[0]} ${tile.image[2]}w, ${tile.image[1]} ${tile.image[2] * 2}w`}
-                sizes="(min-width: 940px) 25vw, 50vw"
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="collection-image"
-              />
-            )}
+            <img
+              src={tile.image[0]}
+              srcSet={`${tile.image[0]} ${tile.image[2]}w, ${tile.image[1]} ${tile.image[2] * 2}w`}
+              sizes="(min-width: 940px) 25vw, 50vw"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="collection-image"
+            />
             <span className="collection-copy">
               <span className="collection-kicker">{tile.kicker}</span>
               <span className="collection-title">{tile.title}</span>
