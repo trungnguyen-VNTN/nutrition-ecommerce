@@ -12,17 +12,18 @@ Xây dựng MVP gồm catalog, tài khoản, giỏ hàng, đặt hàng, quản l
 - Toàn bộ hạ tầng dựng bằng code (Terraform).
 
 A - HÀNH ĐỘNG (Action)
-1. Amazon CloudFront phân phối React SPA và ảnh sản phẩm từ hai bucket Amazon S3 riêng tư, qua Origin Access Control.
+1. Amazon CloudFront phân phối React SPA và ảnh sản phẩm từ hai bucket Amazon S3 riêng tư, qua Origin Access Control. AWS WAF (bộ luật do AWS quản lý và giới hạn số request theo IP) được gắn vào CloudFront khi demo.
 2. Các yêu cầu /api/* đi qua Internet Gateway tới Application Load Balancer. ALB chỉ nhận lưu lượng từ dải IP của CloudFront và kèm header bí mật.
-3. Backend Spring Boot (Java 21) chạy trên Amazon ECS Fargate (ARM64), đặt ở public subnet và không dùng NAT để tiết kiệm chi phí. ECS service trải trên 2 Availability Zone: môi trường dev chạy 1 task, nếu task lỗi thì task thay thế có thể khởi động ở AZ còn lại. Mỗi lớp có security group riêng: ALB chỉ nhận từ CloudFront, ECS chỉ nhận từ ALB, RDS chỉ nhận từ ECS qua cổng 5432.
+3. Backend Spring Boot (Java 21) chạy trên Amazon ECS Fargate (ARM64), đặt ở public subnet và không dùng NAT để tiết kiệm chi phí. Lưu lượng từ backend tới S3 đi qua S3 Gateway Endpoint, không ra Internet. ECS service trải trên 2 Availability Zone: môi trường dev chạy 1 task, nếu task lỗi thì task thay thế có thể khởi động ở AZ còn lại. Mỗi lớp có security group riêng: ALB chỉ nhận từ CloudFront, ECS chỉ nhận từ ALB, RDS chỉ nhận từ ECS qua cổng 5432.
 4. Dữ liệu nằm trên Amazon RDS for PostgreSQL ở private subnet, được mã hoá bằng khoá AWS KMS. Mật khẩu do AWS Secrets Manager quản lý. Truy vấn dùng SQL tham số hoá; trừ kho bằng UPDATE có điều kiện trong transaction.
 5. Amazon Cognito quản lý đăng nhập (JWT, hai nhóm USER và ADMIN). AWS IAM cấp quyền tối thiểu, có permissions boundary.
 6. Trợ lý AI gọi Amazon Bedrock (Nova 2 Lite) ở region Tokyo, kèm Amazon Bedrock Guardrails để chặn câu hỏi y tế và prompt injection. Model chỉ được dùng một tool tìm kiếm chỉ đọc.
 7. GitHub Actions dùng OIDC (không lưu khoá dài hạn) để build image, đẩy lên Amazon ECR rồi cập nhật ECS.
 8. Amazon CloudWatch Logs gom log của ứng dụng; Amazon CloudWatch đặt alarm (lỗi 5xx, CPU, RAM, dòng ERROR) và gửi cảnh báo qua Amazon SNS. AWS Budgets kiểm soát chi phí.
+9. AWS CloudTrail ghi lại mọi thao tác quản trị ở tất cả region, cùng với access log của ALB, vào một bucket Amazon S3 riêng (mã hoá, tự xoá sau 30 ngày) để kiểm toán "ai đã làm gì".
 
 R - KẾT QUẢ (Result)
-- Ứng dụng chạy trên AWS qua CloudFront, với 152 sản phẩm có số liệu USDA thuộc 11 danh mục, lọc theo 9 nhóm chất gây dị ứng, kèm nhãn dinh dưỡng tự động và công cụ phân tích bữa ăn.
-- 60 test backend và 134 test frontend chạy tự động trong CI ở mỗi pull request.
-- Hạ tầng mặc định ở trạng thái tắt, chỉ bật khi demo. Không dùng NAT, Multi-AZ hay interface endpoint, nên chi phí thấp.
+- Ứng dụng chạy trên AWS qua CloudFront, với 152 sản phẩm có số liệu USDA thuộc 11 danh mục, lọc theo 9 nhóm chất gây dị ứng, kèm nhãn dinh dưỡng tự động, công cụ phân tích bữa ăn và nhật ký thanh toán cho admin.
+- Hơn 60 test backend, hơn 130 test frontend và 49 test end-to-end (gồm kiểm tra trợ năng bằng axe ở màn hình 390 px và 1440 px) chạy trong CI hoặc trước mỗi pull request.
+- Hạ tầng mặc định ở trạng thái tắt, chỉ bật khi demo; WAF cũng chỉ bật khi demo. Không dùng NAT, Multi-AZ hay interface endpoint, nên chi phí thấp. CloudTrail và S3 Gateway Endpoint không tốn phí theo giờ.
 - Các hạn chế đã ghi rõ trong tài liệu quyết định: chưa có domain riêng nên CloudFront gọi ALB bằng HTTP; AI phải gọi Bedrock ở Tokyo vì quota Bedrock ở Singapore đang bằng 0; thanh toán chỉ chạy trên môi trường sandbox.
