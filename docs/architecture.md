@@ -4,7 +4,7 @@
 
 ## 1. Phạm vi MVP
 
-Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
+Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán khi nhận hàng hoặc VNPAY **sandbox** (D27), không có giao dịch tiền thật. Sơ đồ AWS: [docs/diagrams/aws-architecture.png](diagrams/aws-architecture.png).
 Không nằm trong MVP: Nutrition Profile, Recommendation Engine, meal plan, event pipeline, pipeline USDA, `addToCart` qua AI, domain riêng, WAF.
 
 ## 2. Sơ đồ khối
