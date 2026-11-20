@@ -46,3 +46,9 @@ variable "images_bucket_regional_domain_name" {
   description = "Regional domain of the images bucket, used as CloudFront origin."
   type        = string
 }
+
+variable "web_acl_arn" {
+  description = "WAFv2 web ACL ARN (us-east-1, CLOUDFRONT scope). Null means no WAF."
+  type        = string
+  default     = null
+}
