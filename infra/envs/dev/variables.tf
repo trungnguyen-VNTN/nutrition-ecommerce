@@ -35,13 +35,13 @@ variable "api_desired_count" {
 variable "bedrock_model_id" {
   description = "Foundation model behind the inference profile (D18). Empty disables AI permissions."
   type        = string
-  default     = "anthropic.claude-haiku-5-5"
+  default     = "amazon.nova-2-lite-v1:0"
 }
 
 variable "bedrock_inference_profile_id" {
   description = "Inference profile ID in bedrock_region (D18: jp.* stays in Tokyo and Osaka). Empty disables AI permissions."
   type        = string
-  default     = "jp.anthropic.claude-haiku-5-5"
+  default     = "jp.amazon.nova-2-lite-v1:0"
 }
 
 variable "bedrock_region" {
