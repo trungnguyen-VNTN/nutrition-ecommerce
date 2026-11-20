@@ -1,8 +1,19 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-18_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-20_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Hoàn thiện phần còn dở (2026-11-20, nhánh `chore/e2e-playwright-node26`).**
+  - **AI trên AWS:** app đang chạy (1 task, task definition rev 7). Task có `BEDROCK_REGION=ap-northeast-1`, Nova 2 Lite qua profile `jp.`, guardrail ở Tokyo. Qua CloudFront: `/`, `/api/products`, `/api/categories` trả 200; `/api/chat` không token trả 401.
+    - **Chưa kiểm chứng:** hỏi AI khi đã đăng nhập; bộ 30 câu `-Pbedrock-eval`. `nutrition-plan` không có `bedrock:InvokeModel` (AccessDenied), nên người dùng chạy bằng `nutrition-apply` (lệnh trong `docs/ai-eval.md`). Lần chạy thử bằng `nutrition-plan`: 6/6 câu tấn công vẫn fail-closed.
+  - **E2E / axe chạy được lần đầu sau nhiều PR:** Playwright 1.56.1 hỏng trên Node 26 (`fs.rmdir` với `recursive`). Nâng `@playwright/test` và override `playwright-core` lên 1.64.1 (phát hành 2026-10-14), rồi cài Chromium.
+    - Kết quả: **49/49 E2E**; axe không có lỗi ở mọi trang (390 / 1440).
+    - Sửa 4 test lỗi thời: 9 khung tải theo `productPageSize`; checkout gửi `payment_method: 'COD'`; test bàn phím Tab tới thẻ sản phẩm thay vì đếm cứng.
+    - **Lỗi giao diện thật đã sửa:** khung tải sản phẩm thấp hơn thẻ thật 58–70 px (layout shift). Khung tải giờ dùng cấu trúc `.spec-row`; hàng nhãn và hàng allergen của thẻ có chiều cao cố định.
+  - **Ảnh README** chụp lại với dữ liệu USDA local (giao diện D28). Sơ đồ kiến trúc AWS và mô tả STAR ở `docs/diagrams/`.
+  - **Diễn tập khôi phục:** `docs/runbook.md` mục 3–4 có thêm biên bản để điền. Người dùng chạy (cần `nutrition-apply`); chưa chạy.
+  - **Lưu ý:** app AWS đang BẬT lúc ghi; chạy `demo-infra.ps1 down -Vnpay` khi xong.
 
 - **AI gọi Bedrock ở Tokyo (2026-11-18, D18, nhánh `feat/ai-bedrock-tokyo`).** Kiểm tra chỉ đọc: ở Singapore cả 531 quota Bedrock bằng 0; case hỗ trợ ngày 2026-11-13 (loại Account, General question) vẫn "Unassigned". Tokyo có quota (Haiku 5.5 cross-region 10 triệu token/phút) và profile `jp.anthropic.claude-haiku-5-5` (Tokyo + Osaka). Người dùng chọn chuyển sang Tokyo.
   - Backend: region Bedrock lấy từ `BEDROCK_REGION` (mặc định ap-southeast-1, tên sai thì dừng khởi động); bỏ `temperature(0F)` mà Haiku 5.5 không nhận; test mới.
