@@ -4,7 +4,8 @@ export const messages = {
   navigation: 'Điều hướng chính',
   skip: 'Đến nội dung chính',
   footer: 'Hiểu thực phẩm. Chọn điều phù hợp.',
-  footerNote: 'Không thanh toán trực tuyến',
+  footerNote:
+    'Thanh toán khi nhận hàng hoặc VNPAY sandbox, không giao dịch tiền thật',
   home: 'Trang chủ',
   products: 'Sản phẩm',
   productDetail: 'Chi tiết sản phẩm',
