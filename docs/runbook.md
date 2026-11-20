@@ -51,13 +51,30 @@ Mục tiêu: chứng minh hạ tầng dựng lại được hoàn toàn từ Ter
 4. Khôi phục bảo vệ xóa trong code, rồi dựng lại từ snapshot:
    ```powershell
    $env:TF_VAR_restore_snapshot_identifier = "nutrition-dev-before-rebuild"
-   powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down -Vnpay
    ```
 5. Chạy workflow Deploy (GitHub Actions → *Deploy to AWS dev* → Run workflow) để đẩy lại image và
    frontend, `up`, kiểm tra theo `docs/demo.md`.
 6. Bỏ biến `TF_VAR_restore_snapshot_identifier` (Terraform bỏ qua thay đổi biến này sau khi tạo).
 
 Bucket state (`infra/bootstrap`) có `prevent_destroy`, không nằm trong bài diễn tập.
+
+Thứ tự khuyên dùng: chạy mục 3 trước (rẻ, không đụng DB đang dùng); mục 4 chỉ chạy khi đã có
+snapshot `Available` và chấp nhận mất tài khoản Cognito nếu xóa cả user pool.
+
+| Mục | Mục 3: khôi phục snapshot | Mục 4: destroy rồi dựng lại |
+| --- | --- | --- |
+| Ngày, người chạy | | |
+| Snapshot dùng | | |
+| Bắt đầu → `Available` (phút) | | |
+| Kiểm tra dữ liệu | Đếm sản phẩm trên bản khôi phục = bản gốc (152)? | `/api/products` trả đủ sản phẩm sau `up`? |
+| Kiểm tra ứng dụng | (không áp dụng) | Trang chủ, đăng nhập, đặt hàng COD theo `docs/demo.md` |
+| Đã xóa tài nguyên diễn tập | Instance `nutrition-dev-restore-drill`, snapshot diễn tập | Biến `TF_VAR_restore_snapshot_identifier` |
+| Sự cố gặp phải, cách xử lý | | |
+
+Ghi chú khi bảo vệ: thời gian từ lúc bắt đầu khôi phục tới khi dùng được chính là **RTO** đo được;
+dữ liệu mất tối đa (**RPO**) là khoảng cách tới snapshot dùng để khôi phục; với backup tự động, RDS
+còn cho khôi phục tới một thời điểm (point-in-time) gần hiện tại, thường chỉ cách vài phút.
 
 ## 5. Thanh toán VNPAY sandbox (D27)
 
