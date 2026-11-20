@@ -180,7 +180,7 @@ public class BedrockLlmClient implements LlmClient {
                     .role(ConversationRole.USER)
                     .content(ContentBlock.fromText(message))
                     .build())
-            // No temperature: newer Claude models on Bedrock reject it; the tool schema and
+            // No temperature: not every Bedrock model accepts it, and the tool schema plus
             // fail-closed parsing keep the output deterministic enough.
             .inferenceConfig(config -> config.maxTokens(400))
             .toolConfig(

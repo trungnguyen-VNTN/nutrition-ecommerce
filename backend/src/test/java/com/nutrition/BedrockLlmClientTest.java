@@ -112,7 +112,7 @@ class BedrockLlmClientTest {
     String schema =
         plain.toolConfig().tools().getFirst().toolSpec().inputSchema().json().toString();
     assertThat(schema).contains("tree_nut", "sesame", "additionalProperties");
-    // Newer Claude models on Bedrock reject temperature, so the request must not send it.
+    // Not every Bedrock model accepts temperature, so the request must not send it.
     assertThat(plain.inferenceConfig().temperature()).isNull();
     assertThat(plain.inferenceConfig().maxTokens()).isEqualTo(400);
 
