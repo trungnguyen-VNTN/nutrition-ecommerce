@@ -80,7 +80,7 @@ giới hạn ở Singapore:
   `ap-northeast-1` / `ap-northeast-3`; `ChatGuardrailInTokyo` cho phép `bedrock:ApplyGuardrail`
   trên guardrail ở Tokyo.
 - `nutrition-apply-policy.json`: `AllowChatGuardrailInTokyo` cho Terraform tạo / sửa / xóa guardrail
-  ở Tokyo (9 hành động guardrail và tag); các hành động này được rút khỏi `DenyOtherRegions` và có
+  ở Tokyo (9 hành động guardrail và tag, cộng `bedrock:ApplyGuardrail` để chạy bộ kiểm thử AI có guardrail); các hành động này được rút khỏi `DenyOtherRegions` và có
   lệnh cấm riêng `DenyGuardrailOutsideSingaporeAndTokyo`. Gọi model được mở thêm Tokyo / Osaka.
 
 Thứ tự làm (root / admin, như mục trên):

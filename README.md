@@ -74,6 +74,8 @@ Kiến trúc đã triển khai trên AWS (bật / tắt theo buổi demo, xem `i
 chỉ nhận lưu lượng từ CloudFront; chi tiết xem [kiến trúc](docs/architecture.md)
 và [quyết định](docs/decisions.md).
 
+![Kiến trúc AWS](docs/diagrams/aws-architecture.png)
+
 ```mermaid
 flowchart LR
   user([Trình duyệt]) -->|HTTPS *.cloudfront.net| cf[CloudFront]
