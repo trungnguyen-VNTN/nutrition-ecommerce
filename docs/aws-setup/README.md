@@ -70,7 +70,7 @@ Tham khảo: https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-r
 ## Ngoại lệ cho Bedrock ở Tokyo (2026-11-18, D18)
 
 Ở ap-southeast-1 mọi quota Bedrock của tài khoản đang bằng 0, nên backend gọi Bedrock ở
-**ap-northeast-1** qua profile `jp.anthropic.claude-haiku-5-5` (định tuyến tới Tokyo và Osaka),
+**ap-northeast-1** qua profile `jp.amazon.nova-2-lite-v1:0` (định tuyến tới Tokyo và Osaka),
 và Guardrail cũng nằm ở Tokyo. Hai policy mở thêm **chỉ cho Bedrock**; mọi dịch vụ khác vẫn bị
 giới hạn ở Singapore:
 
@@ -83,9 +83,9 @@ giới hạn ở Singapore:
 
 Thứ tự làm (root / admin, như mục trên):
 
-1. Bedrock console, region **Tokyo** → Playground → chọn Claude Haiku 5.5 → gửi một câu bất kỳ để
-   chấp nhận điều khoản model (kiểm tra 2026-11-18: `agreementAvailability = NOT_AVAILABLE`).
-   Nếu được hỏi mục đích sử dụng của Anthropic, điền rồi gửi.
+1. (Đã kiểm tra 2026-11-20) Nova 2 Lite không cần chấp nhận điều khoản: `agreementAvailability = AVAILABLE`.
+   Claude (Haiku 5.5, Haiku 4.5, Sonnet 4.5) bị AWS khóa với tài khoản này:
+   "not available for this account ... contact AWS Sales".
 2. Dán JSON mới cho `nutrition-boundary` và inline policy của `nutrition-apply`.
 3. `aws sso login --profile nutrition-apply`, rồi `scripts/demo-infra.ps1 up -Vnpay` (hoặc `down -Vnpay`):
    lần apply này xóa guardrail ở Singapore, tạo guardrail mới ở Tokyo và thay task definition.

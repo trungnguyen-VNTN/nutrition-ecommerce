@@ -33,8 +33,8 @@ và ID lấy từ spike S1:
 ```powershell
 $env:AWS_PROFILE = "nutrition-apply"
 $env:BEDROCK_REGION = "ap-northeast-1"                              # D18: Tokyo
-$env:BEDROCK_MODEL_ID = "anthropic.claude-haiku-5-5"
-$env:BEDROCK_INFERENCE_PROFILE_ID = "jp.anthropic.claude-haiku-5-5"
+$env:BEDROCK_MODEL_ID = "amazon.nova-2-lite-v1:0"
+$env:BEDROCK_INFERENCE_PROFILE_ID = "jp.amazon.nova-2-lite-v1:0"
 $env:BEDROCK_GUARDRAIL_ID = "<terraform output bedrock_guardrail_id>"   # tùy chọn
 $env:BEDROCK_GUARDRAIL_VERSION = "1"                                   # tùy chọn
 cd backend

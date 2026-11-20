@@ -36,7 +36,7 @@ CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──�
 | Backend | ECS Fargate (Spring Boot) | Chỉ nhận từ ALB; image trong ECR; `/actuator/health` |
 | Cân bằng tải | ALB công khai | SG chỉ nhận managed prefix list của CloudFront; listener chỉ chuyển tiếp khi có header bí mật do CloudFront thêm |
 | Database | RDS PostgreSQL | 1 AZ cho dev, mã hóa, `deletion_protection`, mật khẩu do RDS quản lý (Secrets Manager) |
-| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình. Claude Haiku 5.5 qua profile `jp.` ở Tokyo vì Singapore chưa có quota Bedrock (D18); region lấy từ `BEDROCK_REGION` |
+| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình. Amazon Nova 2 Lite qua profile `jp.` ở Tokyo, vì Singapore chưa có quota Bedrock và Claude bị khóa với tài khoản (D18); region lấy từ `BEDROCK_REGION` |
 | Quan sát | CloudWatch Logs, Alarms | Không log token hay dữ liệu cá nhân |
 | IaC | Terraform ≥ 1.10 | State S3, `use_lockfile = true` |
 
