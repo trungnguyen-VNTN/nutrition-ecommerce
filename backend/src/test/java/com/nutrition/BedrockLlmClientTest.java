@@ -215,7 +215,10 @@ class BedrockLlmClientTest {
             request -> {
               throw new IllegalStateException("throttled");
             });
-    assertThatThrownBy(() -> failing.search("x")).isInstanceOf(AiUnavailableException.class);
+    // The root cause is kept for diagnostics (eval output); the API still returns a fixed 503.
+    assertThatThrownBy(() -> failing.search("x"))
+        .isInstanceOf(AiUnavailableException.class)
+        .hasCauseInstanceOf(IllegalStateException.class);
 
     var unconfigured = new BedrockLlmClient("", "", "", new ObjectMapper(), () -> CODES, null);
     assertThatThrownBy(() -> unconfigured.search("x")).isInstanceOf(AiUnavailableException.class);
