@@ -2,6 +2,7 @@ import { Note } from '@/components/ui/note';
 import { useSession } from '@/features/auth/session';
 import { SignInRequired } from '@/features/auth/auth-page';
 import { AdminOrders } from './admin-orders';
+import { AdminPaymentLog } from './admin-payment-log';
 import { AdminProducts } from './admin-products';
 import { AdminStats } from './admin-stats';
 import { CategoriesPanel } from './categories-panel';
@@ -31,6 +32,7 @@ export function AdminPage() {
           <AdminProducts />
           <CategoriesPanel />
           <AdminOrders />
+          <AdminPaymentLog />
         </div>
       )}
     </section>

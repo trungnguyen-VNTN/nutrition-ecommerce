@@ -75,6 +75,44 @@ export async function installReviewFixtures(page: Page, signedIn = true) {
         .map((p, i) => ({ ...p, id: i + 1, category_id: 1, active: true }));
     else if (path === '/api/admin/orders') data = [order];
     else if (path.startsWith('/api/admin/orders/')) data = order;
+    else if (path === '/api/admin/payments/events')
+      data = {
+        items: [
+          {
+            id: 3,
+            received_at: '2026-11-20T11:05:00Z',
+            txn_ref: '12NABCD2345',
+            order_id: 12,
+            signature_valid: true,
+            gateway_code: '00',
+            rsp_code: '00',
+            outcome: 'PAID',
+          },
+          {
+            id: 2,
+            received_at: '2026-11-20T11:02:00Z',
+            txn_ref: '12NABCD2345',
+            order_id: 12,
+            signature_valid: true,
+            gateway_code: '00',
+            rsp_code: '02',
+            outcome: 'DUPLICATE',
+          },
+          {
+            id: 1,
+            received_at: '2026-11-20T11:00:00Z',
+            txn_ref: 'FORGED1',
+            order_id: null,
+            signature_valid: false,
+            gateway_code: null,
+            rsp_code: '97',
+            outcome: 'INVALID_SIGNATURE',
+          },
+        ],
+        total: 3,
+        page: 0,
+        size: 20,
+      };
     else if (path.endsWith('/data'))
       data = {
         ...products[0],
