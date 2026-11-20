@@ -40,6 +40,15 @@ class BedrockEvalTest {
     return value == null ? "" : value;
   }
 
+  /** Root cause for the eval table: error type and a short message, account IDs masked. */
+  private static String cause(AiUnavailableException unavailable) {
+    Throwable root = unavailable.getCause();
+    if (root == null) return "";
+    String message = String.valueOf(root.getMessage()).replaceAll("[0-9]{12}", "<account>");
+    if (message.length() > 160) message = message.substring(0, 160) + "...";
+    return ": " + root.getClass().getSimpleName() + " " + message;
+  }
+
   private static String norm(String text) {
     return Normalizer.normalize(text == null ? "" : text, Normalizer.Form.NFC)
         .toLowerCase(Locale.ROOT)
@@ -75,7 +84,7 @@ class BedrockEvalTest {
       } catch (AiRefusedException refused) {
         outcome = "refused by guardrail";
       } catch (AiUnavailableException unavailable) {
-        outcome = "fail-closed (unavailable)";
+        outcome = "fail-closed (unavailable" + cause(unavailable) + ")";
       }
       results.add(new Result(id, category, judge(category, expect, search, outcome), outcome));
       Thread.sleep(300);
