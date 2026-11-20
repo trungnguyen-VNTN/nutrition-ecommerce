@@ -53,6 +53,9 @@ public class BedrockLlmClient implements LlmClient {
           + " No userId, order, SQL, ordering or write tools exist.";
   private static final BigDecimal MAX_NUMBER = BigDecimal.valueOf(10000);
 
+  /** Where the app runs; Bedrock may be called elsewhere when this region has no quota (D18). */
+  public static final Region DEFAULT_REGION = Region.AP_SOUTHEAST_1;
+
   /** Seam for tests; production calls Bedrock Runtime. */
   public interface Gateway {
     ConverseResponse converse(ConverseRequest request);
@@ -71,12 +74,14 @@ public class BedrockLlmClient implements LlmClient {
   public BedrockLlmClient(
       @Value("${BEDROCK_MODEL_ID:}") String model,
       @Value("${BEDROCK_INFERENCE_PROFILE_ID:}") String profile,
+      @Value("${BEDROCK_REGION:}") String region,
       @Value("${BEDROCK_GUARDRAIL_ID:}") String guardrailId,
       @Value("${BEDROCK_GUARDRAIL_VERSION:}") String guardrailVersion,
       ObjectMapper mapper,
       JdbcTemplate db) {
     this(
         profile.isBlank() ? model : profile,
+        regionOf(region),
         guardrailId,
         guardrailVersion,
         mapper,
@@ -84,9 +89,28 @@ public class BedrockLlmClient implements LlmClient {
         null);
   }
 
-  /** Test constructor; a null gateway means "use Bedrock Runtime when a model is configured". */
+  /** Test constructor in the default region. */
   public BedrockLlmClient(
       String modelOrProfile,
+      String guardrailId,
+      String guardrailVersion,
+      ObjectMapper mapper,
+      Supplier<List<String>> allergenCodes,
+      Gateway gateway) {
+    this(
+        modelOrProfile,
+        DEFAULT_REGION,
+        guardrailId,
+        guardrailVersion,
+        mapper,
+        allergenCodes,
+        gateway);
+  }
+
+  /** A null gateway means "use Bedrock Runtime in {@code region} when a model is configured". */
+  public BedrockLlmClient(
+      String modelOrProfile,
+      Region region,
       String guardrailId,
       String guardrailVersion,
       ObjectMapper mapper,
@@ -104,7 +128,7 @@ public class BedrockLlmClient implements LlmClient {
     } else {
       this.runtime =
           BedrockRuntimeClient.builder()
-              .region(Region.AP_SOUTHEAST_1)
+              .region(region)
               .overrideConfiguration(
                   config ->
                       config
@@ -113,6 +137,18 @@ public class BedrockLlmClient implements LlmClient {
               .build();
       this.gateway = runtime::converse;
     }
+  }
+
+  /**
+   * Bedrock region from configuration: blank means the app's own region; an unknown name is a
+   * configuration error and stops startup instead of failing every chat request later.
+   */
+  public static Region regionOf(String value) {
+    if (value == null || value.isBlank()) return DEFAULT_REGION;
+    Region region = Region.of(value.trim());
+    if (!Region.regions().contains(region))
+      throw new IllegalArgumentException("Unknown BEDROCK_REGION: " + value.trim());
+    return region;
   }
 
   @Override
@@ -144,7 +180,9 @@ public class BedrockLlmClient implements LlmClient {
                     .role(ConversationRole.USER)
                     .content(ContentBlock.fromText(message))
                     .build())
-            .inferenceConfig(config -> config.maxTokens(400).temperature(0F))
+            // No temperature: not every Bedrock model accepts it, and the tool schema plus
+            // fail-closed parsing keep the output deterministic enough.
+            .inferenceConfig(config -> config.maxTokens(400))
             .toolConfig(
                 ToolConfiguration.builder()
                     .tools(
