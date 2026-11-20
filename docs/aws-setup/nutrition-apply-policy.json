@@ -189,7 +189,8 @@
         "bedrock:DeleteGuardrail",
         "bedrock:TagResource",
         "bedrock:UntagResource",
-        "bedrock:ListTagsForResource"
+        "bedrock:ListTagsForResource",
+        "bedrock:ApplyGuardrail"
       ],
       "Resource": "*",
       "Condition": {
@@ -222,7 +223,8 @@
         "bedrock:DeleteGuardrail",
         "bedrock:TagResource",
         "bedrock:UntagResource",
-        "bedrock:ListTagsForResource"
+        "bedrock:ListTagsForResource",
+        "bedrock:ApplyGuardrail"
       ],
       "Resource": "*",
       "Condition": {
@@ -262,7 +264,8 @@
         "bedrock:DeleteGuardrail",
         "bedrock:TagResource",
         "bedrock:UntagResource",
-        "bedrock:ListTagsForResource"
+        "bedrock:ListTagsForResource",
+        "bedrock:ApplyGuardrail"
       ],
       "Resource": "*",
       "Condition": {
