@@ -200,3 +200,9 @@ variable "vnpay_return_url" {
     error_message = "vnpay_return_url must be an https URL."
   }
 }
+
+variable "access_logs_bucket" {
+  description = "Bucket for ALB access logs (prefix alb/). Empty disables access logs."
+  type        = string
+  default     = ""
+}
