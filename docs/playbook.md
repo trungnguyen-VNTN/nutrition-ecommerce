@@ -766,7 +766,7 @@ Mục "Chất lượng giao diện" trong `docs/test-plan.md` áp dụng cho m�
 
 ## G.4. Câu hỏi còn mở bạn cần quyết
 
-- [x] Model và inference profile: chốt tạm Claude Haiku 5.5 qua profile APAC cross-region (D18), xác nhận bằng spike S1
+- [x] Model và inference profile: Amazon Nova 2 Lite qua profile `jp.` ở Tokyo (D18, 2026-11-20); Claude bị khóa với tài khoản
 - [x] Kiến trúc CPU của image: linux/arm64 (O2)
 - [x] NAT: không dùng; task ECS ở public subnet có IP công khai (D15). Không còn interface endpoint (D2)
 - [x] Permission set `apply`: tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary (D16)
