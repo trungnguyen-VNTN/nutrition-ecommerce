@@ -49,7 +49,9 @@ Không có account ID, ARN cụ thể hay secret trong các file này; ARN dùng
 - Policy được soạn từ tài liệu IAM, **chưa chạy thử trên tài khoản thật**. Nếu `terraform apply`
   báo `AccessDenied`, gửi nguyên câu lỗi (bỏ account ID) để bổ sung đúng quyền thiếu, không chuyển sang AdministratorAccess.
 
-## Ngoại lệ cho Bedrock global cross-Region inference (2026-11-13)
+## Ngoại lệ cho Bedrock global cross-Region inference (2026-11-13, lịch sử)
+
+> Không còn dùng: dự án đã bỏ Claude và chuyển sang Nova 2 Lite ở Tokyo (mục kế tiếp). Giữ `unspecified` trong policy cũng không hại; có thể bỏ khi muốn siết quyền.
 
 Claude Haiku 5.5 ở ap-southeast-1 chỉ gọi được qua profile `global.` (D18). Với profile global, AWS
 kiểm tra quyền với `aws:RequestedRegion = "unspecified"`, nên các điều kiện "chỉ Singapore" trả về

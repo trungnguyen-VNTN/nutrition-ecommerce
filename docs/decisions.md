@@ -30,7 +30,7 @@
 
 | # | Chủ đề | Lựa chọn | Quyết khi nào | Trạng thái |
 | --- | --- | --- | --- | --- |
-| O1 | Model và inference profile | in-region hay global; model cụ thể | Sau spike S1 | Chốt tạm 2026-11-10: Claude Haiku 5.5 qua inference profile APAC cross-region; xác nhận lại bằng spike S1 |
+| O1 | Model và inference profile | in-region hay global; model cụ thể | Sau spike S1 | **Đã chốt (D18, 2026-11-20): Amazon Nova 2 Lite qua `jp.amazon.nova-2-lite-v1:0` ở Tokyo.** Phương án cũ (Claude Haiku 5.5) bỏ vì Claude bị khóa với tài khoản |
 | O2 | Kiến trúc CPU của image | linux/arm64 | Trước giai đoạn 3 | Đã chốt |
 | O3 | Đường ra Internet của ECS | Task ở public subnet có IP công khai, hay private subnet + NAT một AZ | Trước giai đoạn 3, so sánh chi phí | Đã chốt 2026-11-10: public subnet có IP công khai, không NAT |
 | O4 | Permission set `apply` | Tùy chỉnh (khuyến nghị) hay AdministratorAccess trên sandbox | Giai đoạn 0 | Đã chốt 2026-11-10: tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary |
