@@ -93,6 +93,8 @@ module "service" {
   bedrock_guardrail_version    = module.guardrail.guardrail_version
   bedrock_guardrail_arn        = module.guardrail.guardrail_arn
 
+  access_logs_bucket = module.audit.logs_bucket_name
+
   vnpay_enabled    = var.vnpay_enabled
   vnpay_return_url = var.vnpay_return_url
 
@@ -111,6 +113,8 @@ module "frontend" {
   images_bucket_name                 = module.images.bucket_name
   images_bucket_arn                  = module.images.bucket_arn
   images_bucket_regional_domain_name = module.images.bucket_regional_domain_name
+
+  web_acl_arn = module.waf.web_acl_arn
 }
 
 module "github_oidc" {
@@ -136,4 +140,17 @@ module "alarms" {
   ecs_service_name        = module.service.service_name
   db_identifier           = module.rds.identifier
   log_group_name          = module.service.log_group_name
+}
+
+module "audit" {
+  source = "../../modules/audit"
+
+  name_prefix = local.name_prefix
+}
+
+module "waf" {
+  source = "../../modules/waf"
+
+  name_prefix = local.name_prefix
+  enabled     = var.waf_enabled
 }

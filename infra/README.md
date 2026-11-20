@@ -127,6 +127,12 @@ Khi chưa có `AWS_DEPLOY_ROLE_ARN`, hai job được bỏ qua (không làm đ�
 
 Chưa tính Bedrock (tính theo token). Bật thanh toán VNPAY sandbox (`-Vnpay`, D27) thêm 1 secret Secrets Manager, **khoảng $0,40 / tháng**.
 
+D29: CloudTrail (trail đầu tiên cho management events miễn phí) và ALB access logs chỉ tốn tiền lưu
+S3, giữ 30 ngày: **vài cent / tháng**. S3 gateway endpoint không tính phí. WAF (`-Waf`) khoảng
+$5 / tháng cho web ACL + $1 / tháng mỗi rule (4 rule), chia theo giờ, cộng $0,60 / 1 triệu request:
+bật 4 giờ cho một buổi demo chỉ vài cent. Giá WAF và CloudTrail lấy theo hiểu biết, chưa đối chiếu
+AWS Pricing Calculator.
+
 Số liệu ước tính theo giá công bố mà tôi biết, chưa đối chiếu AWS Pricing Calculator.
 Muốn giảm tiền khi không dùng: dừng RDS tạm thời (tự bật lại sau 7 ngày) hoặc destroy dev.
 
