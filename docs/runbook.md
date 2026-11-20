@@ -5,7 +5,13 @@
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 up     # ~10-15 phút
 powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down   # ~5-10 phút
+powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 up -Vnpay -Waf   # thêm VNPAY sandbox và WAF
 ```
+
+- `-Waf` (D29) tạo AWS WAF trước CloudFront; lần chạy sau bỏ `-Waf` thì WAF bị xóa. Mỗi lần bật / tắt,
+  CloudFront mất vài phút để cập nhật.
+- Log kiểm toán: CloudTrail và ALB access logs nằm trong bucket `nutrition-dev-logs-<account>`
+  (prefix `cloudtrail/`, `alb/`), tự xóa sau 30 ngày.
 
 - Sau `down`, đợi RDS dừng hẳn (5-10 phút) rồi mới `up`.
 - AWS tự bật lại RDS đã dừng sau 7 ngày: chạy `down` lại mỗi tuần nếu nghỉ lâu.

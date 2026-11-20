@@ -31,6 +31,16 @@ resource "aws_lb" "api" {
   idle_timeout       = 60
 
   drop_invalid_header_fields = true
+
+  dynamic "access_logs" {
+    for_each = var.access_logs_bucket == "" ? [] : [var.access_logs_bucket]
+
+    content {
+      bucket  = access_logs.value
+      prefix  = "alb"
+      enabled = true
+    }
+  }
 }
 
 resource "aws_lb_target_group" "api" {
