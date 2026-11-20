@@ -33,10 +33,14 @@ test('keyboard users can skip navigation and open a product', async ({
   ).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('main')).toBeFocused();
-  // Search, three group toggles, category, two numeric inputs, six allergen choices and two filter actions precede the list.
-  for (let index = 0; index < 15; index++) await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
+  // Filters, the sort control and the meal-analyzer promo precede the list; their count changes
+  // with the filter set, so tab until the first product link instead of hard-coding it.
   const product = page.getByRole('link', { name: 'Yến mạch nguyên hạt' });
+  for (let index = 0; index < 60; index++) {
+    await page.keyboard.press('Tab');
+    if (await product.evaluate((element) => element === document.activeElement))
+      break;
+  }
   await expect(product).toBeFocused();
   expect(
     await product.evaluate((element) => getComputedStyle(element).outlineStyle),
