@@ -131,20 +131,25 @@ public class PaymentService {
    */
   @Transactional
   public IpnResponse handleIpn(Map<String, String> params) {
-    if (!vnpayEnabled()) return new IpnResponse("99", "Unknown error");
-    if (!signer.verify(params)) return new IpnResponse("97", "Invalid signature");
     String txnRef = params.get("vnp_TxnRef");
+    if (!vnpayEnabled())
+      return logged(txnRef, null, false, null, "99", "Unknown error", "DISABLED");
+    if (!signer.verify(params))
+      return logged(txnRef, null, false, null, "97", "Invalid signature", "INVALID_SIGNATURE");
+    String gatewayCode = params.get("vnp_ResponseCode");
     var payments =
         db.queryForList(
             "SELECT id,order_id,amount,status FROM payments WHERE txn_ref=? FOR UPDATE", txnRef);
-    if (payments.isEmpty()) return new IpnResponse("01", "Order not found");
+    if (payments.isEmpty())
+      return logged(txnRef, null, true, gatewayCode, "01", "Order not found", "UNKNOWN_ORDER");
     var payment = payments.getFirst();
     long orderId = ((Number) payment.get("order_id")).longValue();
     String expectedAmount = toVnpayAmount((BigDecimal) payment.get("amount"));
     if (!expectedAmount.equals(params.get("vnp_Amount")))
-      return new IpnResponse("04", "Invalid amount");
+      return logged(txnRef, orderId, true, gatewayCode, "04", "Invalid amount", "INVALID_AMOUNT");
     if (!"PENDING".equals(payment.get("status")))
-      return new IpnResponse("02", "Order already confirmed");
+      return logged(
+          txnRef, orderId, true, gatewayCode, "02", "Order already confirmed", "DUPLICATE");
 
     boolean paid =
         "00".equals(params.get("vnp_ResponseCode"))
@@ -157,6 +162,7 @@ public class PaymentService {
         params.get("vnp_TransactionNo"),
         params.get("vnp_BankCode"),
         payment.get("id"));
+    String outcome = paid ? "PAID" : "PAYMENT_FAILED";
     if (paid) {
       String status =
           db.queryForObject(
@@ -171,6 +177,7 @@ public class PaymentService {
         db.update(
             "UPDATE orders SET payment_status='REFUND_NEEDED',updated_at=now() WHERE id=?",
             orderId);
+        outcome = "REFUND_NEEDED";
         log.warn(
             "VNPAY payment {} succeeded for order {} in status {}: refund needed",
             txnRef,
@@ -179,7 +186,62 @@ public class PaymentService {
       }
     }
     log.info("VNPAY IPN {} for order {}: {}", txnRef, orderId, paid ? "paid" : "failed");
-    return new IpnResponse("00", "Confirm Success");
+    return logged(txnRef, orderId, true, gatewayCode, "00", "Confirm Success", outcome);
+  }
+
+  /** Records the IPN in the admin payment log (D30), then returns the answer for VNPAY. */
+  private IpnResponse logged(
+      String txnRef,
+      Long orderId,
+      boolean signatureValid,
+      String gatewayCode,
+      String rspCode,
+      String message,
+      String outcome) {
+    db.update(
+        "INSERT INTO payment_events(txn_ref,order_id,signature_valid,gateway_code,rsp_code,outcome)"
+            + " VALUES (?,?,?,?,?,?)",
+        safe(txnRef, 64),
+        orderId,
+        signatureValid,
+        signatureValid ? safe(gatewayCode, 8) : null,
+        rspCode,
+        outcome);
+    return new IpnResponse(rspCode, message);
+  }
+
+  /** Untrusted gateway text kept short and alphanumeric only. */
+  static String safe(String value, int max) {
+    if (value == null) return null;
+    String cleaned = value.replaceAll("[^A-Za-z0-9]", "");
+    if (cleaned.isEmpty()) return null;
+    return cleaned.length() > max ? cleaned.substring(0, max) : cleaned;
+  }
+
+  /** Newest first; optional filter by outcome. Admin only (SecurityConfig: /api/admin/**). */
+  @Transactional(readOnly = true)
+  public Map<String, Object> events(String outcome, int page, int size) {
+    List<Map<String, Object>> items =
+        db.queryForList(
+            "SELECT id,received_at,provider,txn_ref,order_id,signature_valid,gateway_code,rsp_code,"
+                + "outcome FROM payment_events WHERE (?::text IS NULL OR outcome=?)"
+                + " ORDER BY id DESC LIMIT ? OFFSET ?",
+            outcome,
+            outcome,
+            size,
+            (long) page * size);
+    Long total =
+        db.queryForObject(
+            "SELECT count(*) FROM payment_events WHERE (?::text IS NULL OR outcome=?)",
+            Long.class,
+            outcome,
+            outcome);
+    Map<String, Object> result = new LinkedHashMap<>();
+    result.put("items", items);
+    result.put("total", total);
+    result.put("page", page);
+    result.put("size", size);
+    return result;
   }
 
   /** Browser return: checks the signature and reports the stored state; changes nothing. */
