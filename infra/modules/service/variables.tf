@@ -117,6 +117,12 @@ variable "bedrock_model_id" {
   default     = ""
 }
 
+variable "bedrock_region" {
+  description = "Region the backend calls Bedrock in (BEDROCK_REGION). Empty = the service region."
+  type        = string
+  default     = ""
+}
+
 variable "bedrock_inference_profile_id" {
   description = "Inference profile ID used for Converse. Empty = AI disabled."
   type        = string

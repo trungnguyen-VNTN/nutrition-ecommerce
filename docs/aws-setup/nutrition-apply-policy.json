@@ -37,7 +37,10 @@
       "Sid": "ProjectBucketsOnly",
       "Effect": "Allow",
       "Action": "s3:*",
-      "Resource": ["arn:aws:s3:::nutrition-*", "arn:aws:s3:::nutrition-*/*"]
+      "Resource": [
+        "arn:aws:s3:::nutrition-*",
+        "arn:aws:s3:::nutrition-*/*"
+      ]
     },
     {
       "Sid": "CreateRoleOnlyWithBoundary",
@@ -156,7 +159,7 @@
       "Resource": "*"
     },
     {
-      "Sid": "AllowModelInvokeSingaporeOrGlobal",
+      "Sid": "AllowModelInvokeSingaporeJapanOrGlobal",
       "Effect": "Allow",
       "Action": [
         "bedrock:InvokeModel",
@@ -165,7 +168,33 @@
       "Resource": "*",
       "Condition": {
         "StringEquals": {
-          "aws:RequestedRegion": ["ap-southeast-1", "unspecified"]
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "unspecified"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "AllowChatGuardrailInTokyo",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:CreateGuardrail",
+        "bedrock:CreateGuardrailVersion",
+        "bedrock:GetGuardrail",
+        "bedrock:ListGuardrails",
+        "bedrock:UpdateGuardrail",
+        "bedrock:DeleteGuardrail",
+        "bedrock:TagResource",
+        "bedrock:UntagResource",
+        "bedrock:ListTagsForResource"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "ap-northeast-1"
         }
       }
     },
@@ -184,7 +213,16 @@
         "organizations:Describe*",
         "organizations:List*",
         "bedrock:InvokeModel",
-        "bedrock:InvokeModelWithResponseStream"
+        "bedrock:InvokeModelWithResponseStream",
+        "bedrock:CreateGuardrail",
+        "bedrock:CreateGuardrailVersion",
+        "bedrock:GetGuardrail",
+        "bedrock:ListGuardrails",
+        "bedrock:UpdateGuardrail",
+        "bedrock:DeleteGuardrail",
+        "bedrock:TagResource",
+        "bedrock:UntagResource",
+        "bedrock:ListTagsForResource"
       ],
       "Resource": "*",
       "Condition": {
@@ -203,7 +241,36 @@
       "Resource": "*",
       "Condition": {
         "StringNotEquals": {
-          "aws:RequestedRegion": ["ap-southeast-1", "unspecified"]
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "unspecified"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyGuardrailOutsideSingaporeAndTokyo",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:CreateGuardrail",
+        "bedrock:CreateGuardrailVersion",
+        "bedrock:GetGuardrail",
+        "bedrock:ListGuardrails",
+        "bedrock:UpdateGuardrail",
+        "bedrock:DeleteGuardrail",
+        "bedrock:TagResource",
+        "bedrock:UntagResource",
+        "bedrock:ListTagsForResource"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "ap-northeast-1"
+          ]
         }
       }
     }
