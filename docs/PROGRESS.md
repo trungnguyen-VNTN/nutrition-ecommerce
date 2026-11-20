@@ -4,6 +4,13 @@ _Cập nhật lần cuối: 2026-11-20_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
+- **Làm nốt phần ngoài AI (2026-11-20).** Năm PR, thứ tự merge: #71 → #72 → #73; #74 độc lập (base `master`).
+  - **#72 (D29) hạ tầng:** S3 gateway endpoint; bucket `nutrition-dev-logs-<account>` (SSE-S3, chặn public, tự xóa sau 30 ngày) nhận CloudTrail (mọi Region) và ALB access logs; WAF CloudFront ở us-east-1 chỉ bật bằng `demo-infra.ps1 -Waf`. Plan: 8 tạo / 1 sửa / 0 xóa (9 / 4 / 0 khi có WAF). **Người dùng:** dán lại inline policy `nutrition-apply` (thêm `cloudtrail:*` ở Singapore, `wafv2:*` ở us-east-1, `ApplyGuardrail` ở Tokyo), rồi `up`.
+  - **#73 (D30) nhật ký thanh toán:** V10 `payment_events`, mọi IPN của VNPAY ghi một dòng; API `GET /api/admin/payments/events` và mục admin "Nhật ký thanh toán". Footer bỏ câu sai "Không thanh toán trực tuyến". Backend 61/61, frontend 136/136, E2E 49/49.
+  - **#74 thuộc tính sản phẩm:** `PUT /api/admin/products/{id}/attributes` (`plant_based` true / false / null, `is_liquid`) và thẻ "Đặc điểm sản phẩm"; sửa lỗi API allergen chỉ nhận tối đa 6 mục trong khi có 9 allergen. Backend 63/63, frontend 135/135.
+  - **Dependabot tồn đọng (chưa xử lý, đề xuất):** #20 (22 bản npm nhỏ) và #31, #32 (provider AWS 6.72) nên rebase rồi merge sau chồng PR trên. #50, #52 (AWS SDK 2.58.0) nên gộp làm một và nâng luôn `sso` / `ssooidc` cùng phiên bản. #51 (configure-aws-credentials v4 → v6) chỉ đụng workflow deploy, cần đọc release notes trước. #13 (ESLint 10) và #24 (Spotless 3.11) đang đỏ CI, nên đóng hoặc để sau. #22 (cooldown Dependabot + playwright-core 1.56.1) xung đột với #71 (1.64.1): chỉ giữ phần cooldown.
+  - **AI:** yêu cầu tăng quota `L-C6F5908D` (Nova 2 Lite, Tokyo, 8.000.000 token/phút) đang PENDING. Quota Nova 2 Lite ở Tokyo bị AWS hạ từ 8.000.000 (18/11) xuống 0 (20/11); quota theo ngày `L-210172B5` = 0, không tự chỉnh được.
+
 - **Hoàn thiện phần còn dở (2026-11-20, nhánh `chore/e2e-playwright-node26`).**
   - **AI trên AWS:** app đang chạy (1 task, task definition rev 7). Task có `BEDROCK_REGION=ap-northeast-1`, Nova 2 Lite qua profile `jp.`, guardrail ở Tokyo. Qua CloudFront: `/`, `/api/products`, `/api/categories` trả 200; `/api/chat` không token trả 401.
     - **Chưa kiểm chứng:** hỏi AI khi đã đăng nhập; bộ 30 câu `-Pbedrock-eval`. `nutrition-plan` không có `bedrock:InvokeModel` (AccessDenied), nên người dùng chạy bằng `nutrition-apply` (lệnh trong `docs/ai-eval.md`). Lần chạy thử bằng `nutrition-plan`: 6/6 câu tấn công vẫn fail-closed.
