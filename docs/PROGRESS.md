@@ -43,7 +43,7 @@ _Cập nhật lần cuối: 2026-11-18_ (Codex cập nhật cuối mỗi phiên)
   - **Bước tiếp theo:**
     1. Merge A → B → C.
     2. Bật AWS để kiểm chứng: seed lên RDS, ảnh mới lên S3, nhãn, máy tính bữa ăn.
-    3. Admin chưa sửa được `plant_based` / `is_liquid` trên giao diện; nếu cần thì làm thêm.
+    3. ~~Admin chưa sửa được `plant_based` / `is_liquid` trên giao diện~~: đã làm (2026-11-20, `PUT /api/admin/products/{id}/attributes`).
 
 - **Rà soát giai đoạn 7 (2026-11-13, D25).** Người dùng duyệt làm cả 9 mục rà soát. Mỗi nhóm một PR:
   - #44 catalog: V7 `allergens_reviewed_at`, chỉ hiện "Allergen đã xác minh" khi admin xác nhận, còn lại "Allergen theo thành phần (dữ liệu mẫu)"; tìm không dấu bằng `unaccent`; `sort` theo danh sách trắng (thiếu dinh dưỡng xếp cuối).
