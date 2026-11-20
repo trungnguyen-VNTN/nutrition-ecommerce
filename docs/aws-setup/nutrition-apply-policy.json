@@ -18,7 +18,8 @@
         "kms:*",
         "secretsmanager:*",
         "ssm:*",
-        "application-autoscaling:*"
+        "application-autoscaling:*",
+        "cloudtrail:*"
       ],
       "Resource": "*",
       "Condition": {
@@ -200,6 +201,17 @@
       }
     },
     {
+      "Sid": "AllowCloudFrontWafInUsEast1",
+      "Effect": "Allow",
+      "Action": "wafv2:*",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"
+        }
+      }
+    },
+    {
       "Sid": "DenyOtherRegions",
       "Effect": "Deny",
       "NotAction": [
@@ -224,7 +236,8 @@
         "bedrock:TagResource",
         "bedrock:UntagResource",
         "bedrock:ListTagsForResource",
-        "bedrock:ApplyGuardrail"
+        "bedrock:ApplyGuardrail",
+        "wafv2:*"
       ],
       "Resource": "*",
       "Condition": {
@@ -274,6 +287,17 @@
             "ap-southeast-1",
             "ap-northeast-1"
           ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyWafOutsideUsEast1",
+      "Effect": "Deny",
+      "Action": "wafv2:*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": "us-east-1"
         }
       }
     }

@@ -5,6 +5,7 @@
     .\scripts\demo-infra.ps1 up     # start RDS, create ALB + ECS service (~10-15 min)
     .\scripts\demo-infra.ps1 down   # remove ALB + ECS service, stop RDS (~5-10 min)
     .\scripts\demo-infra.ps1 up -Vnpay   # also enable VNPAY sandbox payments (D27)
+    .\scripts\demo-infra.ps1 up -Vnpay -Waf   # also put AWS WAF in front of CloudFront
 
   While down, only storage and small fixed items are billed. AWS restarts a stopped RDS
   instance after 7 days; run "down" again if the app stays off longer than that.
@@ -14,7 +15,10 @@ param(
   [string]$Owner = 'trungnguyen-VNTN',
   # VNPAY sandbox (D27): keeps one Secrets Manager secret (about 0.40 USD a month). Pass it on
   # every run while payments should stay on; leaving it out removes the secret.
-  [switch]$Vnpay
+  [switch]$Vnpay,
+  # AWS WAF on CloudFront: billed per month per web ACL and rule, prorated hourly. Pass it only
+  # for demos; leaving it out removes the web ACL (each CloudFront update takes a few minutes).
+  [switch]$Waf
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,6 +54,7 @@ if ($LASTEXITCODE -ne 0) {
 if ($LASTEXITCODE -ne 0) { throw 'terraform init failed.' }
 
 $env:TF_VAR_vnpay_enabled = if ($Vnpay) { 'true' } else { 'false' }
+$env:TF_VAR_waf_enabled = if ($Waf) { 'true' } else { 'false' }
 if ($Vnpay) {
   # The CloudFront domain already exists in state; the return page lives on it.
   $appUrl = & $terraform "-chdir=$dev" output -raw app_url
