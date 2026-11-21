@@ -4,6 +4,8 @@ _Cập nhật lần cuối: 2026-11-21_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
+- **Dọn danh sách contributor (2026-11-21).** Theo yêu cầu, contributor của repo chỉ còn chủ repo. Lịch sử `master` (212 commit) được viết lại: bỏ 98 dòng `Co-Authored-By: Claude`, đổi tác giả 9 commit của Dependabot thành chủ repo; code ở mọi commit giữ nguyên (đã so cây thư mục từng commit). Force push `5f9a7ef` → `1c36e98`, nên **mã commit cũ không còn trên `master`**; bản sao lưu đầy đủ ở `../nutrition-ecommerce-backup-2026-11-21.git` (mirror, nằm cạnh thư mục repo). Đóng #20, #51; tắt Dependabot cập nhật phiên bản (`.github/dependabot.yml` đã xoá). Quy tắc mới trong CLAUDE.md / AGENTS.md: không ghi công AI trong commit / PR, không merge PR do bot tạo. GitHub cần thời gian tính lại danh sách contributor.
+
 - **AI tra cứu đủ theo thiết kế ban đầu (2026-11-21, D31, nhánh `feat/ai-complete`, xếp chồng trên #75).** Thêm bộ lọc danh mục, nhãn chế độ ăn, còn hàng; hỏi số liệu một món và so sánh 2–3 món, câu trả lời có số do code ghép từ DB. Bộ kiểm thử 38 câu với Nova 2 Lite: an toàn 15/15, tra cứu 23/23. Backend 69/69, frontend 137/137, E2E 49/49.
   - Claude Haiku 4.5 ở Tokyo: quota đã có (5 triệu token/phút, 10 request/phút) nhưng điều khoản `NOT_AVAILABLE`; người dùng cần gọi thử trên Playground bằng root / admin. Nếu được, chạy lại bộ 38 câu để so với Nova; đổi model chỉ là cấu hình.
   - **Ngoài phạm vi, đề xuất:** hồ sơ dinh dưỡng và đề xuất món theo mục tiêu cơ thể (playbook đã loại khỏi MVP). Nếu làm: tính mục tiêu bằng code (công thức chuẩn), AI chỉ hiểu yêu cầu; dữ liệu cá nhân theo `sub`, không log; loại trừ mang thai, trẻ em, người có bệnh. Cần người dùng duyệt phạm vi.

@@ -43,6 +43,7 @@ Quy tắc riêng từng phần: frontend/AGENTS.md, backend/AGENTS.md (file gầ
 - Đọc code và tài liệu liên quan trước khi sửa. Không đoán cấu trúc dự án.
 - Viết test cùng code. Chạy test trước khi báo hoàn thành. Không báo "xong" khi test còn đỏ.
 - Một tính năng một nhánh một PR. Commit nhỏ, thông điệp rõ.
+- Commit và PR chỉ đứng tên chủ repo: không thêm `Co-Authored-By` hay bất kỳ dòng ghi công AI / Claude Code / Codex nào trong commit message hoặc mô tả PR. Không merge PR do bot tạo (Dependabot đã tắt cập nhật phiên bản); cần nâng thư viện thì làm thành PR thường.
 - Không đổi phạm vi: thấy việc ngoài yêu cầu thì ghi vào docs/PROGRESS.md thay vì tự làm.
 - Kiến thức về AWS có thể đã cũ: với dịch vụ mới (Bedrock, CloudFront managed prefix list, Cognito), kiểm chứng bằng tài liệu hoặc lệnh chỉ đọc, và nói rõ chỗ chưa chắc.
 - Cuối phiên: cập nhật docs/PROGRESS.md (đã xong, đang dở, bước tiếp theo, câu hỏi mở).
