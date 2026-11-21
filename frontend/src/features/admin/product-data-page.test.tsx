@@ -92,3 +92,32 @@ it('does not request admin data for a regular user', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('không có quyền');
   expect(request).not.toHaveBeenCalled();
 });
+
+it('saves plant-based as true, false or unknown and the liquid flag', async () => {
+  const bodies: Record<string, unknown>[] = [];
+  server.use(
+    http.get('*/api/admin/products/1/data', () =>
+      HttpResponse.json({ ...data, plant_based: null, is_liquid: false }),
+    ),
+    http.put('*/api/admin/products/1/attributes', async ({ request }) => {
+      const body = (await request.json()) as Record<string, unknown>;
+      bodies.push(body);
+      return HttpResponse.json(body);
+    }),
+  );
+  mount();
+  const unknown = await screen.findByRole('radio', { name: 'Chưa rõ' });
+  expect(unknown).toBeChecked();
+  await userEvent.click(screen.getByRole('button', { name: 'Lưu đặc điểm' }));
+  await waitFor(() =>
+    expect(bodies[0]).toEqual({ plant_based: null, is_liquid: false }),
+  );
+  await userEvent.click(screen.getByRole('radio', { name: 'Có' }));
+  await userEvent.click(
+    screen.getByRole('checkbox', { name: /Sản phẩm dạng lỏng/ }),
+  );
+  await userEvent.click(screen.getByRole('button', { name: 'Lưu đặc điểm' }));
+  await waitFor(() =>
+    expect(bodies[1]).toEqual({ plant_based: true, is_liquid: true }),
+  );
+});
