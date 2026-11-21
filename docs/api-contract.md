@@ -109,6 +109,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 | PUT | /api/me/profile | USER | Tạo / thay hồ sơ: `birth_year`, `sex` (`MALE`/`FEMALE`), `height_cm` 100–250, `weight_kg` 30–300, `activity` (`SEDENTARY`/`LIGHT`/`MODERATE`/`ACTIVE`), `goal` (`LOSE`/`MAINTAIN`/`GAIN_MUSCLE`), `excluded_allergens` (mã trong bảng `allergens`), `pregnant_or_breastfeeding`, `medical_condition`, `consent` phải `true`; sai → `400` |
 | DELETE | /api/me/profile | USER | Xóa hồ sơ → `204` |
 | GET | /api/me/targets | USER | Mục tiêu mỗi ngày ước tính từ hồ sơ: `eligible`, `ineligible` (`AGE`/`PREGNANCY`/`MEDICAL`/`BMI`), `bmi`, `resting_calories`, `daily_calories`, `calories`, `protein_g`, `carbs_g`, `fat_g` (null khi không đủ điều kiện) |
+| GET | /api/me/recommendations | USER | Gợi ý một bữa theo mục tiêu (D32): `meal` (`BREAKFAST` 25% / `LUNCH` 37,5% / `DINNER` 37,5%, mặc định `LUNCH`), `exclude` (mã allergen thêm, ≤20), `labels` (≤6). Trả `eligible`, `ineligible`, `meal`, `target`, `items` (`product`, `grams`, `role`, `amounts`), `total`, `calories_pct`, `protein_pct`. Chưa có hồ sơ → `404`; không đủ điều kiện → `eligible=false`, `items` rỗng |
 
 Tool nội bộ (không phải HTTP endpoint, chỉ đọc, không nhận `userId`): `searchProducts`, `getProduct`, `getNutrition`, `compareProducts` (tùy chọn).
 
