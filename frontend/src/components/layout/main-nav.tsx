@@ -2,6 +2,7 @@ import {
   Calculator,
   ChatCircleText,
   GearSix,
+  ForkKnife,
   House,
   Receipt,
   ShoppingCartSimple,
@@ -15,6 +16,7 @@ const links: readonly (readonly [string, string, Icon])[] = [
   ['/', messages.home, House],
   ['/products', messages.products, Storefront],
   ['/meal-analyzer', 'Phân tích bữa ăn', Calculator],
+  ['/suggestions', 'Gợi ý cho bạn', ForkKnife],
   ['/chat', messages.chat, ChatCircleText],
   ['/cart', messages.cart, ShoppingCartSimple],
   ['/orders', messages.orders, Receipt],
@@ -40,7 +42,7 @@ export function MainNav({
             end={to === '/'}
             // The dock keeps five tabs; admin and the meal analyzer stay in the header row on wider
             // screens and are linked from the products and product pages on phones.
-            className={`nav-link control-transition ${to === '/admin' || to === '/meal-analyzer' ? 'hidden md:inline-flex' : ''}`}
+            className={`nav-link control-transition ${['/admin', '/meal-analyzer', '/suggestions'].includes(to) ? 'hidden md:inline-flex' : ''}`}
           >
             {({ isActive }) => (
               <>

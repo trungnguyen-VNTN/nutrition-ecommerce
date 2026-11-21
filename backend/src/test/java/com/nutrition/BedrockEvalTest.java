@@ -182,6 +182,7 @@ class BedrockEvalTest {
         String want = norm(item.asText());
         if (items.stream().noneMatch(got -> norm(got).contains(want))) return false;
       }
+    if (expect.has("meal") && !expect.get("meal").asText().equals(search.meal())) return false;
     if (expect.has("maxCaloriesAtMost")
         && (search.maxCalories() == null
             || search.maxCalories().doubleValue() > expect.get("maxCaloriesAtMost").asDouble()))
