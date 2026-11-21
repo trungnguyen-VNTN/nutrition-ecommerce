@@ -45,7 +45,11 @@ Không có account ID, ARN cụ thể hay secret trong các file này; ARN dùng
 - Trong ap-southeast-1, quyền dịch vụ vẫn rộng (`ec2:*`, `rds:*`…), nên vẫn có thể tạo tài nguyên tốn tiền
   như NAT hay RDS lớn. Lớp bảo vệ ở đây là Budgets và việc đọc `terraform plan` trước khi apply.
 - S3 không bị chặn theo region (vì `ListAllMyBuckets` là toàn cầu); chỉ bị giới hạn theo tên bucket.
-- Khi có domain (Giai đoạn 8) cần thêm ACM và WAF ở us-east-1; hiện chưa cho phép.
+- Khi có domain (Giai đoạn 8) cần thêm ACM ở us-east-1; hiện chưa cho phép.
+- D29 (2026-11-20): `cloudtrail:*` chỉ ở ap-southeast-1 (thêm vào `ProjectServicesInSingapore`),
+  `wafv2:*` chỉ ở us-east-1 (`AllowCloudFrontWafInUsEast1`, rút khỏi `DenyOtherRegions`, có lệnh
+  cấm riêng `DenyWafOutsideUsEast1`). Dán lại inline policy của `nutrition-apply` trước lần `up`
+  đầu tiên sau khi merge.
 - Policy được soạn từ tài liệu IAM, **chưa chạy thử trên tài khoản thật**. Nếu `terraform apply`
   báo `AccessDenied`, gửi nguyên câu lỗi (bỏ account ID) để bổ sung đúng quyền thiếu, không chuyển sang AdministratorAccess.
 
@@ -80,7 +84,7 @@ giới hạn ở Singapore:
   `ap-northeast-1` / `ap-northeast-3`; `ChatGuardrailInTokyo` cho phép `bedrock:ApplyGuardrail`
   trên guardrail ở Tokyo.
 - `nutrition-apply-policy.json`: `AllowChatGuardrailInTokyo` cho Terraform tạo / sửa / xóa guardrail
-  ở Tokyo (9 hành động guardrail và tag); các hành động này được rút khỏi `DenyOtherRegions` và có
+  ở Tokyo (9 hành động guardrail và tag, cộng `bedrock:ApplyGuardrail` để chạy bộ kiểm thử AI có guardrail); các hành động này được rút khỏi `DenyOtherRegions` và có
   lệnh cấm riêng `DenyGuardrailOutsideSingaporeAndTokyo`. Gọi model được mở thêm Tokyo / Osaka.
 
 Thứ tự làm (root / admin, như mục trên):
