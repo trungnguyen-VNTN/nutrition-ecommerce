@@ -16,7 +16,7 @@ for (const width of [390, 1440]) {
       if (path === '/products')
         await expect(page.getByRole('article')).toHaveCount(8);
       if (path.includes('mock=loading'))
-        await expect(page.getByTestId('product-skeleton')).toHaveCount(8);
+        await expect(page.getByTestId('product-skeleton')).toHaveCount(9);
       if (path.includes('mock=empty'))
         await expect(
           page.getByRole('heading', { name: 'Chưa có sản phẩm' }),

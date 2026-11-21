@@ -189,3 +189,16 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_ecs" {
   to_port                      = 5432
   referenced_security_group_id = aws_security_group.ecs.id
 }
+
+# S3 gateway endpoint (no hourly charge): traffic from the tasks to S3 (product images) stays on
+# the AWS network instead of going out through the Internet gateway.
+data "aws_region" "current" {}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = [aws_route_table.public.id, aws_route_table.db.id]
+
+  tags = { Name = "${var.name_prefix}-s3" }
+}

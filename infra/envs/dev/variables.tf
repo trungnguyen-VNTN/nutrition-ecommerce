@@ -91,3 +91,9 @@ variable "vnpay_return_url" {
   type        = string
   default     = ""
 }
+
+variable "waf_enabled" {
+  description = "AWS WAF in front of CloudFront. Billed per month (prorated hourly), so demo-infra.ps1 turns it on only with -Waf."
+  type        = bool
+  default     = false
+}

@@ -57,6 +57,11 @@ class PaymentIntegrationTest {
   @AfterEach
   void cleanup() {
     db.update(
+        "DELETE FROM payment_events WHERE order_id IN (SELECT id FROM orders WHERE user_id IN (?,?))"
+            + " OR txn_ref IN ('999NZZZZZZZZ')",
+        owner,
+        stranger);
+    db.update(
         "DELETE FROM payments WHERE order_id IN (SELECT id FROM orders WHERE user_id IN (?,?))",
         owner,
         stranger);
@@ -179,6 +184,57 @@ class PaymentIntegrationTest {
     // VNPAY retries until it gets 00 or 02; a repeat changes nothing.
     assertThat(ipn(callback(sent, "6900000", "00"))).contains("\"RspCode\":\"02\"");
     assertThat(stock()).isEqualTo(4);
+
+    // Every IPN is in the admin payment log (D30), oldest first here.
+    assertThat(
+            db.queryForList(
+                "SELECT outcome FROM payment_events WHERE txn_ref IN (?,?) ORDER BY id",
+                String.class,
+                sent.get("vnp_TxnRef"),
+                "999NZZZZZZZZ"))
+        .containsExactly(
+            "INVALID_SIGNATURE", "UNKNOWN_ORDER", "INVALID_AMOUNT", "PAID", "DUPLICATE");
+    // A bad signature never trusts the gateway code.
+    assertThat(
+            db.queryForObject(
+                "SELECT count(*) FROM payment_events WHERE txn_ref=? AND signature_valid=false"
+                    + " AND gateway_code IS NULL",
+                Integer.class,
+                sent.get("vnp_TxnRef")))
+        .isEqualTo(1);
+  }
+
+  @Test
+  void onlyAdminsReadThePaymentLog() throws Exception {
+    long order = vnpayOrder(1);
+    Map<String, String> sent = startPayment(order);
+    ipn(callback(sent, "6900000", "24"));
+
+    http.perform(
+            get("/api/admin/payments/events")
+                .param("outcome", "PAYMENT_FAILED")
+                .with(
+                    jwt()
+                        .jwt(j -> j.subject(UUID.randomUUID().toString()))
+                        .authorities(
+                            new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                                "ROLE_ADMIN"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items[0].outcome").value("PAYMENT_FAILED"))
+        .andExpect(jsonPath("$.items[0].order_id").value(order))
+        .andExpect(jsonPath("$.items[0].gateway_code").value("24"))
+        .andExpect(jsonPath("$.items[0].signature_valid").value(true));
+    http.perform(as(get("/api/admin/payments/events"), owner)).andExpect(status().isForbidden());
+    http.perform(
+            get("/api/admin/payments/events")
+                .param("outcome", "x")
+                .with(
+                    jwt()
+                        .jwt(j -> j.subject(UUID.randomUUID().toString()))
+                        .authorities(
+                            new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                                "ROLE_ADMIN"))))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
