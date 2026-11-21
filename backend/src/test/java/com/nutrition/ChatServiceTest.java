@@ -19,8 +19,15 @@ import com.nutrition.catalog.CatalogModels.ProductPage;
 import com.nutrition.catalog.CatalogRepository;
 import com.nutrition.catalog.DietLabel;
 import com.nutrition.catalog.ProductSort;
+import com.nutrition.profile.NutritionTargets;
+import com.nutrition.profile.RecommendationService;
+import com.nutrition.profile.RecommendationService.Amounts;
+import com.nutrition.profile.RecommendationService.Meal;
+import com.nutrition.profile.RecommendationService.Pick;
+import com.nutrition.profile.RecommendationService.Recommendation;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,11 +35,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 class ChatServiceTest {
   private final CatalogRepository catalog = mock(CatalogRepository.class);
   private final JdbcTemplate db = mock(JdbcTemplate.class);
+  private final RecommendationService recommendations = mock(RecommendationService.class);
   private final UUID user = UUID.randomUUID();
 
   private ChatService service(LlmClient llm) {
     when(db.update(anyString(), any(UUID.class))).thenReturn(1);
-    return new ChatService(llm, catalog, db);
+    return new ChatService(llm, catalog, db, recommendations);
   }
 
   @Test
@@ -281,5 +289,72 @@ class ChatServiceTest {
     assertThatThrownBy(() -> service(message -> odd).chat(user, "q"))
         .isInstanceOf(AiUnavailableException.class);
     verifyNoInteractions(catalog);
+  }
+
+  private static LlmClient.Search plan(String meal, List<String> exclude) {
+    return new LlmClient.Search(
+        null, null, null, exclude, false, null, List.of("HIGH_PROTEIN"), null, "plan", null, meal);
+  }
+
+  private static Amounts amounts(String kcal, String protein) {
+    return new Amounts(
+        new BigDecimal(kcal), new BigDecimal(protein), BigDecimal.ZERO, BigDecimal.ZERO);
+  }
+
+  @Test
+  void planUsesTheCallersOwnProfileAndWritesEveryNumberFromTheRecommender() {
+    var chicken = product(1, "Ức gà", "100", "g", nutrition("165", "31"), true);
+    when(recommendations.recommend(user, Meal.DINNER, List.of("milk"), List.of()))
+        .thenReturn(
+            new Recommendation(
+                true,
+                null,
+                Meal.DINNER,
+                amounts("1035", "30"),
+                List.of(
+                    new Pick(chicken, new BigDecimal("70"), "protein", amounts("115.5", "21.7"))),
+                amounts("115.5", "21.7"),
+                11,
+                72));
+    var reply = service(message -> plan("DINNER", List.of("milk"))).chat(user, "tối nay ăn gì");
+    assertThat(reply.reply())
+        .contains("Gợi ý bữa tối")
+        .contains("1035 kcal")
+        .contains("Ức gà (protein), 70 g: 115,5 kcal · protein 21,7 g.")
+        .contains("(11% mục tiêu bữa)")
+        .contains("không phải tư vấn y tế");
+    assertThat(reply.products()).containsExactly(chicken);
+    verifyNoInteractions(catalog);
+  }
+
+  @Test
+  void planWithoutAProfileOrOutsideTheEstimateGivesNoPersonalMeal() {
+    when(recommendations.recommend(user, Meal.LUNCH, List.of(), List.of()))
+        .thenThrow(new NoSuchElementException());
+    var none = service(message -> plan(null, null)).chat(user, "gợi ý bữa trưa");
+    assertThat(none.reply()).startsWith("Bạn chưa có hồ sơ dinh dưỡng");
+    assertThat(none.products()).isEmpty();
+
+    when(recommendations.recommend(user, Meal.BREAKFAST, List.of(), List.of()))
+        .thenReturn(
+            new Recommendation(
+                false,
+                NutritionTargets.Ineligible.PREGNANCY,
+                Meal.BREAKFAST,
+                null,
+                List.of(),
+                null,
+                null,
+                null));
+    var refused = service(message -> plan("BREAKFAST", null)).chat(user, "bữa sáng");
+    assertThat(refused.reply()).contains("chuyên gia dinh dưỡng").doesNotContain("kcal");
+    assertThat(refused.products()).isEmpty();
+  }
+
+  @Test
+  void planRejectsUnknownMeals() {
+    assertThatThrownBy(() -> service(message -> plan("SNACK", null)).chat(user, "q"))
+        .isInstanceOf(AiUnavailableException.class);
+    verifyNoInteractions(recommendations);
   }
 }

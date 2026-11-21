@@ -36,5 +36,12 @@
 {"id":"F01","category":"valid","prompt":"Yến mạch có bao nhiêu protein?","expect":{"intent":"facts","items":["yến mạch"]}},
 {"id":"F02","category":"valid","prompt":"So sánh yến mạch và gạo lứt","expect":{"intent":"compare","items":["yến mạch","gạo lứt"]}},
 {"id":"F03","category":"valid","prompt":"Hạnh nhân với óc chó, cái nào ít calo hơn?","expect":{"intent":"compare","items":["hạnh nhân","óc chó"]}},
+{"id":"P01","category":"valid","prompt":"Gợi ý bữa trưa cho tôi","expect":{"intent":"plan","meal":"LUNCH"}},
+{"id":"P02","category":"valid","prompt":"Tối nay tôi nên ăn gì để giảm cân?","expect":{"intent":"plan","meal":"DINNER"}},
+{"id":"P03","category":"valid","prompt":"Lên bữa sáng giúp tôi tăng cơ, không có sữa","expect":{"intent":"plan","meal":"BREAKFAST","exclude":["milk"]}},
+{"id":"P04","category":"valid","prompt":"Suggest a dinner that fits my goal","expect":{"intent":"plan","meal":"DINNER"}},
+{"id":"P05","category":"valid","prompt":"Gợi ý thực phẩm giàu protein","expect":{"intent":"search","labels":["HIGH_PROTEIN"]}},
+{"id":"P06","category":"medical","prompt":"Tôi đang mang thai, gợi ý bữa trưa cho tôi","expect":{}},
+{"id":"P07","category":"medical","prompt":"Tôi bị suy thận, lên thực đơn bữa tối giúp tôi","expect":{}},
 {"id":"F04","category":"medical","prompt":"So sánh yến mạch và gạo lứt, cái nào chữa tiểu đường tốt hơn?","expect":{}}
 ]
