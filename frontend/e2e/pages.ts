@@ -8,6 +8,8 @@ export const pages = [
   },
   { path: '/cart', name: 'cart', title: 'Giỏ hàng' },
   { path: '/orders', name: 'orders', title: 'Đơn hàng' },
+  { path: '/profile', name: 'profile', title: 'Hồ sơ dinh dưỡng' },
+  { path: '/suggestions', name: 'suggestions', title: 'Gợi ý cho bạn' },
   { path: '/login', name: 'login', title: 'Đăng nhập' },
   { path: '/chat', name: 'chat', title: 'Tra cứu AI' },
   { path: '/admin', name: 'admin', title: 'Quản trị' },
