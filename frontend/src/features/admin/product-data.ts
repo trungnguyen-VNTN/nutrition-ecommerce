@@ -20,6 +20,9 @@ export const productDataSchema = z.object({
   nutrition_complete: z.boolean(),
   allergens_verified: z.boolean(),
   allergens_reviewed: z.boolean().default(false),
+  // null = not known yet: no "plant-based" label is derived (fail-closed, D26).
+  plant_based: z.boolean().nullable().default(null),
+  is_liquid: z.boolean().default(false),
   nutrition: z
     .object({
       calories: nullableNumber,
