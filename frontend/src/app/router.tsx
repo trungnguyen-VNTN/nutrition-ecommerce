@@ -44,6 +44,16 @@ const VnpayReturnPage = lazy(() =>
 const MealPage = lazy(() =>
   import('@/features/meal/meal-page').then((m) => ({ default: m.MealPage })),
 );
+const ProfilePage = lazy(() =>
+  import('@/features/profile/profile-page').then((m) => ({
+    default: m.ProfilePage,
+  })),
+);
+const SuggestionsPage = lazy(() =>
+  import('@/features/profile/suggestions-page').then((m) => ({
+    default: m.SuggestionsPage,
+  })),
+);
 const ForgotPasswordPage = lazy(() =>
   import('@/features/auth/forgot-password-page').then((m) => ({
     default: m.ForgotPasswordPage,
@@ -82,6 +92,8 @@ export function AppRoutes() {
         <Route path="cart" element={<CartPage />} />
         <Route path="meal-analyzer" element={<MealPage />} />
         <Route path="orders" element={<OrdersPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="suggestions" element={<SuggestionsPage />} />
         <Route path="login" element={<AuthPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="chat" element={<ChatPage />} />

@@ -17,6 +17,8 @@ for (const width of [390, 768, 1440]) {
     ['cart', '/cart'],
     ['checkout', '/checkout'],
     ['orders', '/orders'],
+    ['profile', '/profile'],
+    ['suggestions', '/suggestions'],
     ['order-detail', '/orders/12'],
     ['login', '/login'],
     ['register', '/register'],

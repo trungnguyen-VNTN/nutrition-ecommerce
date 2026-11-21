@@ -62,7 +62,75 @@ export async function installReviewFixtures(page: Page, signedIn = true) {
       data =
         products.find((p) => p.id === path.split('/').pop()) ?? products[0];
     else if (path === '/api/cart') data = cart;
-    else if (path === '/api/orders') data = [order];
+    else if (path === '/api/me/profile')
+      data = {
+        birth_year: 1995,
+        sex: 'MALE',
+        height_cm: 180,
+        weight_kg: 80,
+        activity: 'MODERATE',
+        goal: 'MAINTAIN',
+        excluded_allergens: ['milk'],
+        pregnant_or_breastfeeding: false,
+        medical_condition: false,
+        updated_at: '2026-11-21T08:00:00Z',
+      };
+    else if (path === '/api/me/targets')
+      data = {
+        eligible: true,
+        ineligible: null,
+        age: 31,
+        bmi: 24.7,
+        resting_calories: 1780,
+        daily_calories: 2760,
+        calories: 2760,
+        protein_g: 80,
+        carbs_g: 403,
+        fat_g: 92,
+      };
+    else if (path === '/api/me/recommendations') {
+      const n = (
+        calories: number,
+        protein_g: number,
+        carbs_g: number,
+        fat_g: number,
+      ) => ({
+        calories,
+        protein_g,
+        carbs_g,
+        fat_g,
+      });
+      data = {
+        eligible: true,
+        ineligible: null,
+        meal:
+          new URL(route.request().url()).searchParams.get('meal') ?? 'LUNCH',
+        target: n(1035, 30, 151, 35),
+        items: [
+          {
+            product: { id: products[0]!.id, name: products[0]!.name },
+            grams: 120,
+            role: 'protein',
+            amounts: n(198, 24.5, 4.1, 6.2),
+          },
+          {
+            product: { id: products[1]!.id, name: products[1]!.name },
+            grams: 150,
+            role: 'rau, trái cây',
+            amounts: n(51, 4.2, 9.9, 0.6),
+          },
+          {
+            product: { id: products[2]!.id, name: products[2]!.name },
+            grams: 200,
+            role: 'tinh bột',
+            amounts: n(740, 15.8, 154, 5.8),
+          },
+        ],
+        total: n(989, 44.5, 168, 12.6),
+        calories_pct: 96,
+        protein_pct: 148,
+      };
+    } else if (path === '/api/orders') data = [order];
     else if (path.startsWith('/api/orders/')) data = order;
     else if (path === '/api/chat')
       data = {
