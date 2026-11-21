@@ -100,7 +100,7 @@ infra/envs/dev/         Root Terraform duy nhất, backend S3 (D19)
 infra/modules/          Module: network, ecr, rds, cognito, images, service, frontend,
                         github-oidc, guardrail, alarms
 scripts/                Launcher local, bật / tắt AWS (demo-infra.ps1), nhập USDA
-.github/                CI, Dependabot, mẫu PR và issue
+.github/                CI, mẫu PR và issue
 docs/                   Kiến trúc, quyết định, API, DB, tiến độ
 docs/screenshots/       Ảnh dùng trong README
 docs/verification/      Bằng chứng kiểm tra lịch sử
