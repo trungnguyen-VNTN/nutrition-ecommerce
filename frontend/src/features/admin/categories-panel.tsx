@@ -72,12 +72,18 @@ export function CategoriesPanel() {
               className="flex flex-wrap items-center gap-2 p-3"
             >
               <span className="min-w-40 flex-1 font-bold">{category.name}</span>
-              <Button variant="secondary" onClick={() => setEditing(category)}>
-                Sửa {category.name}
+              {/* Short visible text; the label keeps the category so screen readers know which. */}
+              <Button
+                variant="secondary"
+                aria-label={`Sửa ${category.name}`}
+                onClick={() => setEditing(category)}
+              >
+                Sửa
               </Button>
               <Button
                 variant="ghost"
                 className="text-danger"
+                aria-label={`Xóa ${category.name}`}
                 disabled={save.isPending}
                 onClick={() => {
                   if (
@@ -88,7 +94,7 @@ export function CategoriesPanel() {
                     save.mutate({ id: category.id });
                 }}
               >
-                Xóa {category.name}
+                Xóa
               </Button>
             </li>
           ))}
