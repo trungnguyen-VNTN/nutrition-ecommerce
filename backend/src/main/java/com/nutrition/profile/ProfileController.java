@@ -20,21 +20,26 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** The caller's own nutrition profile and estimated daily targets (D32). Identity from the JWT. */
 @RestController
 @RequestMapping("/api/me")
+@Validated
 public class ProfileController {
   private final ProfileService profiles;
+  private final RecommendationService recommendations;
 
-  public ProfileController(ProfileService profiles) {
+  public ProfileController(ProfileService profiles, RecommendationService recommendations) {
     this.profiles = profiles;
+    this.recommendations = recommendations;
   }
 
   public record Input(
@@ -88,5 +93,16 @@ public class ProfileController {
   @GetMapping("/targets")
   public Targets targets(@AuthenticationPrincipal Jwt jwt) {
     return profiles.targets(user(jwt));
+  }
+
+  /** One meal toward the caller's targets; allergens from the profile plus {@code exclude}. */
+  @GetMapping("/recommendations")
+  public RecommendationService.Recommendation recommendations(
+      @AuthenticationPrincipal Jwt jwt,
+      @RequestParam(defaultValue = "LUNCH") RecommendationService.Meal meal,
+      @RequestParam(required = false) @Size(max = 20)
+          List<@Pattern(regexp = "[a-z_]{1,40}") String> exclude,
+      @RequestParam(required = false) @Size(max = 6) List<com.nutrition.catalog.DietLabel> labels) {
+    return recommendations.recommend(user(jwt), meal, exclude, labels);
   }
 }
