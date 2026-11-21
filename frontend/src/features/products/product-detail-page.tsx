@@ -11,6 +11,7 @@ import { ErrorState } from '@/components/error-state';
 import { MacroBar } from '@/components/macro-bar';
 import { NutritionLabel } from '@/components/nutrition-label';
 import { ProductGallery } from './product-gallery';
+import { PortionCard, SourceCard } from './product-facts';
 import { ProductCard } from '@/components/product-card';
 import { Note } from '@/components/ui/note';
 import { Pill } from '@/components/ui/pill';
@@ -100,9 +101,12 @@ function ProductDetail({ product }: { product: Product }) {
   const ready = readyNutrition(product);
   return (
     <>
-      <div className="grid items-start gap-6 md:grid-cols-2 md:gap-12">
-        <ProductGallery name={product.name} images={product.images} />
-        <header className="space-y-5">
+      {/* DOM order photo, header (h1), facts keeps headings in sequence; the grid puts the facts under the photo. */}
+      <div className="grid items-start gap-6 md:grid-cols-2 md:grid-rows-[auto_1fr] md:gap-x-12">
+        <div className="md:col-start-1 md:row-start-1">
+          <ProductGallery name={product.name} images={product.images} />
+        </div>
+        <header className="space-y-5 md:col-start-2 md:row-span-2 md:row-start-1">
           {product.category && (
             <p className="eyebrow">{product.category.name}</p>
           )}
@@ -136,7 +140,7 @@ function ProductDetail({ product }: { product: Product }) {
             {product.description ?? messages.missingValue}
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <p className="font-display text-3xl font-extrabold tabular-nums">
+            <p className="spec-num text-3xl font-semibold">
               {formatMoney(product.price, product.currency)}
             </p>
             {product.stock > 0 ? (
@@ -155,6 +159,12 @@ function ProductDetail({ product }: { product: Product }) {
             </Link>
           )}
         </header>
+        {ready && (
+          <div className="space-y-4 md:col-start-1 md:row-start-2">
+            <PortionCard ready={ready} />
+            <SourceCard source={ready.nutrition.source} />
+          </div>
+        )}
       </div>
       <div>
         <Section title={messages.nutritionHeading}>

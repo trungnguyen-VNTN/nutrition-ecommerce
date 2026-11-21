@@ -117,6 +117,12 @@ variable "bedrock_model_id" {
   default     = ""
 }
 
+variable "bedrock_region" {
+  description = "Region the backend calls Bedrock in (BEDROCK_REGION). Empty = the service region."
+  type        = string
+  default     = ""
+}
+
 variable "bedrock_inference_profile_id" {
   description = "Inference profile ID used for Converse. Empty = AI disabled."
   type        = string
@@ -193,4 +199,10 @@ variable "vnpay_return_url" {
     condition     = var.vnpay_return_url == "" || startswith(var.vnpay_return_url, "https://")
     error_message = "vnpay_return_url must be an https URL."
   }
+}
+
+variable "access_logs_bucket" {
+  description = "Bucket for ALB access logs (prefix alb/). Empty disables access logs."
+  type        = string
+  default     = ""
 }

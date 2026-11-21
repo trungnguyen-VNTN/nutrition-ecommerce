@@ -84,6 +84,7 @@ resource "aws_cloudfront_distribution" "main" {
   comment             = "${var.name_prefix} web and API"
   default_root_object = "index.html"
   price_class         = var.price_class
+  web_acl_id          = var.web_acl_arn # WAF only while demoing (null = none)
   http_version        = "http2and3"
 
   origin {

@@ -9,7 +9,7 @@ Tiến độ hiện tại: docs/PROGRESS.md (đọc đầu phiên, cập nhật 
 - Chỉ một môi trường `dev` (D17). Terraform: module trong `infra/modules/`, root duy nhất `infra/envs/dev/` (D19). Permission set `apply` tùy chỉnh theo tiền tố `nutrition-*` + permissions boundary (D16).
 - Backend: Java 21 (LTS) + Spring Boot, build bằng Maven (luôn dùng wrapper `./mvnw`). Frontend: React + TypeScript. DB: PostgreSQL (Flyway).
 - Image: linux/arm64. ECS Fargate runtime_platform phải khớp (cpu_architecture = "ARM64").
-- AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình. Chốt tạm: Claude Haiku 5.5 qua inference profile APAC (D18, chờ spike S1).
+- AI: Bedrock Converse qua AWS SDK for Java v2, bọc sau interface LlmClient. Model ID và inference profile ID lấy từ cấu hình. Chốt: Amazon Nova 2 Lite qua inference profile `jp.amazon.nova-2-lite-v1:0`, gọi Bedrock ở ap-northeast-1 (`BEDROCK_REGION`); ứng dụng vẫn ở Singapore (D18).
 - Mạng: ALB công khai sau CloudFront; SG của ALB chỉ nhận managed prefix list của CloudFront và listener kiểm tra header bí mật. Không dùng VPC origin hay interface VPC endpoint riêng. Task ECS ở public subnet có IP công khai, SG chỉ nhận từ ALB; RDS ở private subnet. Không dùng NAT (`enable_nat` mặc định false, chỉ bật khi được duyệt; D15).
 - Chưa có domain: dùng tên *.cloudfront.net, không dùng hosted UI của Cognito.
 - Phạm vi MVP: catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán: khi nhận hàng hoặc VNPAY **sandbox** (D27); không có giao dịch tiền thật, không hoàn tiền tự động.

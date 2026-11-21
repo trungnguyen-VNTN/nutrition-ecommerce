@@ -1,8 +1,42 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-16_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-20_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Làm nốt phần ngoài AI (2026-11-20).** Năm PR, thứ tự merge: #71 → #72 → #73; #74 độc lập (base `master`).
+  - **#72 (D29) hạ tầng:** S3 gateway endpoint; bucket `nutrition-dev-logs-<account>` (SSE-S3, chặn public, tự xóa sau 30 ngày) nhận CloudTrail (mọi Region) và ALB access logs; WAF CloudFront ở us-east-1 chỉ bật bằng `demo-infra.ps1 -Waf`. Plan: 8 tạo / 1 sửa / 0 xóa (9 / 4 / 0 khi có WAF). **Người dùng:** dán lại inline policy `nutrition-apply` (thêm `cloudtrail:*` ở Singapore, `wafv2:*` ở us-east-1, `ApplyGuardrail` ở Tokyo), rồi `up`.
+  - **#73 (D30) nhật ký thanh toán:** V10 `payment_events`, mọi IPN của VNPAY ghi một dòng; API `GET /api/admin/payments/events` và mục admin "Nhật ký thanh toán". Footer bỏ câu sai "Không thanh toán trực tuyến". Backend 61/61, frontend 136/136, E2E 49/49.
+  - **#74 thuộc tính sản phẩm:** `PUT /api/admin/products/{id}/attributes` (`plant_based` true / false / null, `is_liquid`) và thẻ "Đặc điểm sản phẩm"; sửa lỗi API allergen chỉ nhận tối đa 6 mục trong khi có 9 allergen. Backend 63/63, frontend 135/135.
+  - **Dependabot tồn đọng (chưa xử lý, đề xuất):** #20 (22 bản npm nhỏ) và #31, #32 (provider AWS 6.72) nên rebase rồi merge sau chồng PR trên. #50, #52 (AWS SDK 2.58.0) nên gộp làm một và nâng luôn `sso` / `ssooidc` cùng phiên bản. #51 (configure-aws-credentials v4 → v6) chỉ đụng workflow deploy, cần đọc release notes trước. #13 (ESLint 10) và #24 (Spotless 3.11) đang đỏ CI, nên đóng hoặc để sau. #22 (cooldown Dependabot + playwright-core 1.56.1) xung đột với #71 (1.64.1): chỉ giữ phần cooldown.
+  - **AI:** yêu cầu tăng quota `L-C6F5908D` (Nova 2 Lite, Tokyo, 8.000.000 token/phút) đang PENDING. Quota Nova 2 Lite ở Tokyo bị AWS hạ từ 8.000.000 (18/11) xuống 0 (20/11); quota theo ngày `L-210172B5` = 0, không tự chỉnh được.
+
+- **Hoàn thiện phần còn dở (2026-11-20, nhánh `chore/e2e-playwright-node26`).**
+  - **AI trên AWS:** app đang chạy (1 task, task definition rev 7). Task có `BEDROCK_REGION=ap-northeast-1`, Nova 2 Lite qua profile `jp.`, guardrail ở Tokyo. Qua CloudFront: `/`, `/api/products`, `/api/categories` trả 200; `/api/chat` không token trả 401.
+    - **Chưa kiểm chứng:** hỏi AI khi đã đăng nhập; bộ 30 câu `-Pbedrock-eval`. `nutrition-plan` không có `bedrock:InvokeModel` (AccessDenied), nên người dùng chạy bằng `nutrition-apply` (lệnh trong `docs/ai-eval.md`). Lần chạy thử bằng `nutrition-plan`: 6/6 câu tấn công vẫn fail-closed.
+  - **E2E / axe chạy được lần đầu sau nhiều PR:** Playwright 1.56.1 hỏng trên Node 26 (`fs.rmdir` với `recursive`). Nâng `@playwright/test` và override `playwright-core` lên 1.64.1 (phát hành 2026-10-14), rồi cài Chromium.
+    - Kết quả: **49/49 E2E**; axe không có lỗi ở mọi trang (390 / 1440).
+    - Sửa 4 test lỗi thời: 9 khung tải theo `productPageSize`; checkout gửi `payment_method: 'COD'`; test bàn phím Tab tới thẻ sản phẩm thay vì đếm cứng.
+    - **Lỗi giao diện thật đã sửa:** khung tải sản phẩm thấp hơn thẻ thật 58–70 px (layout shift). Khung tải giờ dùng cấu trúc `.spec-row`; hàng nhãn và hàng allergen của thẻ có chiều cao cố định.
+  - **Ảnh README** chụp lại với dữ liệu USDA local (giao diện D28). Sơ đồ kiến trúc AWS và mô tả STAR ở `docs/diagrams/`.
+  - **Diễn tập khôi phục:** `docs/runbook.md` mục 3–4 có thêm biên bản để điền. Người dùng chạy (cần `nutrition-apply`); chưa chạy.
+  - **Lưu ý:** app AWS đang BẬT lúc ghi; chạy `demo-infra.ps1 down -Vnpay` khi xong.
+
+- **AI gọi Bedrock ở Tokyo (2026-11-18, D18, nhánh `feat/ai-bedrock-tokyo`).** Kiểm tra chỉ đọc: ở Singapore cả 531 quota Bedrock bằng 0; case hỗ trợ ngày 2026-11-13 (loại Account, General question) vẫn "Unassigned". Tokyo có quota (Haiku 5.5 cross-region 10 triệu token/phút) và profile `jp.anthropic.claude-haiku-5-5` (Tokyo + Osaka). Người dùng chọn chuyển sang Tokyo.
+  - Backend: region Bedrock lấy từ `BEDROCK_REGION` (mặc định ap-southeast-1, tên sai thì dừng khởi động); bỏ `temperature(0F)` mà Haiku 5.5 không nhận; test mới.
+  - Terraform: biến `bedrock_region = "ap-northeast-1"`, guardrail dùng tham số `region` của provider 6.x, IAM của task trỏ profile ở Tokyo, task nhận `BEDROCK_REGION`. Plan (`nutrition-plan`, `-lock=false` vì profile chỉ đọc không ghi được khóa): **3 tạo, 1 sửa, 3 xóa**: thay guardrail + version (Singapore → Tokyo), thay task definition, sửa policy `invoke-bedrock`. Plan dừng ở lỗi có sẵn: `nutrition-plan` không đọc được giá trị secret VNPAY (đúng ý đồ), nên chưa lưu được `tfplan`.
+  - Policy: `docs/aws-setup/*.json` mở thêm Bedrock ở Tokyo / Osaka (gọi model, guardrail); mọi dịch vụ khác vẫn chỉ Singapore.
+  - **2026-11-20, đổi model sang Amazon Nova 2 Lite (`jp.amazon.nova-2-lite-v1:0`):** người dùng gọi thử Haiku 5.5 trên Playground ở Tokyo bằng root / admin. Lần đầu bị "account is currently being verified". Lần sau bị "anthropic.claude-haiku-5-5 is not available for this account ... contact AWS Sales". Kiểm tra chỉ đọc: Haiku 4.5 và Sonnet 4.5 cũng chưa có điều khoản; Nova 2 Lite và Nova Lite đã AVAILABLE. Chỉ đổi cấu hình Terraform và tài liệu.
+  - **Người dùng cần làm:** (1) dán 2 JSON policy mới; (2) merge PR; (3) `demo-infra.ps1 up -Vnpay`.
+  - **Sau đó:** chạy `-Pbedrock-eval` với `BEDROCK_REGION=ap-northeast-1`; kiểm tra trên CloudFront câu hợp lệ, câu y tế bị từ chối, 429, độ trễ câu nặng nhất. Chưa kiểm chứng: profile `jp.` có cần quyền ở Osaka không.
+
+- **Giao diện "Nutrition Lab" (2026-11-17, D28).** Người dùng duyệt mockup canvas (trang chủ, sản phẩm, chi tiết, mobile, design system, banner & hiệu ứng) rồi bảo "làm đi". Ba PR xếp chồng, merge theo thứ tự:
+  - #63 nền tảng: token màu mới, Be Vietnam Pro + JetBrains Mono, dải chữ chạy dưới header (có nút tạm dừng), nhãn "LAB".
+  - #64 trang chủ: banner tự chuyển 3 slide theo mẫu WAI, lưới bộ sưu tập 9 ô, banner đăng ký cho khách. 9 ảnh AI do chủ dự án tạo (WebP, ghi nguồn).
+  - PR 3 sản phẩm: thẻ sản phẩm kiểu phiếu thông số (kcal / protein / carb / béo, ô lime khi đạt "Giàu protein"), banner nhỏ "Phân tích bữa ăn" ở trang sản phẩm, trang chi tiết thêm "Theo khẩu phần" (30 / 50 / 100 g + khẩu phần nhãn) và "Nguồn số liệu" (link bản ghi USDA FDC) dưới ảnh.
+  - Đã kiểm tra: format, lint, typecheck, test, build xanh ở cả 3 nhánh; xem tay bằng dữ liệu mock ở 1440 px và 390 px.
+  - **Chưa làm:** E2E / axe / ảnh chụp Playwright (máy chưa cài Chromium: `npx playwright install chromium`); chưa xem với dữ liệu USDA thật (cần `START.bat`); chưa deploy.
+  - **Ngoài phạm vi, ghi lại:** banner trong mockup có "giảm 15%", "giảm 30.000 ₫", "miễn phí giao từ 300.000 ₫" nhưng cửa hàng chưa có khuyến mãi hay phí giao hàng, nên bản code chỉ ghi điều có thật. Muốn có thì cần một tính năng khuyến mãi riêng (bảng, API, admin). Ảnh rau xanh, ngũ cốc và banner đăng ký là bản cắt từ ảnh ghép, độ phân giải thấp; thay khi có bản gốc.
 
 - **Thanh toán VNPAY sandbox (2026-11-16, D27).** Người dùng duyệt kế hoạch 3 PR, xếp chồng sau #58:
   - #59 P1 backend: V9, giữ hàng 15 phút, IPN theo đúng thứ tự VNPAY 2.1.0, trang quay về chỉ đọc, job hết hạn. Backend 59 test.
