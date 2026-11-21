@@ -99,6 +99,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 | GET | /api/admin/orders | ADMIN | Danh sách, lọc theo `status`, phân trang |
 | GET | /api/admin/orders/{id} | ADMIN | Chi tiết |
 | PATCH | /api/admin/orders/{id}/status | ADMIN | Chuyển trạng thái hợp lệ (xem `db-schema.md`); không hợp lệ → `409`. `AWAITING_PAYMENT` chỉ được hủy (xác nhận do IPN, không làm tay) |
+| GET | /api/admin/payments/events | ADMIN | Nhật ký IPN của VNPAY (D30), mới nhất trước; `outcome` (tùy chọn) lọc theo kết quả, `page`, `size` ≤ 50. Trả `{items, total, page, size}`; outcome sai → `400` |
 
 ## AI tra cứu
 
