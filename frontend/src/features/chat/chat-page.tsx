@@ -21,6 +21,9 @@ const suggestions = [
   'Tìm yến mạch',
   'Thực phẩm dưới 400 kcal mỗi khẩu phần',
   'Tìm sản phẩm không chứa đậu phộng',
+  'Trái cây sấy ít đường',
+  'Yến mạch có bao nhiêu protein?',
+  'So sánh yến mạch và gạo lứt',
 ];
 const assistantMark = (
   <span
@@ -131,7 +134,10 @@ export function ChatPage() {
             {chat.isSuccess && (
               <div className="space-y-4">
                 <div className="max-w-[85%] rounded-card rounded-tl-none bg-lime-soft p-4">
-                  <p role="status" className="wrap-anywhere">
+                  <p
+                    role="status"
+                    className="wrap-anywhere whitespace-pre-line"
+                  >
                     {chat.data.reply}
                   </p>
                 </div>

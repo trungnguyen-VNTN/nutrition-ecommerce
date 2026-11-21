@@ -88,13 +88,29 @@ public class CatalogRepository {
       String q,
       ProductSort sort,
       List<DietLabel> labels) {
+    return list(page, size, category, calories, protein, excluded, q, sort, labels, false);
+  }
+
+  /** Same as above; inStock keeps only products with stock left (AI search, D31). */
+  public ProductPage list(
+      int page,
+      int size,
+      Long category,
+      BigDecimal calories,
+      BigDecimal protein,
+      List<String> excluded,
+      String q,
+      ProductSort sort,
+      List<DietLabel> labels,
+      boolean inStock) {
     // Each label is a fixed condition from DietLabel, never request text.
     String filter =
         FROM_FILTER
             + labels.stream()
                 .distinct()
                 .map(label -> " AND " + label.condition())
-                .collect(Collectors.joining());
+                .collect(Collectors.joining())
+            + (inStock ? " AND p.stock > 0" : "");
     List<String> codes = excluded.stream().distinct().toList();
     if (!codes.isEmpty()) {
       Integer known =

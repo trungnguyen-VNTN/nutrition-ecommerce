@@ -41,6 +41,24 @@ class BedrockEvalTest {
   }
 
   private static final List<String> CODES = List.copyOf(NAMES.keySet());
+
+  /** Same slugs and names as the USDA demo catalog (R__usda_catalog.sql). */
+  private static final java.util.Map<String, String> CATEGORIES = new java.util.LinkedHashMap<>();
+
+  static {
+    CATEGORIES.put("ngu-coc", "Ngũ cốc");
+    CATEGORIES.put("rau-cu", "Rau củ");
+    CATEGORIES.put("trai-cay-tuoi", "Trái cây tươi");
+    CATEGORIES.put("thit-ca-hai-san", "Thịt, cá & hải sản");
+    CATEGORIES.put("sua-trung-dau-hu", "Sữa, trứng & đậu hũ");
+    CATEGORIES.put("do-uong", "Đồ uống");
+    CATEGORIES.put("cac-loai-dau", "Các loại đậu");
+    CATEGORIES.put("cac-loai-hat", "Các loại hạt");
+    CATEGORIES.put("hat-dinh-duong", "Hạt dinh dưỡng");
+    CATEGORIES.put("trai-cay-say", "Trái cây sấy");
+    CATEGORIES.put("thuc-pham-khac", "Dầu, gia vị & đồ ngọt");
+  }
+
   private static final Pattern UNSAFE =
       Pattern.compile(
           "(select|drop|insert|update|delete|table|userid|user|order|đơn hàng|password|api key"
@@ -81,7 +99,8 @@ class BedrockEvalTest {
                 new ObjectMapper(),
                 () -> CODES,
                 null)
-            .withAllergenNames(() -> NAMES);
+            .withAllergenNames(() -> NAMES)
+            .withCategories(() -> CATEGORIES);
     JsonNode prompts;
     try (InputStream in = getClass().getResourceAsStream("/ai-eval/prompts.json")) {
       prompts = new ObjectMapper().readTree(in);
@@ -140,7 +159,29 @@ class BedrockEvalTest {
   }
 
   private static boolean matches(JsonNode expect, Search search) {
-    if (expect.has("q") && !norm(search.q()).contains(norm(expect.get("q").asText()))) return false;
+    List<String> items = search.items() == null ? List.of() : search.items();
+    // A food name may come back as the search text or, for facts / compare, as an item.
+    if (expect.has("q")) {
+      String want = norm(expect.get("q").asText());
+      if (!norm(search.q()).contains(want)
+          && items.stream().noneMatch(item -> norm(item).contains(want))) return false;
+    }
+    if (expect.has("category") && !expect.get("category").asText().equals(search.category()))
+      return false;
+    if (expect.has("labels")) {
+      List<String> labels = search.labels() == null ? List.of() : search.labels();
+      for (JsonNode label : expect.get("labels"))
+        if (!labels.contains(label.asText())) return false;
+    }
+    if (expect.has("inStock")
+        && expect.get("inStock").asBoolean() != Boolean.TRUE.equals(search.inStock())) return false;
+    if (expect.has("intent") && !expect.get("intent").asText().equals(search.intentOrSearch()))
+      return false;
+    if (expect.has("items"))
+      for (JsonNode item : expect.get("items")) {
+        String want = norm(item.asText());
+        if (items.stream().noneMatch(got -> norm(got).contains(want))) return false;
+      }
     if (expect.has("maxCaloriesAtMost")
         && (search.maxCalories() == null
             || search.maxCalories().doubleValue() > expect.get("maxCaloriesAtMost").asDouble()))

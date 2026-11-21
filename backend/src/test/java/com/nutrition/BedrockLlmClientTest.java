@@ -219,6 +219,58 @@ class BedrockLlmClientTest {
   }
 
   @Test
+  void newFiltersAreOfferedAndValidated() {
+    var categories = Map.of("trai-cay-say", "Trái cây sấy");
+    var ok =
+        client(
+                reply(
+                    StopReason.TOOL_USE,
+                    tool(
+                        "searchProducts",
+                        input(
+                            "medicalAdvice",
+                            false,
+                            "category",
+                            "trai-cay-say",
+                            "labels",
+                            List.of("LOW_SUGAR"),
+                            "intent",
+                            "search"))),
+                "")
+            .withCategories(() -> categories)
+            .search("trái cây sấy ít đường");
+    assertThat(ok.category()).isEqualTo("trai-cay-say");
+    assertThat(ok.labels()).containsExactly("LOW_SUGAR");
+    String schema =
+        requests
+            .getLast()
+            .toolConfig()
+            .tools()
+            .getFirst()
+            .toolSpec()
+            .inputSchema()
+            .json()
+            .toString();
+    assertThat(schema)
+        .contains("trai-cay-say = Trái cây sấy", "LOW_SUGAR = Ít đường", "inStock", "compare");
+
+    for (var bad :
+        List.of(
+            input("medicalAdvice", false, "category", "unknown"),
+            input("medicalAdvice", false, "labels", List.of("TASTY")),
+            input("medicalAdvice", false, "intent", "order"),
+            input("medicalAdvice", false, "intent", "facts"),
+            input(
+                "medicalAdvice", false, "intent", "compare", "items", List.of("a", "b", "c", "d"))))
+      assertThatThrownBy(
+              () ->
+                  client(reply(StopReason.TOOL_USE, tool("searchProducts", bad)), "")
+                      .withCategories(() -> categories)
+                      .search("x"))
+          .isInstanceOf(AiUnavailableException.class);
+  }
+
+  @Test
   void bedrockRegionComesFromConfigurationAndDefaultsToSingapore() {
     assertThat(BedrockLlmClient.regionOf(null)).isEqualTo(Region.AP_SOUTHEAST_1);
     assertThat(BedrockLlmClient.regionOf(" ")).isEqualTo(Region.AP_SOUTHEAST_1);
