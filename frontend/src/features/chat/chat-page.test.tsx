@@ -46,3 +46,24 @@ it('uses suggestions as editable input and retries the actual question without i
     screen.getByText('Thông tin tham khảo, không phải tư vấn y tế'),
   ).toBeVisible();
 });
+
+it('keeps the line breaks of a facts or comparison reply', async () => {
+  server.use(
+    http.post('*/api/chat', () =>
+      HttpResponse.json({
+        reply:
+          'Yến mạch (mỗi 100 g): 389 kcal · protein 16,9 g.\nNhiều protein nhất (trên 100 g hoặc 100 ml): Yến mạch (16,9 g).',
+        products: [],
+      }),
+    ),
+  );
+  const user = userEvent.setup();
+  renderApp(<ChatPage />);
+  await user.click(
+    screen.getByRole('button', { name: 'So sánh yến mạch và gạo lứt' }),
+  );
+  await user.click(screen.getByRole('button', { name: 'Tra cứu' }));
+  const status = await screen.findByText(/389 kcal/);
+  expect(status).toHaveClass('whitespace-pre-line');
+  expect(status.textContent).toContain('\n');
+});
