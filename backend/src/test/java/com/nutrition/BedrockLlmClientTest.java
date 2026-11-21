@@ -112,6 +112,8 @@ class BedrockLlmClientTest {
     String schema =
         plain.toolConfig().tools().getFirst().toolSpec().inputSchema().json().toString();
     assertThat(schema).contains("tree_nut", "sesame", "additionalProperties");
+    // Without names the codes are still listed, so the model can map at least the English code.
+    assertThat(schema).contains("Codes (Vietnamese names): peanut; milk");
     // Not every Bedrock model accepts temperature, so the request must not send it.
     assertThat(plain.inferenceConfig().temperature()).isNull();
     assertThat(plain.inferenceConfig().maxTokens()).isEqualTo(400);
@@ -191,6 +193,29 @@ class BedrockLlmClientTest {
     for (var response : bad)
       assertThatThrownBy(() -> client(response, "").search("query"))
           .isInstanceOf(AiUnavailableException.class);
+  }
+
+  @Test
+  void allergenNamesFromTheTableAreShownNextToTheCodes() {
+    var named =
+        client(
+                reply(StopReason.TOOL_USE, tool("searchProducts", input("medicalAdvice", false))),
+                "")
+            .withAllergenNames(() -> Map.of("sesame", "Mè (vừng)", "peanut", "Đậu phộng"));
+    named.search("Không có mè");
+    String schema =
+        requests
+            .getLast()
+            .toolConfig()
+            .tools()
+            .getFirst()
+            .toolSpec()
+            .inputSchema()
+            .json()
+            .toString();
+    assertThat(schema).contains("sesame = Mè (vừng)", "peanut = Đậu phộng", "; milk;");
+    assertThat(requests.getLast().system().getFirst().text())
+        .contains("chà là", "is not medical advice");
   }
 
   @Test
