@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  ForkKnife,
   GearSix,
   Leaf,
   MagnifyingGlass,
@@ -72,6 +73,15 @@ export function SiteHeader({ nav }: { nav: ReactNode }) {
             <Sparkle weight="fill" />
             <span className="sr-only sm:not-sr-only">{messages.askAi}</span>
           </Link>
+          {identity && (
+            // Phones: the dock keeps five tabs, so suggestions ride here (header row has it on wider screens).
+            <Button asChild variant="ghost" className="md:hidden">
+              <Link to="/suggestions">
+                <ForkKnife />
+                <span className="sr-only sm:not-sr-only">Gợi ý</span>
+              </Link>
+            </Button>
+          )}
           {identity?.admin && (
             <Button asChild variant="ghost" className="md:hidden">
               <Link to="/admin">

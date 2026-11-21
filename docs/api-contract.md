@@ -105,7 +105,12 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
-| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429`. AI chỉ trích bộ lọc (từ khóa, danh mục, calo, protein, nhãn chế độ ăn, allergen cần loại, còn hàng) hoặc tên món để hỏi số liệu / so sánh; `reply` có thể nhiều dòng (`\n`), mọi con số do backend ghép từ DB (D31) |
+| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429`. AI chỉ trích bộ lọc (từ khóa, danh mục, calo, protein, nhãn chế độ ăn, allergen cần loại, còn hàng) hoặc tên món để hỏi số liệu / so sánh; `reply` có thể nhiều dòng (`\n`), mọi con số do backend ghép từ DB (D31) Ý định `plan` (D32): gợi ý một bữa theo hồ sơ của chính người gọi, giống `GET /api/me/recommendations`; chưa có hồ sơ hoặc không đủ điều kiện → câu trả lời không có số liệu cá nhân. |
+| GET | /api/me/profile | USER | Hồ sơ dinh dưỡng của chính người gọi (D32); chưa có → `404` |
+| PUT | /api/me/profile | USER | Tạo / thay hồ sơ: `birth_year`, `sex` (`MALE`/`FEMALE`), `height_cm` 100–250, `weight_kg` 30–300, `activity` (`SEDENTARY`/`LIGHT`/`MODERATE`/`ACTIVE`), `goal` (`LOSE`/`MAINTAIN`/`GAIN_MUSCLE`), `excluded_allergens` (mã trong bảng `allergens`), `pregnant_or_breastfeeding`, `medical_condition`, `consent` phải `true`; sai → `400` |
+| DELETE | /api/me/profile | USER | Xóa hồ sơ → `204` |
+| GET | /api/me/targets | USER | Mục tiêu mỗi ngày ước tính từ hồ sơ: `eligible`, `ineligible` (`AGE`/`PREGNANCY`/`MEDICAL`/`BMI`), `bmi`, `resting_calories`, `daily_calories`, `calories`, `protein_g`, `carbs_g`, `fat_g` (null khi không đủ điều kiện) |
+| GET | /api/me/recommendations | USER | Gợi ý một bữa theo mục tiêu (D32): `meal` (`BREAKFAST` 25% / `LUNCH` 37,5% / `DINNER` 37,5%, mặc định `LUNCH`), `exclude` (mã allergen thêm, ≤20), `labels` (≤6). Trả `eligible`, `ineligible`, `meal`, `target`, `items` (`product`, `grams`, `role`, `amounts`), `total`, `calories_pct`, `protein_pct`. Chưa có hồ sơ → `404`; không đủ điều kiện → `eligible=false`, `items` rỗng |
 
 Tool nội bộ (không phải HTTP endpoint, chỉ đọc, không nhận `userId`): `searchProducts`, `getProduct`, `getNutrition`, `compareProducts` (tùy chọn).
 

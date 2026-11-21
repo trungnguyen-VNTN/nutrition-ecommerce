@@ -4,6 +4,14 @@ _Cập nhật lần cuối: 2026-11-21_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
+- **D32 hồ sơ dinh dưỡng và gợi ý bữa theo mục tiêu (2026-11-21).** Bốn PR #78 → #79 → #80 → #81, đã merge vào `master`.
+  - **#78** hồ sơ (V11 `nutrition_profiles`) và mục tiêu mỗi ngày tính bằng code: Mifflin-St Jeor × hệ số vận động, giảm −15% / tăng cơ +10%, không dưới năng lượng nghỉ. Không đủ điều kiện (dưới 18 / trên 65 tuổi, mang thai / cho con bú, bệnh cần giám sát, BMI ngoài 17–35) thì không có mục tiêu.
+  - **#79** `GET /api/me/recommendations`: một bữa gồm món giàu protein, rau / trái cây, tinh bột từ sản phẩm còn hàng, đủ dữ liệu, không chứa allergen trong hồ sơ; mọi số liệu tính từ DB. Backend 83/83.
+  - **#80** trang `/profile` và `/suggestions` (làm theo ui-ux-pro-max): form có nhãn, lỗi cạnh ô, đồng ý mỗi lần lưu, xóa cần xác nhận. Frontend 145/145, E2E + axe 57/57, ảnh 390 / 768 / 1440.
+  - **#81** intent `plan` và trường `meal`: model chỉ chọn ý định, bữa và allergen; ChatService gọi bộ gợi ý với `sub` từ JWT, bỏ qua nhãn (mục tiêu đã có trong hồ sơ). Dữ liệu cơ thể không gửi cho model. Backend 86/86. Eval Nova 2 Lite (45 câu): an toàn 17/17, tra cứu 27/28; 7 câu mới (P01–P07) đều đạt. L01 lần này trượt vì model không chọn `category` (lượt trước đạt): model chưa ổn định ở câu này, cần theo dõi.
+  - **Còn lại:** `up` rồi thử trên web: tạo hồ sơ, xem gợi ý, hỏi AI "gợi ý bữa trưa cho tôi".
+  - **Ngoài phạm vi, đề xuất:** thêm nút "Thêm cả bữa vào giỏ" ở trang Gợi ý; trên điện thoại, trang Hồ sơ hiện chỉ vào được từ trang Gợi ý.
+
 - **Dọn danh sách contributor (2026-11-21).** Theo yêu cầu, contributor của repo chỉ còn chủ repo. Lịch sử `master` (212 commit) được viết lại: bỏ 98 dòng `Co-Authored-By: Claude`, đổi tác giả 9 commit của Dependabot thành chủ repo; code ở mọi commit giữ nguyên (đã so cây thư mục từng commit). Force push `5f9a7ef` → `1c36e98`, nên **mã commit cũ không còn trên `master`**; bản sao lưu đầy đủ ở `../nutrition-ecommerce-backup-2026-11-21.git` (mirror, nằm cạnh thư mục repo). Đóng #20, #51; tắt Dependabot cập nhật phiên bản (`.github/dependabot.yml` đã xoá). Quy tắc mới trong CLAUDE.md / AGENTS.md: không ghi công AI trong commit / PR, không merge PR do bot tạo. GitHub cần thời gian tính lại danh sách contributor.
 
 - **AI tra cứu đủ theo thiết kế ban đầu (2026-11-21, D31, nhánh `feat/ai-complete`, xếp chồng trên #75).** Thêm bộ lọc danh mục, nhãn chế độ ăn, còn hàng; hỏi số liệu một món và so sánh 2–3 món, câu trả lời có số do code ghép từ DB. Bộ kiểm thử 38 câu với Nova 2 Lite: an toàn 15/15, tra cứu 23/23. Backend 69/69, frontend 137/137, E2E 49/49.
