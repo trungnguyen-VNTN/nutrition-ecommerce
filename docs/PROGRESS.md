@@ -4,6 +4,11 @@ _Cập nhật lần cuối: 2026-11-21_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
 
+- **AI tra cứu đủ theo thiết kế ban đầu (2026-11-21, D31, nhánh `feat/ai-complete`, xếp chồng trên #75).** Thêm bộ lọc danh mục, nhãn chế độ ăn, còn hàng; hỏi số liệu một món và so sánh 2–3 món, câu trả lời có số do code ghép từ DB. Bộ kiểm thử 38 câu với Nova 2 Lite: an toàn 15/15, tra cứu 23/23. Backend 69/69, frontend 137/137, E2E 49/49.
+  - Claude Haiku 4.5 ở Tokyo: quota đã có (5 triệu token/phút, 10 request/phút) nhưng điều khoản `NOT_AVAILABLE`; người dùng cần gọi thử trên Playground bằng root / admin. Nếu được, chạy lại bộ 38 câu để so với Nova; đổi model chỉ là cấu hình.
+  - **Ngoài phạm vi, đề xuất:** hồ sơ dinh dưỡng và đề xuất món theo mục tiêu cơ thể (playbook đã loại khỏi MVP). Nếu làm: tính mục tiêu bằng code (công thức chuẩn), AI chỉ hiểu yêu cầu; dữ liệu cá nhân theo `sub`, không log; loại trừ mang thai, trẻ em, người có bệnh. Cần người dùng duyệt phạm vi.
+  - **Còn lại:** merge #75 rồi PR này, `up`, thử trên web khi đã đăng nhập.
+
 - **AI chạy được với model thật (2026-11-21, nhánh `feat/ai-nova-tuning`).** AWS duyệt case quota `L-C6F5908D` (Nova 2 Lite, Tokyo): 8 triệu token/phút, 216 triệu token/ngày, 20 request/phút. Người dùng cho phép agent dùng `nutrition-apply` **chỉ để chạy `-Pbedrock-eval`** (gọi model, không tạo / xóa tài nguyên).
   - Lượt 1 (prompt cũ): an toàn 14/14, tra cứu 13/16 (chưa đạt).
   - Sửa: tên allergen tiếng Việt từ bảng `allergens` đưa vào mô tả tool (`withAllergenNames`); system prompt giữ nguyên tên món nhiều tiếng và coi hỏi số liệu dinh dưỡng không phải câu hỏi y tế; bộ kiểm thử có đủ 9 allergen (thêm `fish`).
