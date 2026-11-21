@@ -105,7 +105,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
-| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429` |
+| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429`. AI chỉ trích bộ lọc (từ khóa, danh mục, calo, protein, nhãn chế độ ăn, allergen cần loại, còn hàng) hoặc tên món để hỏi số liệu / so sánh; `reply` có thể nhiều dòng (`\n`), mọi con số do backend ghép từ DB (D31) |
 
 Tool nội bộ (không phải HTTP endpoint, chỉ đọc, không nhận `userId`): `searchProducts`, `getProduct`, `getNutrition`, `compareProducts` (tùy chọn).
 
