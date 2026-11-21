@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import {
   ArrowSquareOut,
   ChartBar,
+  ClockCounterClockwise,
   Package,
   Receipt,
   SquaresFour,
@@ -15,6 +16,7 @@ const sections = [
   ['admin-products', 'Sản phẩm & tồn kho', Package],
   ['admin-categories', 'Danh mục', SquaresFour],
   ['admin-orders', 'Đơn hàng', Receipt],
+  ['admin-payments', 'Nhật ký thanh toán', ClockCounterClockwise],
 ] as const;
 
 // Wraps every /admin route. Navigation only renders for admins; pages keep their own access checks.

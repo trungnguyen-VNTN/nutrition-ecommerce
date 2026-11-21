@@ -4,7 +4,7 @@
 
 ## 1. Phạm vi MVP
 
-Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Không có thanh toán.
+Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán khi nhận hàng hoặc VNPAY **sandbox** (D27), không có giao dịch tiền thật. Sơ đồ AWS: [docs/diagrams/aws-architecture.png](diagrams/aws-architecture.png).
 Không nằm trong MVP: Nutrition Profile, Recommendation Engine, meal plan, event pipeline, pipeline USDA, `addToCart` qua AI, domain riêng, WAF.
 
 ## 2. Sơ đồ khối
@@ -36,7 +36,7 @@ CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──�
 | Backend | ECS Fargate (Spring Boot) | Chỉ nhận từ ALB; image trong ECR; `/actuator/health` |
 | Cân bằng tải | ALB công khai | SG chỉ nhận managed prefix list của CloudFront; listener chỉ chuyển tiếp khi có header bí mật do CloudFront thêm |
 | Database | RDS PostgreSQL | 1 AZ cho dev, mã hóa, `deletion_protection`, mật khẩu do RDS quản lý (Secrets Manager) |
-| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình. Chốt tạm: Claude Haiku 5.5 qua profile APAC (D18, chờ spike S1) |
+| AI | Bedrock Converse + (tùy chọn) Guardrails | Gọi từ Spring Boot; model ID và inference profile ID lấy từ cấu hình. Amazon Nova 2 Lite qua profile `jp.` ở Tokyo, vì Singapore chưa có quota Bedrock và Claude bị khóa với tài khoản (D18); region lấy từ `BEDROCK_REGION` |
 | Quan sát | CloudWatch Logs, Alarms | Không log token hay dữ liệu cá nhân |
 | IaC | Terraform ≥ 1.10 | State S3, `use_lockfile = true` |
 

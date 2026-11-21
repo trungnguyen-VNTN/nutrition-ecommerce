@@ -1,26 +1,26 @@
-/* Design tokens: "Nutrition Label" direction (docs/ui-guidelines.md §2, D11). */
+/* Design tokens: "Nutrition Lab" direction (docs/ui-guidelines.md §2, D11, D28). */
 :root {
   /* Colour */
-  --cream: #faf9f3;
+  --cream: #fbfaf7;
   --surface: #ffffff;
-  --ink: #19392e;
-  --ink-muted: #566a5c;
-  --brand: #194734;
-  --brand-strong: #0f3324;
-  --lime: #d8ed9d;
+  --ink: #0f1f18;
+  --ink-muted: #5b665f;
+  --brand: #174a35;
+  --brand-strong: #0f1f18;
+  --lime: #d6ee8f;
   --lime-strong: #c3e277;
-  --lime-soft: #eef6d8;
-  --line: #dde5d8;
+  --lime-soft: #eef5da;
+  --line: #e4e2da;
   --line-strong: #75897a;
-  --sunken: #f1efe6;
+  --sunken: #f1f0ea;
 
-  --macro-protein: #d9572b;
+  --macro-protein: #c9542a;
   --macro-protein-tint: #fbe3d8;
-  --macro-carb: #a87c06;
+  --macro-carb: #9a7410;
   --macro-carb-tint: #f8ecc4;
-  --macro-fat: #7b5cc9;
+  --macro-fat: #6e55b8;
   --macro-fat-tint: #ebe4f8;
-  --macro-fiber: #2f8a4c;
+  --macro-fiber: #2b7d45;
   --macro-fiber-tint: #dcefdf;
 
   --success: #276e2b;
@@ -33,8 +33,10 @@
 
   /* Type */
   --font-heading:
-    'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    'Bricolage Grotesque', 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  /* Numbers, units, prices and small labels: the spec-sheet voice. */
+  --font-numeric: 'JetBrains Mono', ui-monospace, monospace;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-base: 16px;
@@ -53,7 +55,7 @@
   --line-3xl: 38px;
   --line-4xl: 50px;
   --line-display: 68px;
-  --tracking-display: -0.02em;
+  --tracking-display: -0.03em;
 
   /* Space, shape, layers */
   --space-0: 0px;

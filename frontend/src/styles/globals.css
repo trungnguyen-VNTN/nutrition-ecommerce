@@ -1,12 +1,16 @@
 /* Self-hosted fonts, latin + vietnamese subsets only (D11). */
-@import '@fontsource/plus-jakarta-sans/latin-400.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-400.css';
-@import '@fontsource/plus-jakarta-sans/latin-500.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-500.css';
-@import '@fontsource/plus-jakarta-sans/latin-600.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-600.css';
-@import '@fontsource/plus-jakarta-sans/latin-700.css';
-@import '@fontsource/plus-jakarta-sans/vietnamese-700.css';
+@import '@fontsource/be-vietnam-pro/latin-400.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-400.css';
+@import '@fontsource/be-vietnam-pro/latin-500.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-500.css';
+@import '@fontsource/be-vietnam-pro/latin-600.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-600.css';
+@import '@fontsource/be-vietnam-pro/latin-700.css';
+@import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/vietnamese-400.css';
+@import '@fontsource/jetbrains-mono/latin-600.css';
+@import '@fontsource/jetbrains-mono/vietnamese-600.css';
 @import '@fontsource/bricolage-grotesque/latin-600.css';
 @import '@fontsource/bricolage-grotesque/vietnamese-600.css';
 @import '@fontsource/bricolage-grotesque/latin-700.css';
@@ -53,6 +57,7 @@
   --color-info: var(--info);
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
+  --font-mono: var(--font-numeric);
   --text-*: initial;
   --text-xs: var(--font-size-xs);
   --text-xs--line-height: var(--line-xs);
@@ -209,7 +214,7 @@
     width: 36px;
     height: 36px;
     border-radius: var(--corner-control);
-    background: var(--brand);
+    background: var(--ink);
     color: var(--lime);
   }
   .header-field {
@@ -565,6 +570,732 @@
       border-radius: var(--corner-card);
       box-shadow: none;
       animation: none;
+    }
+  }
+}
+
+/* Nutrition Lab (D28): promo ticker, spec-sheet numbers, banner carousel, bento tiles. */
+@layer components {
+  .lab-tag {
+    padding: 1px 6px;
+    border: var(--border-width) solid currentColor;
+    border-radius: 4px;
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .promo-strip {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--cream);
+    font-size: var(--font-size-sm);
+    /* Faint lab-grid lines behind the readouts. */
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--lime) 7%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--lime) 7%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 12px 12px;
+  }
+  .promo-strip-label {
+    z-index: 1;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline: var(--space-4);
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    padding-right: calc(var(--space-4) + 10px);
+  }
+  .promo-strip-dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+  .promo-strip-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: promo-ping 1.8s ease-out infinite;
+  }
+  .promo-strip[data-paused='true'] .promo-strip-dot::after {
+    animation: none;
+  }
+  .promo-strip-viewport {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    /* Readouts fade in and out at the edges instead of being cut. */
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 48px,
+      #000 calc(100% - 48px),
+      transparent
+    );
+  }
+  .promo-strip-track {
+    display: flex;
+    width: max-content;
+    animation: promo-scroll 45s linear infinite;
+  }
+  .promo-strip:hover .promo-strip-track,
+  .promo-strip:focus-within .promo-strip-track,
+  .promo-strip[data-paused='true'] .promo-strip-track {
+    animation-play-state: paused;
+  }
+  .promo-strip-row {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    white-space: nowrap;
+  }
+  .promo-strip-row li {
+    display: inline-flex;
+    align-items: center;
+  }
+  .promo-fact {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--touch-target);
+    padding-inline: var(--space-3);
+    color: color-mix(in srgb, var(--cream) 82%, transparent);
+    text-decoration: none;
+    transition: color 160ms ease-out;
+  }
+  .promo-fact:hover,
+  .promo-fact:focus-visible {
+    color: var(--cream);
+  }
+  .promo-fact:focus-visible {
+    outline: 2px solid var(--lime);
+    outline-offset: -4px;
+    border-radius: var(--corner-control);
+  }
+  .promo-fact-stat {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: transform 160ms ease-out;
+  }
+  .promo-fact:hover .promo-fact-stat {
+    transform: translateY(-1px) rotate(-2deg);
+  }
+  .promo-fact-arrow {
+    color: var(--lime);
+    opacity: 0;
+    transform: translate(-4px, 2px);
+    transition:
+      opacity 160ms ease-out,
+      transform 160ms ease-out;
+  }
+  .promo-fact:hover .promo-fact-arrow,
+  .promo-fact:focus-visible .promo-fact-arrow {
+    opacity: 1;
+    transform: none;
+  }
+  .promo-fact-sep {
+    width: 10px;
+    height: 18px;
+    margin-inline: var(--space-3);
+    background: repeating-linear-gradient(
+      -60deg,
+      color-mix(in srgb, var(--lime) 55%, transparent) 0 2px,
+      transparent 2px 5px
+    );
+  }
+  .promo-strip-toggle {
+    z-index: 1;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--touch-target);
+    border: 0;
+    border-left: var(--border-width) solid
+      color-mix(in srgb, var(--cream) 18%, transparent);
+    background: var(--ink);
+    color: var(--lime);
+    cursor: pointer;
+  }
+  .promo-strip-toggle:hover {
+    background: color-mix(in srgb, var(--lime) 12%, var(--ink));
+  }
+  .promo-strip-toggle:focus-visible {
+    outline: 2px solid var(--lime);
+    outline-offset: -4px;
+  }
+  @keyframes promo-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes promo-ping {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(2.6);
+    }
+  }
+  .spec-num {
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Home banner carousel (D28). Copy sits on a scrim so text keeps 4.5:1 over any photo. */
+@layer components {
+  .banner-carousel {
+    position: relative;
+    height: 440px;
+    overflow: hidden;
+    border-radius: var(--corner-sheet);
+    background: var(--ink);
+    isolation: isolate;
+  }
+  .banner-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--motion-enter) var(--motion-ease);
+  }
+  .banner-slide[data-active='true'] {
+    opacity: 1;
+    z-index: 1;
+  }
+  .banner-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 92%, transparent) 30%,
+      color-mix(in srgb, var(--ink) 30%, transparent) 100%
+    );
+  }
+  .banner-slide[data-tone='light']::after {
+    background: linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--cream) 95%, transparent) 38%,
+      color-mix(in srgb, var(--cream) 20%, transparent) 100%
+    );
+  }
+  .banner-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 80% center;
+  }
+  .banner-carousel[data-rotating='true']
+    .banner-slide[data-active='true']
+    .banner-image {
+    animation: banner-zoom var(--banner-interval, 6s) linear both;
+  }
+  .banner-copy {
+    position: absolute;
+    inset: auto var(--space-6) var(--space-16) var(--space-6);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    max-width: 34rem;
+    color: var(--cream);
+  }
+  .banner-slide[data-tone='light'] .banner-copy {
+    color: var(--ink);
+  }
+  .banner-slide[data-active='true'] .banner-copy {
+    animation: banner-rise var(--motion-enter) var(--motion-ease) both;
+  }
+  .banner-tag {
+    padding: 2px 10px;
+    border-radius: var(--corner-pill);
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .banner-slide[data-tone='light'] .banner-tag {
+    background: var(--ink);
+    color: var(--lime);
+  }
+  .banner-title {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-3xl);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: var(--tracking-display);
+  }
+  .banner-accent {
+    color: var(--lime);
+  }
+  .banner-slide[data-tone='light'] .banner-accent {
+    color: var(--brand);
+  }
+  .banner-text {
+    max-width: 30rem;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-sm);
+  }
+  .banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--touch-target);
+    padding-inline: var(--space-4);
+    border-radius: var(--corner-control);
+    background: var(--lime);
+    color: var(--ink);
+    font-weight: 700;
+    transition: background-color var(--motion-fast) var(--motion-ease);
+  }
+  .banner-cta:hover {
+    background: var(--lime-strong);
+  }
+  .banner-slide[data-tone='light'] .banner-cta {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .banner-controls {
+    position: absolute;
+    inset: auto var(--space-6) var(--space-4) var(--space-6);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .banner-dot {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-height: var(--touch-target);
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .banner-dot-fill {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--cream) 35%, transparent);
+  }
+  .banner-dot[aria-current='true'] .banner-dot-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--lime);
+  }
+  .banner-dot-fill.is-running::after {
+    transform-origin: left;
+    animation: banner-progress var(--banner-interval, 6s) linear both;
+  }
+  .banner-toggle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border: var(--border-width) solid
+      color-mix(in srgb, var(--cream) 60%, transparent);
+    border-radius: var(--corner-pill);
+    background: color-mix(in srgb, var(--ink) 70%, transparent);
+    color: var(--cream);
+  }
+  @keyframes banner-zoom {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.06);
+    }
+  }
+  @keyframes banner-rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-4));
+    }
+  }
+  @keyframes banner-progress {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @media (width >= 940px) {
+    .banner-carousel {
+      height: 460px;
+    }
+    .banner-slide::after {
+      background: linear-gradient(
+        90deg,
+        var(--ink) 34%,
+        color-mix(in srgb, var(--ink) 55%, transparent) 50%,
+        transparent 68%
+      );
+    }
+    .banner-slide[data-tone='light']::after {
+      background: linear-gradient(
+        90deg,
+        var(--cream) 34%,
+        color-mix(in srgb, var(--cream) 60%, transparent) 50%,
+        transparent 66%
+      );
+    }
+    .banner-image {
+      object-position: right center;
+    }
+    .banner-copy {
+      inset: var(--space-12) auto auto var(--space-12);
+      gap: var(--space-4);
+    }
+    .banner-title {
+      font-size: 56px;
+    }
+    .banner-text {
+      font-size: var(--font-size-base);
+      line-height: var(--line-base);
+    }
+    .banner-controls {
+      inset: auto var(--space-12) var(--space-4) var(--space-12);
+    }
+  }
+}
+
+/* Collections bento (D28): two columns on phones, four from 940px. */
+@layer components {
+  .collections {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 150px;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .collection-tile {
+    min-width: 0;
+  }
+  .collection-link {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    overflow: hidden;
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--line);
+    border-radius: var(--corner-card);
+    background: var(--surface);
+    color: var(--ink);
+    transition:
+      transform var(--motion-fast) var(--motion-ease),
+      box-shadow var(--motion-fast) var(--motion-ease);
+  }
+  .collection-link:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--elevation-float);
+  }
+  .collection-link[data-tone^='photo'] {
+    border-color: transparent;
+    color: var(--cream);
+  }
+  .collection-link[data-tone^='photo']::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 88%, transparent) 0%,
+      transparent 70%
+    );
+  }
+  .collection-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms var(--motion-ease);
+  }
+  .collection-link[data-tone='photo-wide'] .collection-image {
+    object-position: right center;
+  }
+  .collection-link:hover .collection-image {
+    transform: scale(1.05);
+  }
+  .collection-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-right: var(--space-8);
+  }
+  .collection-kicker {
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .collection-link[data-tone^='photo'] .collection-kicker {
+    color: var(--lime);
+    opacity: 1;
+  }
+  .collection-title {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-xl);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: var(--tracking-display);
+  }
+  .collection-tile.row-span-2 .collection-title {
+    font-size: var(--font-size-3xl);
+  }
+  .collection-arrow {
+    position: absolute;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 2;
+    font-size: var(--font-size-xl);
+    transition: transform var(--motion-fast) var(--motion-ease);
+  }
+  .collection-link:hover .collection-arrow {
+    transform: translateX(4px);
+  }
+  @media (width >= 940px) {
+    .collections {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: 170px;
+      gap: var(--space-4);
+    }
+  }
+}
+
+/* Guest sign-up banner on the home page. */
+@layer components {
+  .account-banner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    overflow: hidden;
+    padding: var(--space-6);
+    border-radius: var(--corner-sheet);
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .account-banner-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    opacity: 0.35;
+  }
+  .account-banner-copy,
+  .account-banner-cta {
+    position: relative;
+  }
+  .account-banner-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .account-banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--touch-target);
+    padding-inline: var(--space-4);
+    border-radius: var(--corner-control);
+    background: var(--lime);
+    color: var(--ink);
+    font-weight: 700;
+  }
+  @media (width >= 940px) {
+    .account-banner {
+      padding: var(--space-8) var(--space-12);
+    }
+    .account-banner-image {
+      opacity: 1;
+      mask-image: linear-gradient(90deg, transparent 45%, #000 75%);
+    }
+  }
+}
+@layer components {
+  .banner-carousel[data-tone='light'] .banner-dot-fill {
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+  .banner-carousel[data-tone='light']
+    .banner-dot[aria-current='true']
+    .banner-dot-fill::after {
+    background: var(--ink);
+  }
+}
+
+/* Spec-sheet numbers on product cards and the portion card (D28). */
+@layer components {
+  .spec-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: var(--border-width) solid var(--line);
+  }
+  .spec-cell {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    min-width: 0;
+    padding-block: var(--space-2);
+  }
+  .spec-cell dt {
+    color: var(--ink-muted);
+    font-family: var(--font-numeric);
+    font-size: 11px;
+    line-height: var(--line-xs);
+  }
+  .spec-cell dd {
+    margin: 0;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-base);
+    line-height: var(--line-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .spec-mark {
+    padding-inline: 2px;
+    background: var(--lime);
+  }
+  .portion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+  }
+  .portion-cell {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: var(--space-3);
+    border-top: 3px solid var(--macro, var(--ink));
+    border-radius: var(--corner-control);
+    background: var(--cream);
+  }
+  .portion-cell[data-tone='energy'] {
+    border-top-color: var(--ink);
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .portion-cell dt {
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-xs);
+    color: inherit;
+    opacity: 0.8;
+  }
+  .portion-cell dd {
+    margin: 0;
+    font-family: var(--font-numeric);
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-2xl);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .portion-cell[data-tone='energy'] dd {
+    color: var(--lime);
+  }
+}
+
+/* Meal analyzer promo beside the products heading. */
+@layer components {
+  .meal-promo {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 150px;
+    overflow: hidden;
+    border-radius: var(--corner-card);
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .meal-promo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--ink) 35%,
+      color-mix(in srgb, var(--ink) 40%, transparent) 70%,
+      transparent
+    );
+  }
+  .meal-promo-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    transition: transform 500ms var(--motion-ease);
+  }
+  .meal-promo:hover .meal-promo-image {
+    transform: scale(1.05);
+  }
+  .meal-promo-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+  }
+  @media (width >= 940px) {
+    .meal-promo {
+      width: 460px;
     }
   }
 }

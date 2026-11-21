@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Outlet, useLocation } from 'react-router-dom';
 import { AdminShell } from '@/components/layout/admin-shell';
 import { MainNav } from '@/components/layout/main-nav';
+import { PromoStrip } from '@/components/layout/promo-strip';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,6 +41,7 @@ export function Layout() {
       <SiteHeader
         nav={<MainNav admin={!!identity?.admin} cartCount={count} />}
       />
+      {!pathname.startsWith('/admin') && <PromoStrip />}
       <CartAnnouncer count={count} />
       <main
         id="main"
@@ -61,7 +63,13 @@ function RouteEffects() {
     const main = document.getElementById('main');
     const title = main?.querySelector('h1')?.textContent ?? messages.brand;
     document.title = `${title} · Nutrition`;
-    if (previousPath.current !== pathname) main?.focus();
+    if (previousPath.current !== pathname) {
+      // A new page starts at the top. Focus moves to main for screen readers,
+      // without the browser scrolling it into view: that scroll used to tuck
+      // the promo strip under the sticky header.
+      window.scrollTo(0, 0);
+      main?.focus({ preventScroll: true });
+    }
     previousPath.current = pathname;
   }, [pathname]);
   return null;

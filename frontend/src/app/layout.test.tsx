@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { expect, it, vi } from 'vitest';
 import { server } from '@/mocks/server';
@@ -50,4 +51,21 @@ it('labels every primary destination with text and shows the cart count', async 
     screen.getByText('', { selector: 'p.sr-only[aria-live="polite"]' }),
   ).toBeEmptyDOMElement();
   expect(screen.queryByRole('link', { name: messages.admin })).toBeNull();
+});
+
+it('starts a new page at the top and focuses main without scrolling it into view', async () => {
+  const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+  const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+  renderApp(<AppRoutes />, '/');
+  const nav = screen.getByRole('navigation', { name: messages.navigation });
+  await userEvent.click(
+    within(nav).getByRole('link', { name: messages.products }),
+  );
+  const main = document.getElementById('main');
+  await waitFor(() => expect(main).toHaveFocus());
+  expect(scrollTo).toHaveBeenCalledWith(0, 0);
+  // preventScroll keeps the promo strip from sliding under the sticky header.
+  expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+  scrollTo.mockRestore();
+  focus.mockRestore();
 });
