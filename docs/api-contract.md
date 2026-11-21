@@ -105,7 +105,7 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 
 | Method | Path | Quyền | Mô tả |
 | --- | --- | --- | --- |
-| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429`. AI chỉ trích bộ lọc (từ khóa, danh mục, calo, protein, nhãn chế độ ăn, allergen cần loại, còn hàng) hoặc tên món để hỏi số liệu / so sánh; `reply` có thể nhiều dòng (`\n`), mọi con số do backend ghép từ DB (D31) |
+| POST | /api/chat | USER | `{message}` → `{reply, products?[]}`; giới hạn độ dài `message`; rate limit và quota theo `sub`; vượt quota → `429`. AI chỉ trích bộ lọc (từ khóa, danh mục, calo, protein, nhãn chế độ ăn, allergen cần loại, còn hàng) hoặc tên món để hỏi số liệu / so sánh; `reply` có thể nhiều dòng (`\n`), mọi con số do backend ghép từ DB (D31) Ý định `plan` (D32): gợi ý một bữa theo hồ sơ của chính người gọi, giống `GET /api/me/recommendations`; chưa có hồ sơ hoặc không đủ điều kiện → câu trả lời không có số liệu cá nhân. |
 | GET | /api/me/profile | USER | Hồ sơ dinh dưỡng của chính người gọi (D32); chưa có → `404` |
 | PUT | /api/me/profile | USER | Tạo / thay hồ sơ: `birth_year`, `sex` (`MALE`/`FEMALE`), `height_cm` 100–250, `weight_kg` 30–300, `activity` (`SEDENTARY`/`LIGHT`/`MODERATE`/`ACTIVE`), `goal` (`LOSE`/`MAINTAIN`/`GAIN_MUSCLE`), `excluded_allergens` (mã trong bảng `allergens`), `pregnant_or_breastfeeding`, `medical_condition`, `consent` phải `true`; sai → `400` |
 | DELETE | /api/me/profile | USER | Xóa hồ sơ → `204` |

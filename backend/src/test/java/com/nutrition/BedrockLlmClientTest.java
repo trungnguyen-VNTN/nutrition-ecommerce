@@ -146,7 +146,7 @@ class BedrockLlmClientTest {
                 org.mockito.ArgumentMatchers.any(java.util.UUID.class)))
         .thenReturn(1);
     var catalog = org.mockito.Mockito.mock(com.nutrition.catalog.CatalogRepository.class);
-    var reply = new ChatService(refusing, catalog, db).chat(java.util.UUID.randomUUID(), "x");
+    var reply = new ChatService(refusing, catalog, db, null).chat(java.util.UUID.randomUUID(), "x");
     assertThat(reply.products()).isEmpty();
     assertThat(reply.reply()).contains("không đưa ra lời khuyên y tế");
     org.mockito.Mockito.verifyNoInteractions(catalog);
@@ -252,7 +252,25 @@ class BedrockLlmClientTest {
             .json()
             .toString();
     assertThat(schema)
-        .contains("trai-cay-say = Trái cây sấy", "LOW_SUGAR = Ít đường", "inStock", "compare");
+        .contains(
+            "trai-cay-say = Trái cây sấy",
+            "LOW_SUGAR = Ít đường",
+            "inStock",
+            "compare",
+            "plan",
+            "DINNER");
+    var plan =
+        client(
+                reply(
+                    StopReason.TOOL_USE,
+                    tool(
+                        "searchProducts",
+                        input("medicalAdvice", false, "intent", "plan", "meal", "DINNER"))),
+                "")
+            .withCategories(() -> categories)
+            .search("tối nay ăn gì");
+    assertThat(plan.intentOrSearch()).isEqualTo("plan");
+    assertThat(plan.meal()).isEqualTo("DINNER");
 
     for (var bad :
         List.of(
@@ -260,6 +278,7 @@ class BedrockLlmClientTest {
             input("medicalAdvice", false, "labels", List.of("TASTY")),
             input("medicalAdvice", false, "intent", "order"),
             input("medicalAdvice", false, "intent", "facts"),
+            input("medicalAdvice", false, "intent", "plan", "meal", "SNACK"),
             input(
                 "medicalAdvice", false, "intent", "compare", "items", List.of("a", "b", "c", "d"))))
       assertThatThrownBy(
