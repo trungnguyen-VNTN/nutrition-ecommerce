@@ -5,6 +5,8 @@ import com.nutrition.catalog.CatalogModels.Product;
 import com.nutrition.catalog.CatalogRepository;
 import com.nutrition.catalog.DietLabel;
 import com.nutrition.catalog.ProductSort;
+import com.nutrition.profile.RecommendationService;
+import com.nutrition.profile.RecommendationService.Meal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -26,11 +29,17 @@ public class ChatService {
   private final LlmClient llm;
   private final CatalogRepository catalog;
   private final JdbcTemplate db;
+  private final RecommendationService recommendations;
 
-  public ChatService(LlmClient llm, CatalogRepository catalog, JdbcTemplate db) {
+  public ChatService(
+      LlmClient llm,
+      CatalogRepository catalog,
+      JdbcTemplate db,
+      RecommendationService recommendations) {
     this.llm = llm;
     this.catalog = catalog;
     this.db = db;
+    this.recommendations = recommendations;
   }
 
   public record Reply(String reply, List<Product> products) {}
@@ -72,7 +81,11 @@ public class ChatService {
     String intent = search.intentOrSearch();
     if (!LlmClient.INTENTS.contains(intent)) throw new AiUnavailableException();
     try {
-      return "search".equals(intent) ? search(search) : facts(search, "compare".equals(intent));
+      return switch (intent) {
+        case "search" -> search(search);
+        case "plan" -> plan(user, search);
+        default -> facts(search, "compare".equals(intent));
+      };
     } catch (IllegalArgumentException exception) {
       throw new AiUnavailableException();
     }
@@ -109,6 +122,77 @@ public class ChatService {
             : "Các sản phẩm sau lấy trực tiếp từ dữ liệu cửa hàng. Xem chi tiết để kiểm tra dinh dưỡng và allergen. "
                 + NOT_MEDICAL,
         products);
+  }
+
+  static final String NO_PROFILE =
+      "Bạn chưa có hồ sơ dinh dưỡng. Hãy tạo hồ sơ ở trang Hồ sơ dinh dưỡng để nhận gợi ý bữa ăn theo mục tiêu của bạn.";
+  static final String NOT_ELIGIBLE =
+      "Hồ sơ của bạn nằm ngoài phạm vi ước tính (tuổi, BMI, mang thai hoặc có bệnh cần giám sát) nên hệ thống không đưa ra gợi ý cá nhân. Hãy hỏi bác sĩ hoặc chuyên gia dinh dưỡng.";
+  private static final Map<Meal, String> MEAL_NAMES =
+      Map.of(Meal.BREAKFAST, "bữa sáng", Meal.LUNCH, "bữa trưa", Meal.DINNER, "bữa tối");
+
+  /**
+   * A meal toward the caller's own targets (D32). The user comes from the JWT; the model only chose
+   * the intent and the meal, and every number below comes from the recommender's DB values.
+   */
+  private Reply plan(UUID user, LlmClient.Search search) {
+    Meal meal;
+    try {
+      meal = search.meal() == null ? Meal.LUNCH : Meal.valueOf(search.meal());
+    } catch (IllegalArgumentException unknown) {
+      throw new AiUnavailableException();
+    }
+    var excluded = search.excludeAllergen() == null ? List.<String>of() : search.excludeAllergen();
+    if (excluded.size() > MAX_ALLERGENS) throw new AiUnavailableException();
+    RecommendationService.Recommendation rec;
+    try {
+      // Labels are ignored here: the goal lives in the profile, and a label such as HIGH_PROTEIN
+      // (often added for "tăng cơ") would drop every vegetable and starch from the meal.
+      rec = recommendations.recommend(user, meal, excluded, List.of());
+    } catch (NoSuchElementException noProfile) {
+      return new Reply(NO_PROFILE + " " + NOT_MEDICAL, List.of());
+    }
+    if (!rec.eligible()) return new Reply(NOT_ELIGIBLE, List.of());
+    if (rec.items().isEmpty())
+      return new Reply(
+          "Chưa tìm được món còn hàng, đủ dữ liệu dinh dưỡng và không chứa allergen bạn tránh cho "
+              + MEAL_NAMES.get(meal)
+              + ". "
+              + NOT_MEDICAL,
+          List.of());
+    List<String> lines = new ArrayList<>();
+    lines.add(
+        "Gợi ý "
+            + MEAL_NAMES.get(meal)
+            + " theo hồ sơ của bạn (mục tiêu bữa khoảng "
+            + number(rec.target().calories())
+            + " kcal, "
+            + number(rec.target().proteinG())
+            + " g protein):");
+    for (var pick : rec.items())
+      lines.add(
+          "- "
+              + pick.product().name()
+              + " ("
+              + pick.role()
+              + "), "
+              + number(pick.grams())
+              + " g: "
+              + number(pick.amounts().calories())
+              + " kcal · protein "
+              + number(pick.amounts().proteinG())
+              + " g.");
+    lines.add(
+        "Tổng: "
+            + number(rec.total().calories())
+            + " kcal"
+            + (rec.caloriesPct() == null ? "" : " (" + rec.caloriesPct() + "% mục tiêu bữa)")
+            + " · protein "
+            + number(rec.total().proteinG())
+            + " g. Xem và đổi bữa ở trang Gợi ý cho bạn.");
+    lines.add("Số liệu tính từ dữ liệu cửa hàng và hồ sơ của bạn. " + NOT_MEDICAL);
+    return new Reply(
+        String.join("\n", lines), rec.items().stream().map(pick -> pick.product()).toList());
   }
 
   /** Nutrition facts of named foods, or a comparison, written from database values only. */
