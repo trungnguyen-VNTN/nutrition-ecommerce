@@ -3,13 +3,13 @@ import { ArrowUpRight, CheckCircle, Info } from '@phosphor-icons/react';
 import { messages } from '@/app/messages.vi';
 import type { Product } from '@/lib/api/catalog.types';
 import { formatMoney } from '@/lib/format';
-import { formatAmount, readyNutrition } from '@/lib/nutrition';
-import { Pill } from '@/components/ui/pill';
+import { readyNutrition } from '@/lib/nutrition';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tag } from '@/components/ui/tag';
 import { DataStatusBadge } from './data-status-badge';
 import { DietLabelTags } from '@/components/diet-label-tags';
 import { ProductArt } from './product-art';
+import { SpecRow } from './spec-row';
 
 // Row with thumbnail below 640px, stacked card above. Skeleton shares this frame (no layout jump).
 const frame =
@@ -39,7 +39,7 @@ export function ProductCard({
         className={art}
       />
       <div className={body}>
-        <p className="text-xs text-ink-muted">
+        <p className="font-mono text-xs text-ink-muted uppercase">
           {[
             product.category?.name,
             ready && messages.serving(ready.servingSize, ready.servingUnit),
@@ -56,22 +56,25 @@ export function ProductCard({
             <ArrowUpRight className="icon mt-1 text-brand" />
           </Link>
         </Heading>
-        <div className="flex flex-wrap gap-1.5">
-          {ready ? (
-            <>
-              <Pill macro="energy">
-                {formatAmount(ready.nutrition.calories)} kcal
-              </Pill>
-              <Pill macro="protein">
-                {formatAmount(ready.nutrition.protein_g)}g protein
-              </Pill>
-            </>
-          ) : (
+        {ready ? (
+          <SpecRow
+            ready={ready}
+            highlight={
+              product.diet_labels.includes('HIGH_PROTEIN')
+                ? 'protein'
+                : undefined
+            }
+          />
+        ) : (
+          <div>
             <DataStatusBadge kind="nutrition" />
-          )}
+          </div>
+        )}
+        {/* Fixed rows keep every card in a grid row the same height as its skeleton. */}
+        <div className="flex min-h-[1.625rem] items-center">
+          <DietLabelTags labels={product.diet_labels} max={2} />
         </div>
-        <DietLabelTags labels={product.diet_labels} max={2} />
-        <div>
+        <div className="flex min-h-8 items-center">
           {product.allergens_verified && product.allergens_reviewed ? (
             <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
               <CheckCircle className="icon text-success" aria-hidden="true" />
@@ -87,7 +90,7 @@ export function ProductCard({
           )}
         </div>
         <div className="mt-auto flex items-end justify-between gap-2 border-t border-line pt-3">
-          <p className="font-display text-lg font-extrabold tabular-nums sm:text-xl">
+          <p className="spec-num text-lg font-semibold sm:text-xl">
             {formatMoney(product.price, product.currency)}
           </p>
           {product.stock > 0 ? (
@@ -108,8 +111,21 @@ export function ProductCardSkeleton() {
       <div className={body}>
         <Skeleton className="h-4 w-1/2" />
         <Skeleton className="h-touch w-full" />
-        <Skeleton className="h-6 w-2/3" />
-        <Skeleton className="h-6 w-1/2" />
+        {/* Same .spec-row frame as the loaded card, so the list does not jump when data arrives. */}
+        <div className="spec-row" aria-hidden="true">
+          {[0, 1, 2, 3].map((cell) => (
+            <div key={cell} className="spec-cell">
+              <Skeleton className="h-[var(--line-xs)] w-3/4" />
+              <Skeleton className="h-[var(--line-base)] w-1/2" />
+            </div>
+          ))}
+        </div>
+        <div className="flex min-h-[1.625rem] items-center">
+          <Skeleton className="h-6 w-2/3" />
+        </div>
+        <div className="flex min-h-8 items-center">
+          <Skeleton className="h-6 w-1/2" />
+        </div>
         <div className="mt-auto border-t border-line pt-3">
           <Skeleton className="h-7 w-1/2" />
         </div>

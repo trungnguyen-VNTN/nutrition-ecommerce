@@ -4,18 +4,21 @@ import {
   ArrowRight,
   ArrowUpRight,
   Barbell,
-  Leaf,
   Lightning,
   ShieldCheck,
   Sparkle,
 } from '@phosphor-icons/react';
-import heroImage from '@/assets/food-editorial.webp';
+import accountBanner800 from '@/assets/banners/banner-tai-khoan-800.webp';
+import accountBanner1600 from '@/assets/banners/banner-tai-khoan-1600.webp';
 import { Button } from '@/components/ui/button';
 import { ProductCard, ProductCardSkeleton } from '@/components/product-card';
 import { ErrorState } from '@/components/error-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage } from '@/lib/api/client';
+import { useSession } from '@/features/auth/session';
 import { getProducts, getCategories } from '@/features/products/api/products';
+import { BannerCarousel } from './banner-carousel';
+import { Collections } from './collections';
 
 // Goal shortcuts are plain links into the real catalog filters.
 const goals = [
@@ -41,12 +44,6 @@ const goals = [
     Glyph: ShieldCheck,
   },
 ] as const;
-
-const promises = [
-  'Dinh dưỡng theo từng khẩu phần',
-  'Allergen ghi rõ trạng thái xác minh',
-  'Không đoán khi thiếu dữ liệu',
-];
 
 function SectionHead({
   eyebrow,
@@ -77,6 +74,7 @@ function SectionHead({
 }
 
 export function HomePage() {
+  const identity = useSession();
   const query = useQuery({
     queryKey: ['products', { page: 0 }],
     queryFn: ({ signal }) => getProducts({ page: 0 }, signal),
@@ -89,61 +87,38 @@ export function HomePage() {
   });
   return (
     <div className="space-y-12 md:space-y-16">
-      <section
-        className="grid items-center gap-8 md:grid-cols-[3fr_2fr] md:gap-12"
-        aria-label="Trang chủ"
-      >
-        <div className="flex flex-col items-start gap-6">
-          <p className="inline-flex items-center gap-2 rounded-pill border border-line-strong px-3 py-1 text-xs font-semibold">
-            <Leaf weight="fill" className="icon text-brand" />
-            Thực phẩm minh bạch · Lựa chọn mỗi ngày
-          </p>
-          <h1 className="text-4xl font-extrabold lg:text-display">
+      <section className="space-y-6" aria-labelledby="home-title">
+        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+          <h1
+            id="home-title"
+            className="text-4xl font-extrabold lg:text-display"
+          >
             Hiểu thực phẩm.
             <br />
-            Chọn điều phù hợp.
+            <span className="text-ink-muted">Chọn điều phù hợp.</span>
           </h1>
-          <p className="max-w-copy text-lg text-ink-muted">
-            Mua sắm cùng thông tin dinh dưỡng rõ ràng. Khám phá thành phần, khẩu
-            phần và allergen trước khi chọn món cho bạn.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button asChild variant="sticker">
-              <Link to="/products">
-                Khám phá sản phẩm <ArrowRight />
-              </Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link to="/chat">
-                <Sparkle />
-                Hỏi trợ lý AI
-              </Link>
-            </Button>
+          <div className="flex max-w-md flex-col items-start gap-4">
+            <p className="text-ink-muted">
+              Mỗi sản phẩm có nhãn dinh dưỡng theo khẩu phần, nguồn số liệu và
+              trạng thái allergen. Thiếu dữ liệu thì ghi là thiếu, không đoán.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button asChild variant="sticker">
+                <Link to="/products">
+                  Khám phá sản phẩm <ArrowRight />
+                </Link>
+              </Button>
+              <Button asChild variant="ghost">
+                <Link to="/chat">
+                  <Sparkle />
+                  Hỏi trợ lý AI
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-        <figure className="hero-arch relative">
-          <img
-            src={heroImage}
-            width="1200"
-            height="800"
-            alt="Bát ngũ cốc cùng rau xanh và các loại hạt — minh họa thực phẩm"
-            fetchPriority="high"
-            className="size-full object-cover"
-          />
-          <figcaption className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-pill bg-surface px-3 py-1 text-xs whitespace-nowrap">
-            Ảnh minh họa AI · không phải sản phẩm
-          </figcaption>
-        </figure>
+        <BannerCarousel />
       </section>
-
-      <ul className="flex flex-wrap justify-center gap-x-8 gap-y-2 rounded-card bg-brand px-4 py-4 text-sm font-semibold text-lime">
-        {promises.map((promise) => (
-          <li key={promise} className="flex items-center gap-2">
-            <Leaf weight="fill" className="icon" />
-            {promise}
-          </li>
-        ))}
-      </ul>
 
       <section className="space-y-6">
         <SectionHead
@@ -169,13 +144,14 @@ export function HomePage() {
 
       <section className="space-y-6">
         <SectionHead
-          eyebrow="Bắt đầu từ điều bạn thích"
-          title="Khám phá theo danh mục"
+          eyebrow="Bộ sưu tập"
+          title="Chọn nhanh theo nhóm"
           to="/products"
           link="Xem tất cả"
         />
+        <Collections categories={categories.data} />
         {categories.isPending ? (
-          <Skeleton className="h-16" />
+          <Skeleton className="h-11" />
         ) : categories.isError ? (
           <ErrorState
             description="Chưa tải được danh mục."
@@ -187,18 +163,21 @@ export function HomePage() {
             Danh mục đang được cập nhật. Bạn vẫn có thể xem tất cả sản phẩm.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {categories.data.map((category) => (
-              <Link
-                className="control-transition flex min-h-16 items-center justify-between gap-3 rounded-card border border-line bg-surface p-4 font-semibold hover:border-ink"
-                key={category.id}
-                to={`/products?categoryId=${category.id}`}
-              >
-                <span>{category.name}</span>
-                <ArrowUpRight className="icon text-brand" />
-              </Link>
-            ))}
-          </div>
+          <nav aria-label="Tất cả danh mục">
+            <ul className="flex flex-wrap gap-2">
+              {categories.data.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    className="control-transition inline-flex min-h-touch items-center gap-2 rounded-pill border border-line bg-surface px-4 text-sm font-semibold hover:border-ink"
+                    to={`/products?categoryId=${category.id}`}
+                  >
+                    {category.name}
+                    <ArrowUpRight className="icon text-brand" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         )}
       </section>
 
@@ -233,6 +212,30 @@ export function HomePage() {
           </ul>
         )}
       </section>
+
+      {!identity && (
+        <Link to="/register" className="account-banner">
+          <img
+            src={accountBanner800}
+            srcSet={`${accountBanner800} 800w, ${accountBanner1600} 1600w`}
+            sizes="(min-width: 1240px) 1176px, 100vw"
+            alt=""
+            loading="lazy"
+            className="account-banner-image"
+          />
+          <span className="account-banner-copy">
+            <span className="font-display text-2xl font-extrabold md:text-3xl">
+              Lần đầu ghé? <span className="text-lime">Tạo tài khoản.</span>
+            </span>
+            <span className="text-sm text-cream/80">
+              Lưu giỏ hàng, đặt hàng và theo dõi đơn ở một nơi.
+            </span>
+          </span>
+          <span className="account-banner-cta">
+            Đăng ký <ArrowRight aria-hidden="true" />
+          </span>
+        </Link>
+      )}
 
       <section className="grid gap-6 rounded-sheet bg-brand p-6 text-cream md:grid-cols-[2fr_1fr] md:items-center md:p-10">
         <div className="space-y-4">

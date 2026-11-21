@@ -4,6 +4,8 @@
 # only a tool call that the backend validates, so the guardrail is a second line of defence.
 
 resource "aws_bedrock_guardrail" "chat" {
+  # Must match the region the backend calls Bedrock in (BEDROCK_REGION, D18).
+  region                    = var.region
   name                      = "${var.name_prefix}-chat"
   description               = "Food catalog search: no medical advice, no prompt attacks."
   blocked_input_messaging   = "Tôi chỉ hỗ trợ tra cứu thực phẩm trong cửa hàng và không đưa ra lời khuyên y tế."
@@ -55,6 +57,7 @@ resource "aws_bedrock_guardrail" "chat" {
 
 # Converse needs a numbered version; a new version is cut whenever the guardrail changes.
 resource "aws_bedrock_guardrail_version" "chat" {
+  region        = var.region
   guardrail_arn = aws_bedrock_guardrail.chat.guardrail_arn
   description   = "Managed by Terraform"
 

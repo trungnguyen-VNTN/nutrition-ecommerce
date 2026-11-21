@@ -8,7 +8,13 @@ Agent chỉ `plan` bằng `nutrition-plan` và đọc trạng thái.
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 up     # ~10-15 phút
 powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down   # ~5-10 phút
+powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 up -Vnpay -Waf   # thêm VNPAY sandbox và WAF
 ```
+
+- `-Waf` (D29) tạo AWS WAF trước CloudFront; lần chạy sau bỏ `-Waf` thì WAF bị xóa. Mỗi lần bật / tắt,
+  CloudFront mất vài phút để cập nhật.
+- Log kiểm toán: CloudTrail và ALB access logs nằm trong bucket `nutrition-dev-logs-<account>`
+  (prefix `cloudtrail/`, `alb/`), tự xóa sau 30 ngày.
 
 - Sau `down`, đợi RDS dừng hẳn (5-10 phút) rồi mới `up`.
 - AWS tự bật lại RDS đã dừng sau 7 ngày: chạy `down` lại mỗi tuần nếu nghỉ lâu.
@@ -55,13 +61,32 @@ Mục tiêu: chứng minh hạ tầng dựng lại được hoàn toàn từ Ter
 4. Khôi phục bảo vệ xóa trong code, rồi dựng lại từ snapshot:
    ```powershell
    $env:TF_VAR_restore_snapshot_identifier = "nutrition-dev-before-rebuild"
-   powershell -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo-infra.ps1 down -Vnpay
    ```
 5. Chạy workflow Deploy (GitHub Actions → *Deploy to AWS dev* → Run workflow) để đẩy lại image và
    frontend, `up`, kiểm tra theo `docs/demo.md`.
 6. Bỏ biến `TF_VAR_restore_snapshot_identifier` (Terraform bỏ qua thay đổi biến này sau khi tạo).
 
 Bucket state (`infra/bootstrap`) có `prevent_destroy`, không nằm trong bài diễn tập.
+
+### Biên bản diễn tập (điền sau mỗi lần chạy, dán vào `docs/PROGRESS.md`)
+
+Thứ tự khuyên dùng: chạy mục 3 trước (rẻ, không đụng DB đang dùng); mục 4 chỉ chạy khi đã có
+snapshot `Available` và chấp nhận mất tài khoản Cognito nếu xóa cả user pool.
+
+| Mục | Mục 3: khôi phục snapshot | Mục 4: destroy rồi dựng lại |
+| --- | --- | --- |
+| Ngày, người chạy | | |
+| Snapshot dùng | | |
+| Bắt đầu → `Available` (phút) | | |
+| Kiểm tra dữ liệu | Đếm sản phẩm trên bản khôi phục = bản gốc (152)? | `/api/products` trả đủ sản phẩm sau `up`? |
+| Kiểm tra ứng dụng | (không áp dụng) | Trang chủ, đăng nhập, đặt hàng COD theo `docs/demo.md` |
+| Đã xóa tài nguyên diễn tập | Instance `nutrition-dev-restore-drill`, snapshot diễn tập | Biến `TF_VAR_restore_snapshot_identifier` |
+| Sự cố gặp phải, cách xử lý | | |
+
+Ghi chú khi bảo vệ: thời gian từ lúc bắt đầu khôi phục tới khi dùng được chính là **RTO** đo được;
+dữ liệu mất tối đa (**RPO**) là khoảng cách tới snapshot dùng để khôi phục; với backup tự động, RDS
+còn cho khôi phục tới một thời điểm (point-in-time) gần hiện tại, thường chỉ cách vài phút.
 
 ## 5. Thanh toán VNPAY sandbox (D27)
 

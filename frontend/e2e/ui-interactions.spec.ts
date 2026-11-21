@@ -58,6 +58,7 @@ test('cart quantity updates shared indicator and checkout opens the created orde
       shipping_name: 'Khách kiểm thử',
       phone: '0900000000',
       address: 'Địa chỉ kiểm thử giao diện',
+      payment_method: 'COD',
     });
     await route.fulfill({
       json: {

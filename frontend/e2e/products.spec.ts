@@ -62,5 +62,6 @@ test('empty and loading states have clear accessible labels', async ({
   ).toBeVisible();
   await page.goto('/products?mock=loading');
   await expect(page.getByRole('status')).toHaveText('Đang tải sản phẩm');
-  await expect(page.getByTestId('product-skeleton')).toHaveCount(8);
+  // One skeleton per page slot (productPageSize = 9); the mock catalog has 8 products.
+  await expect(page.getByTestId('product-skeleton')).toHaveCount(9);
 });
