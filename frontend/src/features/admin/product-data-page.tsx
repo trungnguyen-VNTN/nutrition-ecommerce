@@ -67,7 +67,7 @@ function ProductDataEditor({ id }: { id: string }) {
       section,
       body,
     }: {
-      section: 'nutrition' | 'allergens';
+      section: 'nutrition' | 'allergens' | 'attributes';
       body: object;
     }) =>
       requestJson(`admin/products/${encodeURIComponent(id)}/${section}`, {
@@ -115,12 +115,20 @@ function ProductDataEditor({ id }: { id: string }) {
           busy={save.isPending}
           onSave={(body) => save.mutate({ section: 'nutrition', body })}
         />
-        <AllergensForm
-          key={`allergens-${query.dataUpdatedAt}`}
-          data={query.data}
-          busy={save.isPending}
-          onSave={(body) => save.mutate({ section: 'allergens', body })}
-        />
+        <div className="min-w-0 space-y-6">
+          <AllergensForm
+            key={`allergens-${query.dataUpdatedAt}`}
+            data={query.data}
+            busy={save.isPending}
+            onSave={(body) => save.mutate({ section: 'allergens', body })}
+          />
+          <AttributesForm
+            key={`attributes-${query.dataUpdatedAt}`}
+            data={query.data}
+            busy={save.isPending}
+            onSave={(body) => save.mutate({ section: 'attributes', body })}
+          />
+        </div>
       </div>
     </div>
   );
@@ -287,6 +295,86 @@ function AllergensForm({
       </label>
       <Button type="submit" loading={busy}>
         Lưu allergen
+      </Button>
+    </Card>
+  );
+}
+
+// Attributes behind diet labels (D26). "Chưa rõ" keeps plant_based null, so the label is never
+// guessed; liquids use the per-100 ml thresholds for "ít đường" / "ít béo".
+function AttributesForm({
+  data,
+  busy,
+  onSave,
+}: {
+  data: ProductData;
+  busy: boolean;
+  onSave: (body: object) => void;
+}) {
+  const plant =
+    data.plant_based === null ? 'unknown' : data.plant_based ? 'yes' : 'no';
+  return (
+    <Card
+      as="form"
+      className="min-w-0 space-y-4"
+      onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const values = new FormData(event.currentTarget);
+        const choice = values.get('plant_based');
+        onSave({
+          plant_based: choice === 'yes' ? true : choice === 'no' ? false : null,
+          is_liquid: values.get('is_liquid') === 'on',
+        });
+      }}
+    >
+      <h3 className="text-xl font-bold">Đặc điểm sản phẩm</h3>
+      <p className="text-sm text-ink-muted">
+        Dùng để gắn nhãn dinh dưỡng. Chọn “Chưa rõ” khi chưa đối chiếu thành
+        phần: hệ thống sẽ không gắn nhãn “Thuần thực vật”.
+      </p>
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-semibold">
+          Thuần thực vật (không có thành phần động vật)
+        </legend>
+        {(
+          [
+            ['yes', 'Có'],
+            ['no', 'Không'],
+            ['unknown', 'Chưa rõ'],
+          ] as const
+        ).map(([value, label]) => (
+          <label
+            key={value}
+            className="flex min-h-touch items-center gap-3 text-sm"
+          >
+            <input
+              type="radio"
+              name="plant_based"
+              value={value}
+              defaultChecked={plant === value}
+            />
+            {label}
+          </label>
+        ))}
+      </fieldset>
+      <label className="flex min-h-touch items-start gap-3 text-sm">
+        <input
+          type="checkbox"
+          name="is_liquid"
+          className="mt-1"
+          defaultChecked={data.is_liquid}
+          aria-describedby="is-liquid-hint"
+        />
+        <span>
+          <span className="font-semibold">Sản phẩm dạng lỏng (đồ uống)</span>
+          <span id="is-liquid-hint" className="block text-ink-muted">
+            Nhãn “Ít đường” và “Ít chất béo” dùng ngưỡng cho 100 ml thay vì 100
+            g.
+          </span>
+        </span>
+      </label>
+      <Button type="submit" loading={busy}>
+        Lưu đặc điểm
       </Button>
     </Card>
   );

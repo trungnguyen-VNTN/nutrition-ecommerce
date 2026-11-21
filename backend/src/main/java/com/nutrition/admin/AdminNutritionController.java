@@ -51,7 +51,13 @@ public class AdminNutritionController {
       @NotBlank @Pattern(regexp = "contains|may_contain") String kind) {}
 
   public record Allergens(
-      boolean verified, @NotNull @Size(max = 6) List<@NotNull @Valid Allergen> items) {}
+      boolean verified, @NotNull @Size(max = 20) List<@NotNull @Valid Allergen> items) {}
+
+  /**
+   * Product attributes behind diet labels (D26). plantBased null = unknown, so no "plant-based"
+   * label is derived (fail-closed); isLiquid switches LOW_SUGAR / LOW_FAT to per-100 ml thresholds.
+   */
+  public record Attributes(Boolean plantBased, @NotNull Boolean isLiquid) {}
 
   private void exists(long id) {
     if (db.queryForList("SELECT id FROM products WHERE id=? FOR UPDATE", Long.class, id).isEmpty())
@@ -66,7 +72,8 @@ public class AdminNutritionController {
     var products =
         db.queryForList(
             "SELECT name,serving_size,serving_unit,nutrition_complete,allergens_verified,"
-                + "allergens_reviewed_at IS NOT NULL AS allergens_reviewed FROM products WHERE id=?",
+                + "allergens_reviewed_at IS NOT NULL AS allergens_reviewed,plant_based,is_liquid"
+                + " FROM products WHERE id=?",
             id);
     if (products.isEmpty()) throw new NoSuchElementException();
     var result = new HashMap<>(products.getFirst());
@@ -120,6 +127,22 @@ public class AdminNutritionController {
         complete,
         id);
     return Map.of("nutrition_complete", complete);
+  }
+
+  @PutMapping("/attributes")
+  @Transactional
+  public Map<String, Object> attributes(
+      @PathVariable @Positive long id, @Valid @RequestBody Attributes input) {
+    exists(id);
+    db.update(
+        "UPDATE products SET plant_based=?,is_liquid=?,updated_at=now() WHERE id=?",
+        input.plantBased,
+        input.isLiquid,
+        id);
+    var result = new HashMap<String, Object>();
+    result.put("plant_based", input.plantBased);
+    result.put("is_liquid", input.isLiquid);
+    return result;
   }
 
   @PutMapping("/allergens")

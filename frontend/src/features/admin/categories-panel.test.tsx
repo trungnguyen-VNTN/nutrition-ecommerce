@@ -31,6 +31,13 @@ it('creates a category from an empty catalog and preserves it when deletion conf
   await user.type(screen.getByLabelText('Slug'), 'ngu-coc');
   await user.click(screen.getByRole('button', { name: 'Tạo danh mục' }));
   await screen.findByRole('button', { name: 'Xóa Ngũ cốc' });
+  // Visible text stays short; the accessible name says which category.
+  expect(screen.getByRole('button', { name: 'Xóa Ngũ cốc' })).toHaveTextContent(
+    /^Xóa$/,
+  );
+  expect(screen.getByRole('button', { name: 'Sửa Ngũ cốc' })).toHaveTextContent(
+    /^Sửa$/,
+  );
   expect(payload).toEqual({ name: 'Ngũ cốc', slug: 'ngu-coc' });
   await user.click(screen.getByRole('button', { name: 'Xóa Ngũ cốc' }));
   expect(confirmation).toHaveBeenCalledWith(
