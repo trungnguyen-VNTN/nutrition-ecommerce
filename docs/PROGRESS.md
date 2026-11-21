@@ -1,8 +1,14 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-20_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-21_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **AI chạy được với model thật (2026-11-21, nhánh `feat/ai-nova-tuning`).** AWS duyệt case quota `L-C6F5908D` (Nova 2 Lite, Tokyo): 8 triệu token/phút, 216 triệu token/ngày, 20 request/phút. Người dùng cho phép agent dùng `nutrition-apply` **chỉ để chạy `-Pbedrock-eval`** (gọi model, không tạo / xóa tài nguyên).
+  - Lượt 1 (prompt cũ): an toàn 14/14, tra cứu 13/16 (chưa đạt).
+  - Sửa: tên allergen tiếng Việt từ bảng `allergens` đưa vào mô tả tool (`withAllergenNames`); system prompt giữ nguyên tên món nhiều tiếng và coi hỏi số liệu dinh dưỡng không phải câu hỏi y tế; bộ kiểm thử có đủ 9 allergen (thêm `fish`).
+  - Lượt 2: 14/14 và 16/16. Lượt 3: 14/14 và 15/16. Backend 62/62.
+  - **Còn lại:** merge PR, `up`, hỏi thử trên web khi đã đăng nhập (câu hợp lệ, câu y tế bị từ chối, 429 khi hỏi dồn dập, độ trễ).
 
 - **Làm nốt phần ngoài AI (2026-11-20).** Năm PR, thứ tự merge: #71 → #72 → #73; #74 độc lập (base `master`).
   - **#72 (D29) hạ tầng:** S3 gateway endpoint; bucket `nutrition-dev-logs-<account>` (SSE-S3, chặn public, tự xóa sau 30 ngày) nhận CloudTrail (mọi Region) và ALB access logs; WAF CloudFront ở us-east-1 chỉ bật bằng `demo-infra.ps1 -Waf`. Plan: 8 tạo / 1 sửa / 0 xóa (9 / 4 / 0 khi có WAF). **Người dùng:** dán lại inline policy `nutrition-apply` (thêm `cloudtrail:*` ở Singapore, `wafv2:*` ở us-east-1, `ApplyGuardrail` ở Tokyo), rồi `up`.
