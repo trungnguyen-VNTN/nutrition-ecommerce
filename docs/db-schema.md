@@ -105,6 +105,10 @@ Tối đa 5 ảnh mỗi sản phẩm (kiểm tra trong service, khóa dòng `pro
 | shipping_name / phone / address | text | NOT NULL |
 | created_at / updated_at | timestamptz | NOT NULL |
 
+### nutrition_profiles (V11, D32)
+
+Một dòng cho mỗi người dùng (`user_id` = `sub`, xóa theo `app_users`): `birth_year`, `sex`, `height_cm`, `weight_kg`, `activity`, `goal`, `excluded_allergens text[]`, `pregnant_or_breastfeeding`, `medical_condition`, `consent_at`, `updated_at`. Không log, không gửi cho model; người dùng tự xóa qua `DELETE /api/me/profile`.
+
 ### payment_events (V10, D30)
 
 Mỗi IPN của VNPAY một dòng: `received_at`, `txn_ref` (≤ 64 ký tự chữ / số), `order_id` (null nếu không xác định; `ON DELETE SET NULL`), `signature_valid`, `gateway_code` (chỉ lưu khi chữ ký hợp lệ), `rsp_code` (mã cửa hàng trả cho VNPAY), `outcome`. Không lưu chữ ký, khóa bí mật hay thông tin khách.
