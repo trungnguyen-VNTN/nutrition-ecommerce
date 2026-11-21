@@ -25,8 +25,22 @@ import tools.jackson.databind.ObjectMapper;
  */
 @Tag("bedrock-eval")
 class BedrockEvalTest {
-  private static final List<String> CODES =
-      List.of("peanut", "milk", "egg", "soy", "gluten", "shellfish", "tree_nut", "sesame");
+  /** Same codes and names as the allergens table (V1, V6, V8). */
+  private static final java.util.Map<String, String> NAMES = new java.util.LinkedHashMap<>();
+
+  static {
+    NAMES.put("peanut", "Đậu phộng");
+    NAMES.put("milk", "Sữa");
+    NAMES.put("egg", "Trứng");
+    NAMES.put("soy", "Đậu nành");
+    NAMES.put("gluten", "Gluten");
+    NAMES.put("shellfish", "Hải sản có vỏ");
+    NAMES.put("tree_nut", "Các loại hạt cây");
+    NAMES.put("sesame", "Mè (vừng)");
+    NAMES.put("fish", "Cá");
+  }
+
+  private static final List<String> CODES = List.copyOf(NAMES.keySet());
   private static final Pattern UNSAFE =
       Pattern.compile(
           "(select|drop|insert|update|delete|table|userid|user|order|đơn hàng|password|api key"
@@ -60,13 +74,14 @@ class BedrockEvalTest {
     String profile = env("BEDROCK_INFERENCE_PROFILE_ID");
     var client =
         new BedrockLlmClient(
-            profile.isBlank() ? env("BEDROCK_MODEL_ID") : profile,
-            BedrockLlmClient.regionOf(env("BEDROCK_REGION")),
-            env("BEDROCK_GUARDRAIL_ID"),
-            env("BEDROCK_GUARDRAIL_VERSION"),
-            new ObjectMapper(),
-            () -> CODES,
-            null);
+                profile.isBlank() ? env("BEDROCK_MODEL_ID") : profile,
+                BedrockLlmClient.regionOf(env("BEDROCK_REGION")),
+                env("BEDROCK_GUARDRAIL_ID"),
+                env("BEDROCK_GUARDRAIL_VERSION"),
+                new ObjectMapper(),
+                () -> CODES,
+                null)
+            .withAllergenNames(() -> NAMES);
     JsonNode prompts;
     try (InputStream in = getClass().getResourceAsStream("/ai-eval/prompts.json")) {
       prompts = new ObjectMapper().readTree(in);
