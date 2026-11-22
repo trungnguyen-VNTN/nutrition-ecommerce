@@ -2,7 +2,20 @@ import type { Page } from '@playwright/test';
 import { products, productPage } from '../src/mocks/products';
 
 // Browser-only fixtures. Never imported by application code or the production build.
-export async function installReviewFixtures(page: Page, signedIn = true) {
+export async function installReviewFixtures(
+  page: Page,
+  signedIn = true,
+  onboarding = false,
+) {
+  // The review account has already seen the onboarding guide unless a test asks for it.
+  if (!onboarding)
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem('nutrition.onboarding.v1:review-only', 'done');
+      } catch {
+        // Storage unavailable: the guide may show.
+      }
+    });
   // This fixture suite owns all API requests through Playwright routing.
   // Avoid starting the separate MSW harness used by the other E2E suites.
   await page.route('**/src/mocks/browser.ts*', (route) =>

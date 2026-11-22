@@ -76,7 +76,7 @@ export function SiteHeader({ nav }: { nav: ReactNode }) {
           {identity && (
             // Phones: the dock keeps five tabs, so suggestions ride here (header row has it on wider screens).
             <Button asChild variant="ghost" className="md:hidden">
-              <Link to="/suggestions">
+              <Link to="/suggestions" data-tour="suggestions">
                 <ForkKnife />
                 <span className="sr-only sm:not-sr-only">Gợi ý</span>
               </Link>
@@ -84,7 +84,7 @@ export function SiteHeader({ nav }: { nav: ReactNode }) {
           )}
           {identity?.admin && (
             <Button asChild variant="ghost" className="md:hidden">
-              <Link to="/admin">
+              <Link to="/admin" data-tour="admin">
                 <GearSix />
                 <span className="sr-only sm:not-sr-only">{messages.admin}</span>
               </Link>

@@ -25,6 +25,7 @@ for (const width of [390, 768, 1440]) {
     ['chat', '/chat'],
     ['admin', '/admin'],
     ['admin-nutrition', '/admin/products/1'],
+    ['onboarding', '/'],
   ] as const) {
     test(`V2 UI review ${name} ${width}`, async ({ page }) => {
       const browserErrors: string[] = [];
@@ -33,6 +34,7 @@ for (const width of [390, 768, 1440]) {
       await installReviewFixtures(
         page,
         name !== 'login' && name !== 'register',
+        name === 'onboarding',
       );
       if (name.startsWith('products-')) {
         await page.route(
@@ -61,6 +63,10 @@ for (const width of [390, 768, 1440]) {
 
       await page.goto(path);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      if (name === 'onboarding')
+        await expect(
+          page.getByRole('dialog', { name: 'Chào bạn, mình là Lá!' }),
+        ).toBeVisible();
       if (name === 'home' || name === 'products')
         await expect(page.getByRole('article').first()).toBeVisible();
       if (name === 'products-loading')
