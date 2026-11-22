@@ -23,7 +23,9 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [var.security_group_id]
   publicly_accessible    = false
-  multi_az               = false
+  # Standby copy in the second AZ with automatic failover (prod-like HA; adds instance hours
+  # while the app is on and doubles storage).
+  multi_az = var.multi_az
 
   backup_retention_period   = var.backup_retention_days
   copy_tags_to_snapshot     = true
@@ -33,7 +35,7 @@ resource "aws_db_instance" "main" {
 
   auto_minor_version_upgrade   = true
   performance_insights_enabled = false
-  apply_immediately            = false
+  apply_immediately            = var.apply_immediately
 
   # Rebuild from a snapshot (runbook: destroy and rebuild). Only read when the instance is created.
   snapshot_identifier = var.restore_snapshot_identifier

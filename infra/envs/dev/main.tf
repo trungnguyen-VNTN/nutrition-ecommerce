@@ -23,6 +23,9 @@ module "rds" {
   security_group_id           = module.network.rds_security_group_id
   running                     = var.app_running
   restore_snapshot_identifier = var.restore_snapshot_identifier
+  multi_az                    = var.rds_multi_az
+  # Dev: changes such as the Multi-AZ switch take effect during apply, not in the weekly window.
+  apply_immediately = true
 }
 
 module "cognito" {

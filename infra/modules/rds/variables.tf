@@ -66,3 +66,15 @@ variable "restore_snapshot_identifier" {
   type        = string
   default     = null
 }
+
+variable "multi_az" {
+  description = "Run a standby in a second AZ with automatic failover."
+  type        = bool
+  default     = false
+}
+
+variable "apply_immediately" {
+  description = "Apply instance changes now instead of in the next maintenance window."
+  type        = bool
+  default     = false
+}

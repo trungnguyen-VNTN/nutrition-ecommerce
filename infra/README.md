@@ -9,7 +9,7 @@ infra/
 └── modules/
     ├── network/      VPC, 2 public subnet, 2 private-db subnet, IGW, SG (ALB, ECS, RDS). NAT tắt (D15).
     ├── ecr/          Repository image backend, quét khi đẩy, lifecycle giữ 10 image.
-    ├── rds/          PostgreSQL 17, db.t4g.micro, 1 AZ, mã hóa, mật khẩu do RDS quản lý.
+    ├── rds/          PostgreSQL 17, db.t4g.micro, Multi-AZ (D33), mã hóa, mật khẩu do RDS quản lý.
     ├── cognito/      User pool, SPA client, group ADMIN và USER.
     ├── service/      ALB công khai (chỉ nhận request có header bí mật từ CloudFront), ECS Fargate ARM64,
     │                 role execution / task có boundary, log group.
@@ -25,7 +25,7 @@ Biến `app_running` (mặc định `false`) quyết định phần tốn tiền
 | | `app_running = false` (tắt) | `app_running = true` (bật) |
 | --- | --- | --- |
 | RDS | **dừng** (giữ dữ liệu) | chạy |
-| ALB, ECS service | **không tồn tại** | được tạo, chạy `api_desired_count` task (mặc định 1) |
+| ALB, ECS service | **không tồn tại** | được tạo, chạy `api_desired_count` task (mặc định 2, trải 2 AZ) |
 | CloudFront | chỉ phục vụ frontend; `/api/*` không có origin | `/api/*` chuyển về ALB |
 | VPC, ECR, Cognito, S3, IAM | giữ nguyên | giữ nguyên |
 | Secret VNPAY (chỉ khi chạy với `-Vnpay`, D27) | giữ nguyên | giữ nguyên, task ECS đọc `VNPAY_TMN_CODE` / `VNPAY_HASH_SECRET` |
@@ -122,9 +122,9 @@ Khi chưa có `AWS_DEPLOY_ROLE_ARN`, các job deploy được bỏ qua (không l
 
 | Trạng thái | Gồm | Ước tính |
 | --- | --- | --- |
-| **Tắt** (`down`) | Lưu trữ RDS 20 GiB + backup, secret của RDS, ECR, S3, CloudFront, CloudWatch Logs; Cognito trong hạn mức miễn phí | **khoảng $4–5 / tháng** |
-| **Bật** (`up`), cộng thêm | RDS db.t4g.micro (~$0,026/giờ), ALB (~$0,03/giờ), 1 task Fargate ARM64 0,5 vCPU / 1 GiB kèm IPv4 (~$0,03/giờ) | **khoảng $0,09 / giờ**: buổi demo 4 giờ ~$0,35; quên tắt cả ngày ~$2,1 |
-| Để bật 24/7 (so sánh) | | khoảng $60–67 / tháng |
+| **Tắt** (`down`) | Lưu trữ RDS 20 GiB x2 (Multi-AZ) + backup, secret của RDS, ECR, S3, CloudFront, CloudWatch Logs; Cognito trong hạn mức miễn phí | **khoảng $7–8 / tháng** |
+| **Bật** (`up`), cộng thêm | RDS db.t4g.micro Multi-AZ (~$0,052/giờ), ALB (~$0,03/giờ), 2 task Fargate ARM64 0,5 vCPU / 1 GiB kèm IPv4 (~$0,06/giờ) | **khoảng $0,14 / giờ**: buổi demo 4 giờ ~$0,55; quên tắt cả ngày ~$3,4 |
+| Để bật 24/7 (so sánh) | | khoảng $105–115 / tháng |
 
 Chưa tính Bedrock (tính theo token). Bật thanh toán VNPAY sandbox (`-Vnpay`, D27) thêm 1 secret Secrets Manager, **khoảng $0,40 / tháng**.
 
@@ -142,7 +142,7 @@ Muốn giảm tiền khi không dùng: dừng RDS tạm thời (tự bật lại
 - `0.0.0.0/0` xuất hiện ở hai chỗ, có chủ ý: route ra Internet của public subnet và
   egress HTTPS (443) của task ECS để gọi ECR, Bedrock, Cognito, CloudWatch (D2, D15).
   Không có ingress nào mở cho Internet; ALB chỉ nhận prefix list của CloudFront.
-- RDS: `deletion_protection = true`, `publicly_accessible = false`, `multi_az = false`.
+- RDS: `deletion_protection = true`, `publicly_accessible = false`, `multi_az = var.rds_multi_az` (mặc định `true`, D33). Về 1 AZ: `rds_multi_az = false`, `api_desired_count = 1`.
 - Tài nguyên public có chủ ý: ALB (internet-facing nhưng SG chỉ nhận prefix list CloudFront, listener trả 403
   nếu thiếu header bí mật) và CloudFront. Task ECS có IP công khai nhưng SG chỉ nhận từ ALB.
 - IAM: mọi role có boundary `nutrition-boundary`. `Resource = "*"` chỉ ở `ecr:GetAuthorizationToken` và các
