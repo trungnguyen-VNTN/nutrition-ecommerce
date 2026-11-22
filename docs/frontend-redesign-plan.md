@@ -1,5 +1,7 @@
 # Kế hoạch làm lại giao diện frontend (đã duyệt 2026-11-03)
 
+Nhánh: `feat/frontend-redesign` (từ `master` sau PR #17). Mỗi bước kết thúc bằng lint, typecheck, unit test, ảnh chụp 390/1440 + axe + kiểm tra tràn ngang, checklist UI/UX, rồi dừng để duyệt.
+
 ## Nguồn thiết kế (kết hợp, xem D11 trong `decisions.md`)
 
 | Phần | Nguồn |

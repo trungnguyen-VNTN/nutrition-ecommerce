@@ -81,6 +81,7 @@ Theo quyết định 2026-10-29 (`decisions.md`): ALB công khai, bỏ CloudFron
 
 | Profile | Dùng bởi | Quyền |
 | --- | --- | --- |
+| `nutrition-plan` | Lệnh thường ngày (chỉ đọc) | Đọc tài nguyên dự án; đọc/ghi state và file khóa trong bucket state |
 | `nutrition-apply` | Chỉ người dùng | Tạo, sửa, xóa tài nguyên dự án (theo tiền tố, có permissions boundary) |
 | GitHub OIDC role | CI | Đẩy ECR, cập nhật ECS |
 

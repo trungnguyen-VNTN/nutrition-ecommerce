@@ -55,3 +55,4 @@
 | Danh tính người dùng lấy từ đâu? | Chỉ từ JWT Cognito (`sub`, `cognito:groups`) |
 | AI có bịa số liệu không? | Không: model chỉ trả tool call đã kiểm tra, câu trả lời cố định, số liệu từ DB |
 | Ảnh có bản quyền không? | 38 ảnh CC0 / Public domain, nguồn ở `docs/image-credits.md` |
+| Ai được triển khai? | Chỉ người dùng (`nutrition-apply`); CI không có quyền tạo / xóa hạ tầng |

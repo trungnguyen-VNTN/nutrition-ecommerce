@@ -1,5 +1,6 @@
 # Schema cơ sở dữ liệu (bản nháp MVP)
 
+> Điểm xuất phát cho migration Flyway; cập nhật file này khi schema thay đổi. Không tạo bảng chưa dùng.
 > Danh tính người dùng nằm ở Cognito; `app_users.id` là claim `sub`.
 
 ## Bảng

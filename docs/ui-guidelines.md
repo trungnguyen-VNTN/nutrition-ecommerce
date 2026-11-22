@@ -99,6 +99,7 @@
 - Kiểm tra tự động bằng axe trong Playwright; không để lỗi serious/critical.
 
 ## 8. Cách kiểm tra "đẹp" một cách khách quan
+Sau mỗi thay đổi UI, tự duyệt checklist này trên ảnh chụp (390px và 1440px):
 - [ ] Có một điểm nhấn chính rõ ràng trong màn hình?
 - [ ] Khoảng cách theo thang 4px, thẳng hàng, không chỗ nào chật hay thưa bất thường?
 - [ ] Chỉ dùng token; không có màu / cỡ chữ lạ?

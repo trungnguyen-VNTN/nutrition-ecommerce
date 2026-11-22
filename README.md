@@ -36,6 +36,7 @@ người kiểm tra xác nhận được ghi rõ, không bao giờ hiển thị 
 - [Kiểm tra](#kiểm-tra)
 - [Trạng thái dự án](#trạng-thái-dự-án)
 - [Đóng góp](#đóng-góp)
+- [Tài liệu](#tài-liệu)
 - [Giấy phép](#giấy-phép)
 
 ## Phạm vi và công nghệ
@@ -219,8 +220,9 @@ terraform -chdir=infra/envs/dev validate
 
 ## Trạng thái dự án
 
-Giai đoạn 0–5 và phần lớn giai đoạn 7 đã xong; giai đoạn 6 (AI) đã có code, Guardrail
-và bộ đánh giá nhưng đang chờ AWS Support mở quyền gọi model cho tài khoản. Chi tiết
+MVP đã chạy trên AWS (dev): catalog, tài khoản, giỏ hàng, đặt hàng, thanh toán VNPAY
+sandbox, quản trị, AI tra cứu với Amazon Nova 2 Lite + Guardrails (Bedrock ở Tokyo), hồ sơ
+dinh dưỡng và gợi ý bữa ăn theo mục tiêu. Các quyết định thiết kế xem [decisions](docs/decisions.md).
 
 - **Đã kiểm chứng trên AWS** (qua `https://<id>.cloudfront.net`): catalog (lúc đó 41 sản phẩm),
   ảnh từ S3 qua CloudFront, bộ lọc allergen, deploy bằng GitHub Actions. Đăng ký /
@@ -244,6 +246,8 @@ và bộ đánh giá nhưng đang chờ AWS Support mở quyền gọi model cho
 - Thay đổi hạ tầng chỉ qua Terraform; PR kèm tóm tắt `terraform plan`, không `apply` từ máy cá nhân.
 - Định dạng file theo `.editorconfig` và `.gitattributes` (LF, UTF-8, thụt lề 2 dấu cách).
 - Không commit `.env`, `*.tfvars`, state Terraform, token hay dữ liệu cá nhân.
+
+## Tài liệu
 
 - [Kiến trúc](docs/architecture.md), [quyết định](docs/decisions.md),
   [hướng dẫn UI](docs/ui-guidelines.md).

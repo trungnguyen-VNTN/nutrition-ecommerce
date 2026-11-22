@@ -1,5 +1,8 @@
 # Runbook vận hành môi trường dev
 
+Mọi lệnh `apply` / thao tác ghi chạy bằng profile `nutrition-apply`.
+Việc thường ngày chỉ `plan` bằng `nutrition-plan` và đọc trạng thái.
+
 ## 1. Bật / tắt cho buổi demo (D20)
 
 ```powershell
@@ -39,6 +42,7 @@ Diễn tập khôi phục (không ảnh hưởng DB đang dùng):
 2. Khi snapshot `Available`: **Actions → Restore snapshot**, DB identifier
    `nutrition-dev-restore-drill`, instance `db.t4g.micro`, **Single-AZ**, subnet group
    `nutrition-dev-db`, security group `nutrition-dev-rds`, **Public access: No**.
+3. Đợi `Available` (~10 phút). Ghi lại thời gian khôi phục vào biên bản bên dưới.
 4. **Xóa bản diễn tập**: Actions → Delete, bỏ chọn final snapshot, không giữ backup tự động.
    (Instance diễn tập tính tiền theo giờ như RDS thật.)
 5. Xóa snapshot diễn tập nếu không cần giữ.
@@ -64,6 +68,8 @@ Mục tiêu: chứng minh hạ tầng dựng lại được hoàn toàn từ Ter
 6. Bỏ biến `TF_VAR_restore_snapshot_identifier` (Terraform bỏ qua thay đổi biến này sau khi tạo).
 
 Bucket state (`infra/bootstrap`) có `prevent_destroy`, không nằm trong bài diễn tập.
+
+### Biên bản diễn tập (điền sau mỗi lần chạy)
 
 Thứ tự khuyên dùng: chạy mục 3 trước (rẻ, không đụng DB đang dùng); mục 4 chỉ chạy khi đã có
 snapshot `Available` và chấp nhận mất tài khoản Cognito nếu xóa cả user pool.

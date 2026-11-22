@@ -1,5 +1,6 @@
 # API contract (bản nháp MVP)
 
+> Hợp đồng API, hoàn thiện dần (request/response chi tiết) trước khi code từng giai đoạn. Quyền: `public`, `USER` (đã đăng nhập), `ADMIN`.
 > Mọi endpoint dưới `/api`. `userId` **luôn lấy từ JWT**, không bao giờ nằm trong request.
 
 ## Quy ước chung
@@ -112,6 +113,8 @@ Trạng thái allergen của sản phẩm: `allergens_verified` = danh sách đ�
 | GET | /api/me/recommendations | USER | Gợi ý một bữa theo mục tiêu (D32): `meal` (`BREAKFAST` 25% / `LUNCH` 37,5% / `DINNER` 37,5%, mặc định `LUNCH`), `exclude` (mã allergen thêm, ≤20), `labels` (≤6). Trả `eligible`, `ineligible`, `meal`, `target`, `items` (`product`, `grams`, `role`, `amounts`), `total`, `calories_pct`, `protein_pct`. Chưa có hồ sơ → `404`; không đủ điều kiện → `eligible=false`, `items` rỗng |
 
 Tool nội bộ (không phải HTTP endpoint, chỉ đọc, không nhận `userId`): `searchProducts`, `getProduct`, `getNutrition`, `compareProducts` (tùy chọn).
+
+## Việc cần hoàn thiện (giai đoạn 3 trở đi)
 
 - [ ] Schema request/response cho từng endpoint
 - [ ] Mã lỗi và thông điệp thống nhất

@@ -1,5 +1,7 @@
 # Ảnh tham chiếu thiết kế
 
+Đặt vào đây các ảnh giao diện cần bám theo (PNG / JPG, rộng tối đa ~2000px).
+
 Quy ước tên file: `<màn-hình>-<mobile|desktop>.png`, ví dụ `product-list-desktop.png`, `product-detail-mobile.png`, `chat-desktop.png`.
 
 Gợi ý nguồn:

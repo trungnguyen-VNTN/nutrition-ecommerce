@@ -1,5 +1,7 @@
 # Frontend verification — 2026-10-29
 
+Status: not accepted; waiting for dependency approval. No dependency version, lockfile, or Git branch was changed in this review.
+
 ## Evidence
 
 - `dependencies.json`: npm registry metadata for all 35 direct dependencies and initial patch candidates. All currently pinned direct dependencies are older than 21 days. Ages use the start of 2026-10-29 in Asia/Saigon as a conservative cutoff; timestamps are UTC.

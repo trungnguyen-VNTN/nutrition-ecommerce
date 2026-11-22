@@ -51,6 +51,7 @@ Quyền Bedrock của task chỉ được tạo khi đặt `bedrock_model_id` v�
 
 ## Ai chạy gì
 
+- Việc thường ngày: `fmt`, `validate`, `plan` bằng profile `nutrition-plan`, rồi dừng.
 - Chỉ người dùng chạy `apply` bằng profile `nutrition-apply`, trong một terminal riêng.
 
 ## Lần đầu: tạo bucket state (spike S2)
