@@ -14,6 +14,8 @@ từ USDA FoodData Central và ảnh thật cho cả 152 sản phẩm (CC0 / pub
 người kiểm tra xác nhận được ghi rõ, không bao giờ hiển thị như "đã xác minh".
 Ứng dụng đã chạy trên AWS (CloudFront + ECS Fargate + RDS) và chỉ được bật khi demo (D20).
 
+**Demo:** https://ddn09pubqlwme.cloudfront.net (hệ thống chỉ bật trong buổi demo; ngoài giờ đó trang có thể không tải được).
+
 ![Trang chủ](docs/screenshots/home.png)
 
 <details>

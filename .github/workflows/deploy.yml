@@ -95,3 +95,17 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
             --paths "/index.html" "/" > /dev/null
+
+  release:
+    # Records the deployment on GitHub (Deployments panel, link to the app). This job has its own
+    # environment and never calls AWS, so the OIDC subject of the jobs above stays unchanged.
+    name: Publish deployment
+    needs: [backend, frontend]
+    if: vars.AWS_DEPLOY_ROLE_ARN != '' && vars.APP_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: dev
+      url: ${{ vars.APP_URL }}
+    steps:
+      - run: echo "Deployed $GITHUB_SHA to ${{ vars.APP_URL }}"

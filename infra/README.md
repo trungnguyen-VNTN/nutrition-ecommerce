@@ -114,8 +114,9 @@ cấu hình công khai, không phải secret; giá trị lấy từ `terraform -
 | `CLOUDFRONT_DISTRIBUTION_ID` | output `cloudfront_distribution_id` |
 | `VITE_COGNITO_USER_POOL_ID` | output `cognito_user_pool_id` |
 | `VITE_COGNITO_CLIENT_ID` | output `cognito_app_client_id` |
+| `APP_URL` | output `app_url`; job "Publish deployment" ghi bản deploy vào environment `dev` của GitHub kèm link này |
 
-Khi chưa có `AWS_DEPLOY_ROLE_ARN`, hai job được bỏ qua (không làm đỏ CI).
+Khi chưa có `AWS_DEPLOY_ROLE_ARN`, các job deploy được bỏ qua (không làm đỏ CI).
 
 ## Chi phí ước tính khi đã apply (ap-southeast-1)
 
