@@ -27,9 +27,15 @@ variable "app_running" {
 }
 
 variable "api_desired_count" {
-  description = "API tasks while the app is on (billed per hour)."
+  description = "API tasks while the app is on (billed per hour). Two tasks spread over both AZs."
   type        = number
-  default     = 1
+  default     = 2
+}
+
+variable "rds_multi_az" {
+  description = "RDS standby in the second AZ with automatic failover. Adds instance hours while the app is on and doubles storage."
+  type        = bool
+  default     = true
 }
 
 variable "bedrock_model_id" {

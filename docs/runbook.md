@@ -88,6 +88,17 @@ Ghi chú khi bảo vệ: thời gian từ lúc bắt đầu khôi phục tới k
 dữ liệu mất tối đa (**RPO**) là khoảng cách tới snapshot dùng để khôi phục; với backup tự động, RDS
 còn cho khôi phục tới một thời điểm (point-in-time) gần hiện tại, thường chỉ cách vài phút.
 
+### Diễn tập chuyển AZ (Multi-AZ, D33)
+
+Database có bản dự phòng ở AZ thứ hai. Thử chuyển AZ thật, không mất dữ liệu:
+
+1. App đang bật. Ghi AZ hiện tại: RDS → `nutrition-dev-postgres` → tab **Configuration**, mục *Availability Zone* (ví dụ `ap-southeast-1a`).
+2. **Actions → Reboot**, tích **Reboot with failover**, xác nhận. Ghi giờ bấm.
+3. Mở web và gọi `/api/products` liên tục; ghi lúc API trả lỗi và lúc trả lại 200. Khoảng đó là thời gian gián đoạn (thường 1–2 phút).
+4. Khi RDS về `Available`, AZ chính đã đổi sang AZ kia (ví dụ `ap-southeast-1b`). Địa chỉ database giữ nguyên, ứng dụng tự kết nối lại.
+
+Chỉ dùng tài khoản `nutrition-apply`. Không tốn thêm tiền ngoài giờ chạy bình thường.
+
 ## 5. Thanh toán VNPAY sandbox (D27)
 
 Chỉ dùng môi trường **sandbox**: không có tiền thật. Không có khóa thì web chỉ có thanh toán khi nhận hàng.
