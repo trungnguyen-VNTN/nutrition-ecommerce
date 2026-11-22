@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { installReviewFixtures } from './review-fixtures';
 import { productPage } from '../src/mocks/products';
+import { productPageSize } from '../src/features/products/api/filters';
 
 test.use({ serviceWorkers: 'block' });
 for (const width of [390, 768, 1440]) {
@@ -70,7 +71,9 @@ for (const width of [390, 768, 1440]) {
       if (name === 'home' || name === 'products')
         await expect(page.getByRole('article').first()).toBeVisible();
       if (name === 'products-loading')
-        await expect(page.getByTestId('product-skeleton')).toHaveCount(8);
+        await expect(page.getByTestId('product-skeleton')).toHaveCount(
+          productPageSize,
+        );
       if (name === 'products-empty')
         await expect(
           page.getByRole('heading', { name: 'Chưa có sản phẩm' }),
@@ -98,11 +101,15 @@ for (const width of [390, 768, 1440]) {
       }
       await page.evaluate(() => document.fonts.ready);
       if (name === 'home')
-        await page
-          .getByRole('img', { name: /Bát ngũ cốc/ })
-          .evaluate(async (image) => {
-            await (image as HTMLImageElement).decode();
-          });
+        // Banner photos are decorative (alt=""), so wait on every eagerly loaded image
+        // instead of one by name; lazy images below the fold are left to load later.
+        await page.evaluate(() =>
+          Promise.all(
+            [...document.images]
+              .filter((image) => image.loading !== 'lazy')
+              .map((image) => image.decode().catch(() => undefined)),
+          ),
+        );
       expect(browserErrors).toEqual([]);
       expect(
         await page.evaluate(
