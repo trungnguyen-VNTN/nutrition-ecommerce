@@ -4,7 +4,7 @@
 
 ## 1. Phạm vi MVP
 
-Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán khi nhận hàng hoặc VNPAY **sandbox** (D27), không có giao dịch tiền thật. Sơ đồ AWS: [docs/diagrams/aws-architecture.png](diagrams/aws-architecture.png).
+Catalog, tài khoản, AI tra cứu (chỉ đọc), giỏ hàng, đặt hàng, quản lý đơn. Thanh toán khi nhận hàng hoặc VNPAY **sandbox** (D27), không có giao dịch tiền thật. Sơ đồ AWS: [docs/diagrams/aws-architecture.png](diagrams/aws-architecture.png), bản chỉnh sửa được [aws-architecture.drawio](diagrams/aws-architecture.drawio).
 Không nằm trong MVP: Nutrition Profile, Recommendation Engine, meal plan, event pipeline, pipeline USDA, `addToCart` qua AI, domain riêng, WAF.
 
 ## 2. Sơ đồ khối
@@ -15,12 +15,13 @@ Trình duyệt
    ▼
 CloudFront ──── / , /images/* ──► S3 (React build, ảnh sản phẩm; OAC, không public)
    │
-   └─ /api/* ──► ALB công khai (HTTP, chỉ nhận CloudFront + header bí mật) ──► ECS Fargate (Spring Boot)
+   └─ /api/* ──► ALB công khai (HTTP, chỉ nhận CloudFront + header bí mật) ──► ECS Fargate (Spring Boot, 2 task ở 2 AZ)
                                                     │
                                    ┌────────────────┼──────────────────────┐
                                    ▼                ▼                      ▼
                               RDS PostgreSQL   Bedrock Runtime       Cognito (JWKS)
-                              (private)        (endpoint công khai qua đường ra Internet 🔎)
+                              (private,        (Tokyo, đường ra Internet)
+                               Multi-AZ: bản dự phòng ở AZ thứ hai)
 
 Đăng nhập: React ──► Cognito User Pool (không gán domain, không hosted UI) ──► JWT
 CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──► cập nhật ECS

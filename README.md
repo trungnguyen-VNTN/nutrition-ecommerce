@@ -78,14 +78,17 @@ và [quyết định](docs/decisions.md).
 
 ![Kiến trúc AWS](docs/diagrams/aws-architecture.png)
 
+Bản vẽ chỉnh sửa được: [aws-architecture.drawio](docs/diagrams/aws-architecture.drawio) (mở bằng draw.io / diagrams.net, dùng bộ icon AWS chính thức).
+
 ```mermaid
 flowchart LR
   user([Trình duyệt]) -->|HTTPS *.cloudfront.net| cf[CloudFront]
   cf -->|/ , /images/*| s3[(S3<br/>React build, ảnh)]
   cf -->|/api/*| alb[ALB công khai<br/>chỉ nhận CloudFront]
-  alb --> ecs[ECS Fargate<br/>Spring Boot]
-  ecs --> rds[(RDS PostgreSQL)]
-  ecs -->|Converse + tool chỉ đọc| bedrock[Bedrock Runtime]
+  alb --> ecs[ECS Fargate<br/>Spring Boot, 2 task ở 2 AZ]
+  ecs --> rds[(RDS PostgreSQL<br/>Multi-AZ)]
+  rds -.->|đồng bộ| standby[(RDS standby<br/>AZ thứ hai)]
+  ecs -->|Converse + tool chỉ đọc| bedrock[Bedrock Runtime<br/>Tokyo]
   ecs -.->|JWKS| cognito[Cognito User Pool]
   user -.->|đăng nhập, JWT| cognito
 ```
