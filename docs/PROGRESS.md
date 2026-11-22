@@ -1,8 +1,13 @@
 # Tiến độ
 
-_Cập nhật lần cuối: 2026-11-21_ (Codex cập nhật cuối mỗi phiên)
+_Cập nhật lần cuối: 2026-11-22_ (Codex cập nhật cuối mỗi phiên)
 
 ## Trạng thái hiện tại
+
+- **Hạ tầng #72 đã apply (2026-11-22).** Người dùng gỡ khóa state kẹt từ lần apply dở ngày 20/11 (, state không đổi), đăng nhập SSO lại rồi chạy  (8 tạo, 1 sửa, 0 xóa). Kiểm chứng chỉ đọc: CloudTrail đang ghi, bucket  đã có log CloudTrail và ALB, S3 gateway endpoint , app qua CloudFront trả 200.
+  - **Chi phí thực tế (Cost Explorer, 1–21/11):** 6,44 USD dùng, credit trừ hết (phải trả 0). Lớn nhất: RDS 2,77; ALB 1,29; ECS 1,21; IPv4 công khai 0,74; Bedrock 0,21; Secrets Manager 0,20.
+  - **Ước tính một tháng** (giá Singapore, chưa thuế): bật 24/7 khoảng 65–75 USD (RDS t4g.micro ~22, ALB ~20, Fargate ARM 0,5 vCPU / 1 GB ~15, 3 IPv4 công khai ~11, còn lại < 5); chỉ bật lúc demo ~4 giờ / ngày khoảng 12–18 USD; tắt hẳn () khoảng 3–5 USD. Thêm WAF khi demo: khoảng +8–10 USD / tháng nếu để cả tháng.
+  - **Còn lại:** người dùng thử trên web khi đã đăng nhập (hồ sơ, gợi ý, AI, VNPAY sandbox);  khi không dùng.
 
 - **D32 hồ sơ dinh dưỡng và gợi ý bữa theo mục tiêu (2026-11-21).** Bốn PR #78 → #79 → #80 → #81, đã merge vào `master`.
   - **#78** hồ sơ (V11 `nutrition_profiles`) và mục tiêu mỗi ngày tính bằng code: Mifflin-St Jeor × hệ số vận động, giảm −15% / tăng cơ +10%, không dưới năng lượng nghỉ. Không đủ điều kiện (dưới 18 / trên 65 tuổi, mang thai / cho con bú, bệnh cần giám sát, BMI ngoài 17–35) thì không có mục tiêu.
