@@ -1,6 +1,7 @@
 import { Leaf } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { messages } from '@/app/messages.vi';
+import { openTour } from '@/features/onboarding/tour-store';
 
 export function SiteFooter() {
   return (
@@ -26,6 +27,9 @@ export function SiteFooter() {
           <div className="flex flex-col items-start">
             <Link to="/products">Tất cả sản phẩm</Link>
             <Link to="/chat">Trợ lý dinh dưỡng AI</Link>
+            <button type="button" className="footer-link" onClick={openTour}>
+              Xem lại hướng dẫn
+            </button>
           </div>
         </div>
         <div>

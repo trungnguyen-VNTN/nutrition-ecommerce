@@ -9,6 +9,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSession } from '@/features/auth/session';
 import { getCart } from '@/features/commerce/api';
+import { OnboardingTour } from '@/features/onboarding/onboarding-tour';
 import { messages } from './messages.vi';
 
 export function Layout() {
@@ -51,6 +52,7 @@ export function Layout() {
         {pathname.startsWith('/admin') ? <AdminShell>{page}</AdminShell> : page}
       </main>
       <SiteFooter />
+      <OnboardingTour />
     </div>
   );
 }

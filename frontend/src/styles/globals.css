@@ -321,7 +321,8 @@
     background: var(--brand);
     color: var(--cream);
   }
-  .site-footer a {
+  .site-footer a,
+  .site-footer .footer-link {
     display: inline-flex;
     min-height: var(--touch-target);
     align-items: center;
@@ -330,7 +331,8 @@
     text-decoration-color: color-mix(in srgb, var(--cream) 45%, transparent);
     text-underline-offset: var(--space-1);
   }
-  .site-footer a:hover {
+  .site-footer a:hover,
+  .site-footer .footer-link:hover {
     text-decoration-color: var(--lime);
   }
 
@@ -1296,6 +1298,73 @@
   @media (width >= 940px) {
     .meal-promo {
       width: 460px;
+    }
+  }
+}
+
+/* Onboarding guide ("Lá"): spotlight on one control, card with the mascot. */
+@layer components {
+  .tour-layer {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-tour);
+  }
+  .tour-scrim,
+  .tour-spotlight {
+    position: fixed;
+    pointer-events: none;
+  }
+  .tour-scrim {
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+  .tour-spotlight {
+    border-radius: var(--corner-control);
+    box-shadow: 0 0 0 200vmax color-mix(in srgb, var(--ink) 55%, transparent);
+    outline: 3px solid var(--lime);
+    outline-offset: 2px;
+    transition:
+      top var(--motion-enter) var(--motion-ease),
+      left var(--motion-enter) var(--motion-ease),
+      width var(--motion-enter) var(--motion-ease),
+      height var(--motion-enter) var(--motion-ease);
+  }
+  .tour-card {
+    position: fixed;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    padding: var(--space-6);
+    border: 2px solid var(--ink);
+    border-radius: var(--corner-card);
+    background: var(--surface);
+    box-shadow: var(--elevation-float);
+    color: var(--ink);
+  }
+  .tour-step {
+    animation: tour-in var(--motion-enter) var(--motion-ease);
+  }
+  .leaf-mascot__body {
+    transform-origin: 60px 90px;
+    animation: leaf-bob 2.4s ease-in-out infinite;
+  }
+  .leaf-mascot--wave .leaf-mascot__hand {
+    transform-origin: 98px 34px;
+    animation: leaf-wave 1.2s ease-in-out 2;
+  }
+  @keyframes tour-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes leaf-bob {
+    50% {
+      transform: translateY(-2px) rotate(-2deg);
+    }
+  }
+  @keyframes leaf-wave {
+    50% {
+      transform: rotate(18deg);
     }
   }
 }

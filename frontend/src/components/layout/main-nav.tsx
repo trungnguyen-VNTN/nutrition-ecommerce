@@ -40,6 +40,7 @@ export function MainNav({
             key={to}
             to={to}
             end={to === '/'}
+            data-tour={to.slice(1) || undefined}
             // The dock keeps five tabs; admin and the meal analyzer stay in the header row on wider
             // screens and are linked from the products and product pages on phones.
             className={`nav-link control-transition ${['/admin', '/meal-analyzer', '/suggestions'].includes(to) ? 'hidden md:inline-flex' : ''}`}
