@@ -7,16 +7,40 @@ import {
 } from 'amazon-cognito-identity-js';
 import { useSyncExternalStore } from 'react';
 
-const values = new Map<string, string>();
+// Cognito tokens live in localStorage (the library's default) so a page reload or a new tab keeps
+// the user signed in; the refresh token renews the session. Only Cognito's own keys are touched.
+// When storage is unavailable (private mode, blocked site data) they fall back to memory, which
+// lasts until the page is reloaded.
+const COGNITO_PREFIX = 'CognitoIdentityServiceProvider.';
+const memory = new Map<string, string>();
+function browserStorage(): Storage | null {
+  try {
+    const probe = COGNITO_PREFIX + 'probe';
+    window.localStorage.setItem(probe, '1');
+    window.localStorage.removeItem(probe);
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+const persistent = typeof window === 'undefined' ? null : browserStorage();
 const storage = {
-  getItem: (key: string) => values.get(key) ?? null,
+  getItem: (key: string) =>
+    persistent ? persistent.getItem(key) : (memory.get(key) ?? null),
   setItem: (key: string, value: string) => {
-    values.set(key, value);
+    if (persistent) persistent.setItem(key, value);
+    else memory.set(key, value);
   },
   removeItem: (key: string) => {
-    values.delete(key);
+    if (persistent) persistent.removeItem(key);
+    else memory.delete(key);
   },
-  clear: () => values.clear(),
+  clear: () => {
+    memory.clear();
+    if (!persistent) return;
+    for (const key of Object.keys(persistent))
+      if (key.startsWith(COGNITO_PREFIX)) persistent.removeItem(key);
+  },
 };
 const poolId = import.meta.env.VITE_COGNITO_USER_POOL_ID as string | undefined;
 const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
@@ -43,6 +67,41 @@ export const subscribeSession = (listener: () => void) => {
 export const useSession = () =>
   useSyncExternalStore(subscribeSession, () => identity);
 const emit = () => listeners.forEach((listener) => listener());
+function identityOf(session: CognitoUserSession): Identity {
+  const access = session.getAccessToken().decodePayload() as Record<
+    string,
+    unknown
+  >;
+  const id = session.getIdToken().decodePayload() as Record<string, unknown>;
+  const groups = access['cognito:groups'];
+  return {
+    sub: String(access.sub),
+    email: String(id.email ?? ''),
+    admin: Array.isArray(groups) && groups.includes('ADMIN'),
+  };
+}
+
+/** Restores the session saved by an earlier sign-in (page reload, new tab). */
+export function restoreSession() {
+  const saved = pool?.getCurrentUser();
+  if (!saved) return;
+  const expected = epoch;
+  current = saved;
+  // Synchronous while the access token is valid, so the first render is already signed in;
+  // otherwise the library refreshes it with the refresh token first.
+  saved.getSession(
+    (error: Error | null, session: CognitoUserSession | null) => {
+      if (expected !== epoch) return;
+      if (error || !session?.isValid()) {
+        signOut();
+        return;
+      }
+      identity = identityOf(session);
+      emit();
+    },
+  );
+}
+
 function user(email: string) {
   if (!pool) throw new Error('AUTH_NOT_CONFIGURED');
   return new CognitoUser({ Username: email, Pool: pool, Storage: storage });
@@ -96,18 +155,8 @@ export function signIn(email: string, password: string) {
             reject(new Error('SESSION_CANCELLED'));
             return;
           }
-          const claims = session.getAccessToken().decodePayload() as Record<
-            string,
-            unknown
-          >;
           current = candidate;
-          identity = {
-            sub: String(claims.sub),
-            email,
-            admin:
-              Array.isArray(claims['cognito:groups']) &&
-              claims['cognito:groups'].includes('ADMIN'),
-          };
+          identity = { ...identityOf(session), email };
           emit();
           resolve();
         },
@@ -161,3 +210,5 @@ export function confirmPasswordReset(
     }),
   );
 }
+
+restoreSession();
