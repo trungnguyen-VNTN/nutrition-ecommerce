@@ -31,7 +31,19 @@ async function inspect(directory) {
   }
 }
 
-await inspect(fileURLToPath(new URL('../dist', import.meta.url)));
+const dist = fileURLToPath(new URL('../dist', import.meta.url));
+await inspect(dist);
+// Icons linked from index.html must ship; they live in public/ next to the dev-only worker.
+const shipped = new Set(await readdir(dist));
+for (const file of [
+  'favicon.svg',
+  'favicon-32.png',
+  'apple-touch-icon.png',
+  'icon-192.png',
+  'icon-512.png',
+  'manifest.webmanifest',
+])
+  assert(shipped.has(file), `Missing public asset in the build: ${file}`);
 process.stdout.write(
-  'Production assets contain no MSW worker or registration code.\n',
+  'Production assets contain no MSW worker or registration code; app icons are present.\n',
 );
