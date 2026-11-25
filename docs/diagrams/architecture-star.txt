@@ -18,7 +18,7 @@ A - HÀNH ĐỘNG (Action)
 4. Dữ liệu nằm trên Amazon RDS for PostgreSQL Multi-AZ ở private subnet: có bản dự phòng ở AZ thứ hai, tự chuyển sang khi AZ chính lỗi. Dữ liệu được mã hoá bằng khoá AWS KMS. Mật khẩu do AWS Secrets Manager quản lý. Truy vấn dùng SQL tham số hoá; trừ kho bằng UPDATE có điều kiện trong transaction.
 5. Amazon Cognito quản lý đăng nhập (JWT, hai nhóm USER và ADMIN). AWS IAM cấp quyền tối thiểu, có permissions boundary.
 6. Trợ lý AI gọi Amazon Bedrock (Nova 2 Lite) ở region Tokyo, kèm Amazon Bedrock Guardrails để chặn câu hỏi y tế và prompt injection. Model chỉ được dùng một tool tìm kiếm chỉ đọc.
-7. GitHub Actions dùng OIDC (không lưu khoá dài hạn) để build image, đẩy lên Amazon ECR rồi cập nhật ECS.
+7. GitHub Actions dùng OIDC: token của GitHub được AWS STS đổi lấy quyền tạm thời của role deploy (AssumeRoleWithWebIdentity), nên không lưu khoá dài hạn. Với quyền đó, workflow build image, đẩy lên Amazon ECR rồi cập nhật ECS.
 8. Amazon CloudWatch Logs gom log của ứng dụng; Amazon CloudWatch đặt alarm (lỗi 5xx, CPU, RAM, dòng ERROR) và gửi cảnh báo qua Amazon SNS. AWS Budgets kiểm soát chi phí.
 
 R - KẾT QUẢ (Result)
