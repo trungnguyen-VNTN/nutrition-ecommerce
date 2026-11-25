@@ -24,7 +24,8 @@ CloudFront ──── / , /images/* ──► S3 (React build, ảnh sản ph�
                                Multi-AZ: bản dự phòng ở AZ thứ hai)
 
 Đăng nhập: React ──► Cognito User Pool (không gán domain, không hosted UI) ──► JWT
-CI/CD:     GitHub Actions (OIDC) ──► build/test/scan ──► ECR ──► cập nhật ECS
+CI/CD:     GitHub Actions ──► build/test/scan ──► token OIDC ──► AWS STS (AssumeRoleWithWebIdentity,
+           quyền tạm thời của role deploy) ──► đẩy ECR ──► cập nhật ECS
 ```
 
 ## 3. Thành phần

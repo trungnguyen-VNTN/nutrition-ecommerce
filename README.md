@@ -68,7 +68,7 @@ Công nghệ:
 - Backend: Java 21, Spring Boot 4.1 (Jackson 3), JDBC, Flyway, PostgreSQL 17.
 - Frontend: React 19, TypeScript, Vite, Tailwind, TanStack Query, zod; Vitest và Playwright/axe.
 - AWS (`ap-southeast-1`, Terraform): CloudFront, S3, ALB, ECS Fargate ARM64, RDS,
-  Cognito, Bedrock + Guardrail, CloudWatch / SNS; deploy bằng GitHub Actions OIDC.
+  Cognito, Bedrock + Guardrail, CloudWatch / SNS; deploy bằng GitHub Actions OIDC (AWS STS cấp quyền tạm thời, không lưu access key).
 
 ## Kiến trúc
 
@@ -91,6 +91,9 @@ flowchart LR
   ecs -->|Converse + tool chỉ đọc| bedrock[Bedrock Runtime<br/>Tokyo]
   ecs -.->|JWKS| cognito[Cognito User Pool]
   user -.->|đăng nhập, JWT| cognito
+  gh([GitHub Actions]) -.->|OIDC token, AssumeRoleWithWebIdentity| sts[AWS STS<br/>quyền tạm thời]
+  gh -->|đẩy image| ecr[(ECR)]
+  ecr -->|kéo image| ecs
 ```
 
 Backend chỉ lấy danh tính từ JWT, tool AI chỉ đọc qua SQL tham số hóa, và việc
